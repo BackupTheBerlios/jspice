@@ -44,7 +44,7 @@ INVENTORY STRUCTURE
 	-	searches exhaustively and duplicates are reported
 
 *	the /usr/local/jspice/bin/jspice executable takes an inventory as its argument.
-	-	an executable inventory should include at least one command-options files
+	-	an executable inventory should include at least one command-options file
 	-	these file defines the entry points
 	-	it may cache the list of package directories, subsequently overriding the inventory.conf
 
@@ -56,30 +56,30 @@ PACKAGE STRUCTURE
 *	the name of the folder is the package name with dots replaced by - (U002D = ASCII 45).
 
 *	an optional configuration file loadInventory.conf that:
-	-	lists the core files to be loaded and defines the default loadInventory order.
+	-	lists the core file to be loaded and defines the default loadInventory order.
 	-	it may use a regex to make maintenance easier
 	-	If this is missing, the default is to look for and loadInventory the file loadInventory.spi or, failing that,
 		the loadInventory SUB-folder loadInventory.
-	-	The core files may state their dependencies via the loadInventory pragma (which takes precedence over the order
+	-	The core file may state their dependencies via the loadInventory pragma (which takes precedence over the order
 		supplied by the manifest.)
-	-	Core files will only be loaded once.
-	-	Core files are loaded with the parent package set as the current package.
+	-	Core file will only be loaded once.
+	-	Core file are loaded with the parent package set as the current package.
 	-	the manifest file may list further loadInventory-subfolders which are recursively loaded in the same manner.
 
-*	the autoloadable folder auto, containing autoloadable files
+*	the autoloadable folder auto, containing autoloadable file
 	-	the variable name
 	-	the facet
 	-	content-type
 	-	e.g. fred-public.xml
 
-*	the library files in lib; these are subpackages - loading one of these will cause the parent package to
+*	the library file in lib; these are subpackages - loading one of these will cause the parent package to
 	loadInventory. The subpackages should also be marked with the suffix -pkg to facilitate renaming. Subpackages's
 	full name is calculated by prefixed by the full name of their parent package.
 
 *	documentation in a directory called docs
 
 
-*	other folders and files are not relevant and will not interfere with loading
+*	other folders and file are not relevant and will not interfere with loading
 
 */
 

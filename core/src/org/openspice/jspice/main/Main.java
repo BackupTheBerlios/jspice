@@ -24,23 +24,14 @@ import org.openspice.jspice.conf.FixedConf;
 
 import java.util.Observable;
 
-public class Main {
+public class Main extends AbsMain {
 
 	JSpiceConf jspice_conf;
 	SuperLoader super_loader;
 	Interpreter interpreter;
 
-	static class SimpleObservable extends Observable {
-		public void ping() {
-			this.setChanged();
-			this.notifyObservers();
-		}
-	}
-
-	public static final SimpleObservable SHUTDOWN = new SimpleObservable();
-
 	protected void shutdown() {
-		SHUTDOWN.ping();
+		Hooks.SHUTDOWN.ping();
 	}
 
 	protected void init( final boolean wantBanner ) {
@@ -51,14 +42,10 @@ public class Main {
 		this.interpreter = new Interpreter( this.super_loader.getNameSpace( "spice.interactive_mode" ) );
 	}
 
-	protected void perform( final boolean wantBanner, final String prompt ) {
-		this.init( wantBanner );
-		this.interpreter.interpret( prompt != null ? prompt : this.jspice_conf.getPrompt() );
+	public void perform( final CmdLineOptions cmd ) {
+		this.init( cmd.banner );
+		this.interpreter.interpret( cmd.prompt != null ? cmd.prompt : this.jspice_conf.getPrompt() );
 		this.shutdown();
-	}
-
-	public static void main( final String[] args ) {
-		new Main().perform( true, null );
 	}
 
 }

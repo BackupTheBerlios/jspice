@@ -25,11 +25,9 @@ import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.datatypes.SpiceObject;
 import org.openspice.jspice.tools.PrintTools;
 import org.openspice.jspice.conf.FixedConf;
+import org.openspice.jspice.alert.Alert;
 
-import java.util.List;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 
 public class ListPragma {
@@ -63,6 +61,9 @@ public class ListPragma {
 	public void list( final NameSpace current, final List args ) {
 		final String nsn = args.isEmpty() ? FixedConf.STD_LIB : (String)args.get( 0 );
 		final NameSpace ns = current.getNameSpaceManager().get( nsn );
+		if ( ns == null ) {
+			throw new Alert( "No such namespace" ).culprit( "namespace", nsn ).mishap();
+		}
 
 		//	Map< String, Var.Perm >
 		int count = 1;

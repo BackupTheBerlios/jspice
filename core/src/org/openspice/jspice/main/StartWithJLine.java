@@ -16,32 +16,20 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.main;
 
-import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
-import org.openspice.jspice.lib.CastLib;
-import org.openspice.jspice.lib.ConvertLib;
-import org.openspice.jspice.vm_and_compiler.VM;
-import org.openspice.jspice.alert.Alert;
-import org.openspice.jspice.main.SuperLoader;
-import org.openspice.vfs.file.FileVFile;
+public class StartWithJLine {
 
-import java.io.File;
-
-public class LoadValueFromFileProc extends Unary1InvokeProc {
-
-	final SuperLoader sloader;
-
-	public LoadValueFromFileProc( final SuperLoader sloader ) {
-		this.sloader = sloader;
-	}
-
-	public Object invoke( final Object x ) {
-		return Alert.unreachable();
-	}
-	
-	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
-		return sloader.loadValueFromVItem( new FileVFile( new File( ConvertLib.convertString( tos ) ) ) );
+	public static void main( final String[] args ) {
+		boolean jline = false;
+		for ( int i = 0; i < args.length; i++ ) {
+			final String option = args[ i ];
+			if ( option.startsWith( "--jline" ) ) {
+				jline = option.equals( "--jline" ) || option.equals( "--jline=on" );
+			}
+		}
+		final AbsMain main = jline ? new MainWithJLine() : new Main();
+		main.perform( args );
 	}
 
 }

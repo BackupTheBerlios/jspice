@@ -24,7 +24,7 @@ import org.mortbay.http.handler.*;
 import org.mortbay.util.MultiException;
 import org.openspice.jspice.boxes.CommandLineBoxServlet;
 import org.openspice.jspice.conf.JSpiceConf;
-import org.openspice.vfs.files.FileVFolder;
+import org.openspice.vfs.file.FileVFolder;
 
 import java.io.File;
 import java.util.Observer;
@@ -89,7 +89,7 @@ public class ServerMain implements Observer {
 
 	public void start( final JSpiceConf jconf) {
 		this.startUp( jconf );
-		Main.SHUTDOWN.addObserver( this );		//	Horrible temporary hack.
+		Hooks.SHUTDOWN.addObserver( this );		//	Horrible temporary hack.
 	}
 
 }

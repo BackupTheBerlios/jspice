@@ -103,7 +103,7 @@ public class ClassNameCompletor extends SimpleCompletor {
 				}
 
 				String name = entry.getName();
-				if ( !name.endsWith( ".class" ) ) // only use class files
+				if ( !name.endsWith( ".class" ) ) // only use class file
 				{
 					continue;
 				}

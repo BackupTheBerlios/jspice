@@ -33,12 +33,12 @@ import java.io.*;
 /**
  * Optional configuration file (loadInventory.conf).
  * Concerns:
- * 	-	lists the core files to be loaded and defines the default loadInventory order.
+ * 	-	lists the core file to be loaded and defines the default loadInventory order.
  *	-	it may use a regex to make maintenance easier
  *	-	If this is missing, the default is to look for and loadInventory the file loadInventory.spi or, failing that, the loadInventory SUB-folder loadInventory.
- *	-	The core files may state their dependencies via the loadInventory pragma (which takes precedence over the order supplied by the manifest.)
- *	-	Core files will only be loaded once.
- *	-	Core files are loaded with the parent package set as the current package.
+ *	-	The core file may state their dependencies via the loadInventory pragma (which takes precedence over the order supplied by the manifest.)
+ *	-	Core file will only be loaded once.
+ *	-	Core file are loaded with the parent package set as the current package.
  *	-	the manifest file may list further loadInventory-subfolders which are recursively loaded in the same manner.
  */
 
@@ -105,7 +105,7 @@ public final class LoadConf {
 			Print.println( Print.CONFIG, "found load.spi name" );
 			this.add( f );
 		} else {
-			Print.println( Print.CONFIG, "Cannot find any files that need loading" );
+			Print.println( Print.CONFIG, "Cannot find any file that need loading" );
 		}
 		Print.println( Print.CONFIG, "init DONE" );
 	}

@@ -28,8 +28,8 @@ import org.openspice.jspice.main.manual.FileManual;
 import org.openspice.jspice.class_builder.JSpiceClassLoader;
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFile;
-import org.openspice.vfs.files.FileVFolder;
-import org.openspice.vfs.files.FileVFile;
+import org.openspice.vfs.file.FileVFolder;
+import org.openspice.vfs.file.FileVFile;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -210,7 +210,7 @@ public final class JSpiceConf {
 	}
 
 
-	//	---- Find help files ----
+	//	---- Find help file ----
 
 	//	Maps commands/manual names into Manuals
 	Map manuals = new HashMap();
@@ -289,7 +289,7 @@ public final class JSpiceConf {
 
 	/**
 	 * This is placeholding stuff at present.  Obviously enough the configuration
-	 * files should have a unified format.  However, for the moment the basic rules are:-
+	 * file should have a unified format.  However, for the moment the basic rules are:-
 	 * 	1.	'#' is an end of line comment
 	 * 	2.	data entry lines are
 	 *          AddLoaderBuilder EXTN CLASSNAME

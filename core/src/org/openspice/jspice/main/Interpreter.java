@@ -133,6 +133,7 @@ public final class Interpreter extends Loader {
 	public void interpret( final String origin, final Reader reader, final String prompt ) {
 		final Petrifier petrifier = new Petrifier();
 		SpiceParser parser = new SpiceParser( this, origin, reader, prompt );
+		Hooks.READY.ping();
 		for (;;) {
 //		while ( parser.peekToken() != null ) {
 			boolean reset = false;

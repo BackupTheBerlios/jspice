@@ -22,9 +22,9 @@ import org.openspice.jspice.conf.FixedConf;
 import org.openspice.jspice.tools.PrintTools;
 import org.openspice.jspice.tools.StdOutConsumer;
 
-public class Version {
-	public static final void main( final String[] args ) {
-		final String control_string = args.length == 0 ? "%1p_%2p_%3p" : args[ 0 ];
+public class StartVersion {
+
+	public static final void printVersion( final String control_string ) {
 		PrintTools.formatTo(
 			StdOutConsumer.OUT,
 			control_string,
@@ -36,4 +36,10 @@ public class Version {
 		);
 		System.out.println( "" );
 	}
+
+	public static final void main( final String[] args ) {
+		final String control_string = args.length == 0 ? "%1p_%2p_%3p" : args[ 0 ];
+		printVersion( control_string );
+	}
+
 }

@@ -255,7 +255,7 @@ public class NameSpace {
 
 	public final void loadCoreFiles( final SuperLoader sloader ) {
 		final LoadConf load_conf = new LoadConf( this.vfolder, this.manager.getSuperLoader().getJSpiceConf() );
-		Print.println( Print.LOAD, "loading files ... ");
+		Print.println( Print.LOAD, "loading file ... ");
 		for(;;) {
 			final VFile f = load_conf.nextFile();
 			if ( f == null ) break;

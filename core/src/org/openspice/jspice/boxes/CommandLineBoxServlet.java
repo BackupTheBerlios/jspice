@@ -21,7 +21,7 @@ package org.openspice.jspice.boxes;
 import org.openspice.jspice.conf.JSpiceConf;
 import org.openspice.vfs.VFSTools;
 import org.openspice.vfs.VFile;
-import org.openspice.vfs.files.FileVFile;
+import org.openspice.vfs.file.FileVFile;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

@@ -16,32 +16,21 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.main;
 
-import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
-import org.openspice.jspice.lib.CastLib;
-import org.openspice.jspice.lib.ConvertLib;
-import org.openspice.jspice.vm_and_compiler.VM;
-import org.openspice.jspice.alert.Alert;
-import org.openspice.jspice.main.SuperLoader;
-import org.openspice.vfs.file.FileVFile;
+import java.util.Observable;
 
-import java.io.File;
+public class Hooks {
 
-public class LoadValueFromFileProc extends Unary1InvokeProc {
-
-	final SuperLoader sloader;
-
-	public LoadValueFromFileProc( final SuperLoader sloader ) {
-		this.sloader = sloader;
+	static class SimpleObservable extends Observable {
+		public void ping() {
+			this.setChanged();
+			this.notifyObservers();
+		}
 	}
 
-	public Object invoke( final Object x ) {
-		return Alert.unreachable();
-	}
-	
-	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
-		return sloader.loadValueFromVItem( new FileVFile( new File( ConvertLib.convertString( tos ) ) ) );
-	}
+	public static final SimpleObservable READY = new SimpleObservable();
+
+	public static final SimpleObservable SHUTDOWN = new SimpleObservable();
 
 }

@@ -18,7 +18,7 @@
  */
 package org.openspice.jspice.main.pragmas;
 
-import org.openspice.vfs.files.FileVFile;
+import org.openspice.vfs.file.FileVFile;
 import org.openspice.vfs.VFile;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.Interpreter;

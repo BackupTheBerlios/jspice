@@ -7,10 +7,14 @@ package org.openspice.jspice.main;
  * Time: 8:22:36 PM
  * To change this template use File | Settings | File Templates.
  */
-public class MainPlain {
+public class StartPlain {
 
     public static final void main( final String[] args ) {
-        new Main().perform( false, "" );
+		final String[] new_args = new String[ args.length + 2 ];
+		System.arraycopy( args, 0, new_args, 2, args.length );
+		new_args[ 0 ] = "--banner=off";
+		new_args[ 1 ] = "--prompt=";
+        new Main().perform( new_args );
     }
 
 }

@@ -29,8 +29,8 @@ import org.openspice.jspice.main.jline_stuff.SmartCompletor;
 
 public class MainWithJLine extends Main {
 
-	protected void perform( final boolean wantsBanner, final String prompt ) {
-		this.init( wantsBanner );
+	public void perform( final CmdLineOptions cmd ) {
+		this.init( cmd.banner );
 		try {
 			// Setup the input stream.
 			final ConsoleReader reader = new ConsoleReader();
@@ -43,7 +43,7 @@ public class MainWithJLine extends Main {
 					}
 				)
 			);
-			ConsoleReaderInputStream.setIn( reader, prompt != null ? prompt : this.jspice_conf.getPrompt() );
+			ConsoleReaderInputStream.setIn( reader, cmd.prompt != null ? cmd.prompt : this.jspice_conf.getPrompt() );
 
 			this.interpreter.interpret( "" );
 			this.shutdown();
@@ -51,9 +51,8 @@ public class MainWithJLine extends Main {
 			throw new RuntimeException( e );
 		}
 	}
-
-	public static void main( final String[] args ) {
-		new MainWithJLine().perform( true, null );
-	}
-
+	
 }
+
+
+

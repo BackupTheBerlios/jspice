@@ -41,7 +41,7 @@ import java.util.*;
  * <p/>
  * <p>TODO</p>
  * <ul>
- * <li>Handle files with spaces in them</li>
+ * <li>Handle file with spaces in them</li>
  * <li>Have an option for file type color highlighting</li>
  * </ul>
  *
@@ -86,7 +86,7 @@ public class FileNameCompletor implements Completor {
 	 * @return the offset of the match
 	 * @param	buffer		the untranslated buffer
 	 * @param	translated	the buffer with common characters replaced
-	 * @param	entries		the list of files to match
+	 * @param	entries		the list of file to match
 	 * @param	candidates	the list of candidates to populate
 	 */
 	public int matchFiles( String buffer, String translated, File[] entries, List candidates ) {

@@ -20,7 +20,7 @@ package org.openspice.jspice.tests;
 
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFile;
-import org.openspice.vfs.files.FileVFolder;
+import org.openspice.vfs.file.FileVFolder;
 
 import java.io.File;
 import java.util.Iterator;

@@ -94,7 +94,7 @@ public class FileManual extends AbsFileManual {
 						this.find( phrase, folder, nickname, null, results );
 					}
 				}
-				//	Add all the matching files from the packages.
+				//	Add all the matching file from the packages.
 				this.allPackageFiles( phrase, iconf, results );
 			}
 		}
