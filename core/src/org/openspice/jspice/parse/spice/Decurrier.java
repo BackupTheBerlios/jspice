@@ -59,7 +59,7 @@ final class Decurrier {
 	}
 
 	public static Decurrier parse( final Parser parser, final String closing_keyword ) {
-		final Expr head = parser.readExpr();
+		final Expr head = parser.readDefineHead();
 		if ( parser.tryReadToken( "=>" ) == null && parser.tryReadToken( "as" ) == null ) {
 			new Alert( "Expecting '=>' or 'as' before the body of this definition" ).culprit( "token", parser.peekToken() ).mishap();
 		}

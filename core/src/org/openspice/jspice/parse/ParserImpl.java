@@ -59,15 +59,18 @@ public class ParserImpl extends Parser {
 		this.holes_used = true;
 	}
 
+	char phase = 'P';
+
 	private Alert alert( final String msg ) {
 		return this.alert( msg, null );
 	}
 
 	private Alert alert( final String msg1, final String msg2 ) {
 		return (
-			new Alert( msg1, msg2, 'P' ).
+			new Alert( msg1, msg2, this.phase ).
 			culprit( "file", this.tokens.getPrintName() ).
-			culprit( "line no.", new Integer( this.tokens.getLineNumber() ) )
+			culprit( "line no.", new Integer( this.tokens.getLineNumber() ) ).
+			resetInsertionPoint()
 		);
 	}
 	
@@ -227,7 +230,7 @@ public class ParserImpl extends Parser {
 		return null;
    }
 	
-    public Expr readOptExprPrec( final int prec ) {
+   public Expr readOptExprPrec( final int prec ) {
         Expr sofar = readOptPrimary();
         if ( sofar == null ) return null;
 
@@ -256,7 +259,6 @@ public class ParserImpl extends Parser {
         return e;
     }
 
-
     public Expr readOptExpr() {
         return readOptExprPrec( Prec.zero );
     }
@@ -264,6 +266,16 @@ public class ParserImpl extends Parser {
     public Expr readExpr() {
         return readExprPrec( Prec.zero );
     }
+
+	public Expr readDefineHead() {
+		final char phase_sv = this.phase;
+		this.phase = 'H';
+		try {
+			return this.readExpr();
+		} finally {
+			this.phase = phase_sv;
+		}
+	}
 
     public Expr readExprTo( final String sym ) {
         final Expr e = this.readExpr();
@@ -276,7 +288,6 @@ public class ParserImpl extends Parser {
         this.tokens.mustReadToken( sym );
         return e;
     }
-
 
     //    Read expressions upto but NOT including commas.
     public Expr readExprUpToComma() {
@@ -306,5 +317,6 @@ public class ParserImpl extends Parser {
 	public JSpiceConf getJSpiceConf() {
 		return this.jspice_conf;
 	}
+
 }
 

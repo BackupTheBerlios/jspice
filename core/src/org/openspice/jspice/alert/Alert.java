@@ -23,8 +23,26 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public final class Alert {
+class AlertBase {
 
+	private int index = 0;								//	index into list of culprits.
+	private LinkedList culprits = new LinkedList();
+
+	protected void add( final Culprit culprit ) {
+		this.culprits.add( this.index++, culprit );
+	}
+
+	protected Iterator culprit_iterator() {
+		return this.culprits.iterator();
+	}
+
+	public void resetIndex() {
+		this.index = 0;
+	}
+
+}
+
+public final class Alert extends AlertBase {
 
 	//	---- Different style for raising error messages ----
 	//	new Alert( snafu, ok ).culprit( MSG, OBJ )....mishap();
@@ -32,7 +50,9 @@ public final class Alert {
 	final Throwable cause;
 	final String complaint;
 	final String explanation;
-	LinkedList culprits = new LinkedList(); 		//new CulpritGroup();
+
+//	int index = 0;									//	index into list of culprits.
+//	LinkedList culprits = new LinkedList(); 		//new CulpritGroup();
 
 	public Alert( final Throwable t, final String _complaint, final String _explanation, final char phase ) {
 		this.cause = t;
@@ -77,6 +97,7 @@ public final class Alert {
 		final String p = (
 			phase == 'T' ? "Tokenization" :
 			phase == 'P' ? "Parsing" :
+			phase == 'H' ? "Parsing head of define" :
 			phase == 'R' ? "Resolving names" :
 			phase == 'I' ? "Importing" :
 			phase == 'G' ? "Generating code" :
@@ -84,16 +105,16 @@ public final class Alert {
 			null
 		);
 		if ( p != null ) {
-			this.culprits.add( new Culprit( "Phase", p ) );
+			this.add( new Culprit( "Phase", p, false, true ) );
 		}
 	}
 
 	public Alert culprit( final String desc, final Object arg ) {
-		this.culprits.add( new Culprit( desc, arg ) );
+		this.add( new Culprit( desc, arg ) );
 		return this;
 	}
 
-	int arg_count = 1;
+	private int arg_count = 1;
 	public Alert culprit_list( final List list ) {
 		for ( Iterator it = list.iterator(); it.hasNext(); ) {
 			this.culprit( "arg(" + this.arg_count++ + ")", it.next() );
@@ -102,12 +123,12 @@ public final class Alert {
 	}
 
 	public Alert hint( final String hint_text ) {
-		this.culprits.add( Culprit.hint( hint_text ) );
+		this.add( Culprit.hint( hint_text ) );
 		return this;
 	}
 
 	public Alert typedCulprit( final String desc, final Object arg ) {
-		this.culprits.add( Culprit.typedCulprit( desc, arg ) );
+		this.add( Culprit.typedCulprit( desc, arg ) );
 		return this;
 	}
 
@@ -151,7 +172,7 @@ public final class Alert {
 	}
 
 	private void output() {
-		for ( Iterator it = this.culprits.iterator(); it.hasNext(); ) {
+		for ( Iterator it = this.culprit_iterator(); it.hasNext(); ) {
 			final Culprit c = (Culprit)it.next();
 			c.output();
 		}
@@ -186,5 +207,10 @@ public final class Alert {
 	public static AlertException unimplemented() {
 		return Alert.unimplemented( "unimplemented" );
 	}
-	
+
+	public Alert resetInsertionPoint() {
+		this.resetIndex();
+		return this;
+	}
+
 }

@@ -38,6 +38,7 @@ public abstract class Parser {
 	abstract public Expr readOptExprTo( final String sym );
 	abstract public Expr readStmnts();
 	abstract public Expr readStmntsTo( final String sym );
+	abstract public Expr readDefineHead();
 
 	//	Token-oriented reading.
 	abstract public Token tryReadToken( final String sym );
@@ -48,12 +49,9 @@ public abstract class Parser {
 	abstract public void dropToken();
 	abstract public Token readToken();
 	abstract public Token peekXmlName();
-//	abstract public List readNameTokenList();
 	abstract public NameToken readNameToken( final boolean nullAllowed, final boolean whiteSpaceAllowed );
 	abstract public NameToken readPackageName();
 
-
-	//abstract public int newTmp();
 	abstract public NameExpr newTmpNameExpr();
 	abstract public void saveTmp();
 	abstract public void restoreTmp();
