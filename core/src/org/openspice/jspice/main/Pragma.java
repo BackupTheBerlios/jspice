@@ -33,13 +33,14 @@ import java.util.*;
 
 public class Pragma {
 
-	private final Interpreter interpreter;
+	Interpreter interpreter;				//	may be null .... for limited use .... a design bug ... todo:
+	private final JSpiceConf jspice_conf;
 	private final String input_string;
 	private String command;
 	private final List arg_list;
 
-	public Pragma( final Interpreter interpreter, final String input_string ) {
-		this.interpreter = interpreter;
+	public Pragma( final JSpiceConf jconf, final String input_string ) {
+		this.jspice_conf = jconf;
 		this.input_string = input_string;
 		this.command = null;
 		this.arg_list = new ArrayList();
@@ -55,8 +56,13 @@ public class Pragma {
 		}
 	}
 
+	public Pragma( final Interpreter interpreter, final String input_string ) {
+		this( interpreter.getJSpiceConf(), input_string );
+		this.interpreter = interpreter;
+	}
+
 	public JSpiceConf getJSpiceConf() {
-		return this.interpreter.getJSpiceConf();
+		return this.jspice_conf;
 	}
 
 	public NameSpace getNameSpace() {

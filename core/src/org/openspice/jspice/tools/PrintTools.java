@@ -111,6 +111,8 @@ public final class PrintTools {
 			}
 		} else if ( obj instanceof Character ) {
 			cuchar.outObject( obj );
+		} else if ( obj instanceof Map.Entry ) {
+			printTo( cuchar, ((Map.Entry)obj).getValue() );
 		} else if ( obj instanceof org.openspice.jspice.datatypes.SpiceObject ) {
 			((org.openspice.jspice.datatypes.SpiceObject)obj).printTo( cuchar );
 		} else {

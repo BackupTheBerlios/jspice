@@ -18,9 +18,11 @@
  */
 
 package org.openspice.jspice.datatypes;
+
 import java.util.*;
 
-public final class Maplet implements Map.Entry {
+//	Should NOT extend SpiceObject.  Always have to treat Map.Entry as a peer.
+public final class Maplet  implements Map.Entry {
 	private final Object key;
 	private final Object val;
 	
@@ -40,5 +42,6 @@ public final class Maplet implements Map.Entry {
 	public Object setValue( final Object arg0 ) {
 		throw new UnsupportedOperationException();
 	}
+
 }
 

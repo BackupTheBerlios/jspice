@@ -111,7 +111,7 @@ public final class SpiceMiniParserTable extends Standard {
 			new String[] {
 				"=| |=",
 				"class slot method",
-				"do endfor from by to in while until",
+				"do endfor from by to in while until suchthat finally",
 				"=> as",
 				".. /> </ ) ] % } : case endswitch",
 				"then else elseif elseunless endif endunless",

@@ -45,7 +45,7 @@ public class PragmaCompletor implements jline.Completor {
 
 		final List tmp = new ArrayList();
 		final PrefixFilterAccumulator acc = new PrefixFilterAccumulator( buff, tmp );
-		new Pragma( null, "" ).findPragmaCompletions( acc );	//	null & "" are the appropriate dummy parameters.
+		new Pragma( this.jspice_conf, "" ).findPragmaCompletions( acc );	//	null & "" are the appropriate dummy parameters.
 
 		if ( tmp.size() == 0 ) return -1;
 

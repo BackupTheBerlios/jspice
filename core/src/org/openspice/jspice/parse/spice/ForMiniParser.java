@@ -81,6 +81,7 @@ public class ForMiniParser extends Prefix {
 		final LinkedList tmpvars,
 		final LinkedList matches,
 		final LinkedList iterators,
+		final LinkedList filters,
 		final LinkedList conditions,
 		final LinkedList results,
 		final Expr body,
@@ -160,8 +161,17 @@ public class ForMiniParser extends Prefix {
 		rep_factory.add(
 			predicate,
 			finally_expr,
-			loop_bindings
+			loop_bindings,
+			true                              //return
 		);
+
+		//	Add a break condition for each filter.
+		{
+			for ( Iterator fit = filters.iterator(); fit.hasNext(); ) {
+				final Expr filter_expr = (Expr)fit.next();
+				rep_factory.add( filter_expr, SkipExpr.make(), SkipExpr.make(), false );
+			}
+		}
 
 		//	Now add a guarded clause for each side-condition.
 		//		&_while <while> then <then> do () end_&_while
@@ -174,7 +184,8 @@ public class ForMiniParser extends Prefix {
 				rep_factory.add(
 					(Expr)cs.next(),
 					(Expr)rs.next(),
-					SkipExpr.make()
+					SkipExpr.make(),
+					true				//	return
 				);
 			}
 			assert !cs.hasNext() && !rs.hasNext();
@@ -184,7 +195,8 @@ public class ForMiniParser extends Prefix {
 		rep_factory.add(
 			ConstantExpr.TRUE_EXPR,
 			SkipExpr.SKIP_EXPR,
-			body
+			body,
+			true	//	return
 		);
 
 		//	This completes the construction of the repeat loop.
@@ -303,13 +315,18 @@ public class ForMiniParser extends Prefix {
 		final LinkedList tmpvars = new LinkedList();
 		final LinkedList matches = new LinkedList();
 		final LinkedList iterators = new LinkedList();
+		final LinkedList filters = new LinkedList();
 		final LinkedList conditions = new LinkedList();
 		final LinkedList results = new LinkedList();
 
 		if ( parser.tryReadToken( "do" ) == null ) {
 			for (;;) {
 				final Token t = parser.peekToken();
-				if ( t.hasName( "while" ) || t.hasName( "until" ) ) {
+				if ( t.hasName( "suchthat" ) ) {
+					parser.dropToken();
+					final Expr filter = parser.readExpr();
+					filters.add( filter );
+				} else if ( t.hasName( "while" ) || t.hasName( "until" ) ) {
 					parser.dropToken();
 					Expr cond = parser.readExpr();
 					if ( t.hasName( "until" ) ) {
@@ -328,7 +345,8 @@ public class ForMiniParser extends Prefix {
 					readGenerator( parser, matches, iterators );
 				}
 				if ( parser.tryReadToken( "do" ) != null ) break;
-				if ( !parser.canPeekToken( "while" ) && !parser.canPeekToken( "until" ) ) {
+				//	Yuck.  Horrible.  todo:
+				if ( !parser.canPeekToken( "while" ) && !parser.canPeekToken( "until" ) && !parser.canPeekToken( "suchthat" )) {
 					parser.mustReadToken( ";" );
 				}
 			}
@@ -348,6 +366,7 @@ public class ForMiniParser extends Prefix {
 				tmpvars,
 				matches,
 				iterators,
+				filters,
 				conditions,
 				results,
 				body,

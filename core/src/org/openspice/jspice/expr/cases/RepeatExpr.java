@@ -29,15 +29,18 @@ import java.util.ArrayList;
 
 public final class RepeatExpr extends ExprBase {
 
+
 	static final class Triple {
 		final Expr first;
 		final Expr second;
 		final Expr third;
+		final boolean fourth;
 
-		Triple( final Expr _first, final Expr _second, final Expr _third ) {
+		Triple( final Expr _first, final Expr _second, final Expr _third, final boolean _fourth ) {
 			this.first = _first;
 			this.second = _second;
 			this.third = _third;
+			this.fourth = _fourth;
 		}
 	}
 
@@ -60,6 +63,26 @@ public final class RepeatExpr extends ExprBase {
 		return v.visitRepeatExpr( this, arg );
 	}
 
+	public int size() {
+		return this.body.length;
+	}
+
+	public Expr getTest( final int i ) {
+		return this.body[ i ].first;
+	}
+
+	public Expr getResult( final int i ) {
+		return this.body[ i ].second;
+	}
+
+	public Expr getDo( final int i ) {
+		return this.body[ i ].third;
+	}
+
+	public boolean getReturnOrBreak( final int i ) {
+		return this.body[ i ].fourth;
+	}
+
 	public ExprIterator getAllKids() {
 		final ArrayList list = new ArrayList();
 		for ( int i = 0; i < this.body.length; i++ ) {
@@ -67,6 +90,7 @@ public final class RepeatExpr extends ExprBase {
 			list.add( t.first );
 			list.add( t.second );
 			list.add( t.third );
+			list.add( ConstantExpr.make( Boolean.valueOf( t.fourth ) ) );	//	Yuck.
 		}
 		return ExprIterator.makeFromIterator( list.iterator() );
 	}
@@ -74,7 +98,7 @@ public final class RepeatExpr extends ExprBase {
 	public Expr copy( final ExprIterator kids ) {
 		final Factory f = new Factory();
 		while ( kids.hasNext() ) {
-			f.add( kids.next(), kids.next(), kids.next() );
+			f.add( kids.next(), kids.next(), kids.next(), ((Boolean)(((ConstantExpr)kids.next()).getValue())).booleanValue() );
 		}
 		return f.make();
 	}
@@ -84,8 +108,8 @@ public final class RepeatExpr extends ExprBase {
 	public static final class Factory {
 		final ArrayList list = new ArrayList();
 
-		public void add( final Expr _test, final Expr _result, final Expr _body ) {
-			this.list.add( new Triple( _test, _result, _body ) );
+		public void add( final Expr _test, final Expr _result, final Expr _body, final boolean ret_or_brk ) {
+			this.list.add( new Triple( _test, _result, _body, ret_or_brk ) );
 		}
 
 		public RepeatExpr make() {

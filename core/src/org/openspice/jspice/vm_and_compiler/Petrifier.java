@@ -441,12 +441,14 @@ public class Petrifier extends ExprVisitor.DefaultUnimplemented {
 		final ArrayList test_list = new ArrayList();
 		final ArrayList result_list = new ArrayList();
 		final ArrayList do_list = new ArrayList();
-		final ExprIterator it = repeat_expr.getAllKids();
-		while ( it.hasNext() ) {
-			test_list.add( this.petrify( it.next() ) );
-			result_list.add( this.petrify( it.next() ) );
-			do_list.add( this.petrify( it.next() ) );
+		final boolean[] return_or_break = new boolean[ repeat_expr.size() ];
+		for ( int i = 0; i < repeat_expr.size(); i++ ) {
+			test_list.add( this.petrify( repeat_expr.getTest( i ) ) );
+			result_list.add( this.petrify( repeat_expr.getResult( i ) ) );
+			do_list.add( this.petrify( repeat_expr.getDo( i ) ) );
+			return_or_break[ i ] = repeat_expr.getReturnOrBreak( i );
 		}
+
 		final Pebble[] test_array = createPebbleArray( test_list );
 		final Pebble[] result_array = createPebbleArray( result_list );
 		final Pebble[] do_array = createPebbleArray( do_list );
@@ -460,7 +462,9 @@ public class Petrifier extends ExprVisitor.DefaultUnimplemented {
 						for ( int i = 0; i < count; i++ ) {
 							tos = test_array[ i ].run( tos, vm );
 							if ( !((Boolean)tos).booleanValue() ) {
-								return result_array[ i ].run( vm.pop(), vm );
+								tos = result_array[ i ].run( vm.pop(), vm );
+								if ( return_or_break[ i ] ) return tos;
+								break;
 							}
 							tos = do_array[ i ].run( vm.pop(), vm );
 						}
