@@ -54,7 +54,13 @@ public final class XmlElement extends SpiceObject {
 	public List getChildren() {
 		return Arrays.asList( this.children );
 	}
-	
+
+	public boolean equals( final Object x ) {
+		if ( ! ( x instanceof XmlElement ) ) return false;
+		final XmlElement that = (XmlElement)x;
+		return this.name == that.name && Arrays.equals( this.children, that.children ) && this.attributes.equals( that.attributes ) ;
+	}
+
 	public Object get( final int idx ) {
 		return this.children[ idx ];
 	}
