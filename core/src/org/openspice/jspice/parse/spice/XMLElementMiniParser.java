@@ -18,7 +18,6 @@
  */
 package org.openspice.jspice.parse.spice;
 
-import org.openspice.jspice.parse.miniparser.MiniParser;
 import org.openspice.jspice.parse.miniparser.Bothfix;
 import org.openspice.jspice.parse.Parser;
 import org.openspice.jspice.expr.*;

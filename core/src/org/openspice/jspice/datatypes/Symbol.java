@@ -1,5 +1,6 @@
 package org.openspice.jspice.datatypes;
 import org.openspice.jspice.lib.MapLib;
+import org.openspice.jspice.lib.CastLib;
 import org.openspice.jspice.tools.ListTools;
 import org.openspice.jspice.tools.Consumer;
 import org.openspice.jspice.datatypes.SpiceObject;
@@ -26,13 +27,17 @@ import java.util.*;
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-public class Symbol extends SpiceObject {
+public class Symbol extends SpiceObject implements Comparable {
 
     private final String symbol;
 
     private Symbol( final String _symbol ) {
         this.symbol = _symbol.intern();
     }
+
+	public int compareTo( final Object obj ) {
+		return this.symbol.compareTo( ((Symbol)obj).symbol );
+	}
 
     public String getInternedString() {
         return this.symbol;

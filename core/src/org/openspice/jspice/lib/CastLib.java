@@ -23,6 +23,7 @@ import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.datatypes.Deferred;
 import org.openspice.jspice.datatypes.SpiceClass;
+import org.openspice.jspice.datatypes.XmlElement;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.tools.Consumer;
 
@@ -169,6 +170,20 @@ public class CastLib {
 			}
 		}
 	}
+
+	public static final XmlElement toXmlElement( final Object obj ) {
+		try {
+			if ( obj != null ) return (XmlElement)obj;
+			throw oops( "XmlElement needed", obj );
+		} catch ( final ClassCastException _ ) {
+			try {
+				return toXmlElement( ((Deferred)obj).get() );
+			} catch ( final ClassCastException exn ) {
+				throw oops( exn, "XmlElement needed", obj );
+			}
+		}
+	}
+
 
 	public static final Image toImage( final Object obj ) {
 		try {

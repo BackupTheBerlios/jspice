@@ -18,8 +18,6 @@
  */
 package org.openspice.jspice.parse;
 
-import org.openspice.jspice.parse.Parser;
-import org.openspice.jspice.parse.Prec;
 import org.openspice.jspice.parse.spice.*;
 import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.expr.cases.NameExpr;
@@ -115,7 +113,7 @@ public final class SpiceMiniParserTable extends Standard {
 				"class slot method",
 				"do endfor from by to in while until",
 				"=> as",
-				".. /> </ ) ] } : case endswitch",
+				".. /> </ ) ] % } : case endswitch",
 				"then else elseif elseunless endif endunless",
 				"enddefine endfun endfor",
 				"; ::",

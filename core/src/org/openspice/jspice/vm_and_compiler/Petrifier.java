@@ -564,10 +564,10 @@ public class Petrifier extends ExprVisitor.DefaultUnimplemented {
 						final Object y = attr_values_p[ i ].run( vm.pop(), vm );
 						try {
 							map.put( x, y );
-						} catch ( ClassCastException ex ) {
+						} catch ( final ClassCastException ex ) {
 							new Alert(
 								"Attribute name not a symbol",
-								"Names of XML element attributes must be symbolic"
+								"Names of XML element attributes must be comparable"
 							).culprit( "attribute name", x ).mishap( 'E' );
 						}
 					}
