@@ -39,6 +39,7 @@ public abstract class Token {
 		return false;
 	}
 
+
 	public boolean matches( final Token that ) {
 		return this.word.equals( that.word );
 	}

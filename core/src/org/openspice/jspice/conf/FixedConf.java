@@ -31,7 +31,7 @@ public abstract class FixedConf {
 
 	final static private String major_version = "0";
 	final static private String minor_version = "4";
-	final static private String incremental_version = "14";
+	final static private String incremental_version = "15";
 
 	public static final String STD_LIB = "org.openspice.stdlib";
 

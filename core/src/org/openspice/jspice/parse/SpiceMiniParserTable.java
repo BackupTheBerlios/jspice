@@ -103,6 +103,8 @@ public final class SpiceMiniParserTable extends Standard {
 		install( "[", new IndexMiniParser().modPrec( Prec.bracket ) );
 		install( "(", new ParenMiniParser().modPrec( Prec.paren ) );
 
+		install( "<<", new QuasiQuoteMiniParser() );
+
 		install(
 			"by !! downto endclass endmethod into facet as default where",
 			new ReservedMiniParser()
@@ -122,7 +124,8 @@ public final class SpiceMiniParserTable extends Standard {
 				"then else elseif elseunless endif endunless",
 				"enddefine endfun endfor",
 				"; ::",
-				"endblock"
+				"endblock",
+				">>"
 			},
 			new NonfixMiniParser()
 		);

@@ -35,6 +35,23 @@ public final class QuotedToken extends WordLikeToken {
 		this.opt_interpolation_map = interpolation_map != null ? new TreeMap( interpolation_map ) : null;
 	}
 
+	public boolean isSymbolToken() {
+		return this.flavour == '`';
+	}
+
+	public boolean isCharsToken() {
+		return this.flavour == '\'';
+	}
+
+	public boolean isRegexpToken() {
+		return this.flavour == '/';
+	}
+
+	public boolean isStringToken() {
+		return this.flavour == '"';
+	}
+
+
 	public String kind() {
 		switch ( this.flavour ) {
 		case '`':
