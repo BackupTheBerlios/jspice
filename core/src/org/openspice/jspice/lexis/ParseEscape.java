@@ -33,7 +33,8 @@ public abstract class ParseEscape {
 		return this.jspice_conf;
 	}
 
-	public abstract char readChar();
+	public abstract char readChar( final char default_char );
+	public abstract char readCharNoEOF();
 
 	public final Alert alert( final String msg ) {
 		return this.alert( msg, null );
@@ -46,28 +47,28 @@ public abstract class ParseEscape {
 
 	private char parseAfterEscAmp() {
 		final StringBuffer b = new StringBuffer();
-		char ch = this.readChar();
+		char ch = this.readCharNoEOF();
 		char answer;
 		if ( ch == '#' ) {
 			int radix = 10;
-			ch = this.readChar();
+			ch = this.readCharNoEOF();
 			if ( ch == 'x' ) {
 				//	  hex
-				ch = this.readChar();
+				ch = this.readCharNoEOF();
 				radix = 16;
 			}
 			for(;;) {
 				int n = Character.digit( ch, radix );
 				if ( n == -1 ) break;	// end of file
 				b.append( ch );
-				ch = this.readChar();
+				ch = this.readChar( ' ' );
 			}
 			answer = (char)Integer.parseInt( b.toString(), radix );
 		} else {
 			for(;;) {
 				if ( !Character.isLetter( ch ) ) break;
 				b.append( ch );
-				ch = this.readChar();
+				ch = this.readCharNoEOF();
 			}
 			final String s = b.toString().intern();
 			final Character tmp = this.jspice_conf.decode( s );
@@ -95,14 +96,16 @@ public abstract class ParseEscape {
 	static private final String esc_ou = "[]{}|*%?'\"`\\\u0007\b\n\r \t\u000B";
 
 	public final char parseEscape() {
-		final char ch = this.readChar();
+		final char ch = this.readCharNoEOF();
 		final int offset = esc_in.indexOf( ch );
 		if ( offset >= 0 ) {
 			return esc_ou.charAt( offset );
 		} else if ( ch == '&' ) {
+			//	Character entities.
 			return this.parseAfterEscAmp();
 		} else if ( ch == '^' ) {
-			final char nch = this.readChar();
+			//	Control characters.
+			final char nch = this.readCharNoEOF();
 			if ( 64 <= nch && nch <= 95 ) {
 				return (char)( nch - 64 );
 			} else {

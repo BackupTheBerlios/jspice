@@ -16,15 +16,31 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+package org.openspice.jspice.datatypes.repeaters;
 
-package org.openspice.jspice.lexis;
+import org.openspice.jspice.datatypes.repeaters.Repeater;
+import org.openspice.jspice.datatypes.Termin;
 
-import org.openspice.jspice.tools.HasPrintName;
+import java.util.Iterator;
 
-interface SourceIntf extends HasPrintName {
-    int getLineNumber();
-    int readInt();
-    char readChar( final char default_char );
-    void pushInt( final int ich );
-	boolean tryRead( final String s );
+public final class IteratorRepeater extends Repeater {
+
+	final Iterator iterator;
+
+	public IteratorRepeater( final Iterator iterator ) {
+		this.iterator = iterator;
+	}
+
+	public Object next() {
+		if ( this.hasNext() ) {
+			return this.iterator.next();
+		} else {
+			return Termin.TERMIN;
+		}
+	}
+
+	public boolean hasNext() {
+		return this.iterator.hasNext();
+	}
+
 }

@@ -41,7 +41,15 @@ final class ProcessInlineText extends ParseEscape {
 		return position;
 	}
 
-	public char readChar() {
+	public char readChar( final char default_char ) {
+		try {
+			return text.charAt( this.position++ );
+		} catch ( final IndexOutOfBoundsException _ ) {
+			return default_char;
+		}
+	}
+
+	public char readCharNoEOF() {
 		return text.charAt( this.position++ );
 	}
 

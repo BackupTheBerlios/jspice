@@ -119,7 +119,7 @@ final class WikiParser {
 		final StringBuffer b = new StringBuffer();
 		int level = 1;
 		for(;;) {
-			final char ch = pinline.readChar();
+			final char ch = pinline.readCharNoEOF();
 			if ( ch == '[' ) {
 				level += 1;
 			} else if ( ch == ']' ) {
@@ -136,7 +136,7 @@ final class WikiParser {
 	private final void processStyleModifier( final ProcessInlineText pinline, final char closer, final String name ) throws SAXException {
 		final StringBuffer b = new StringBuffer();
 		for(;;) {
-			final char ch = pinline.readChar();
+			final char ch = pinline.readCharNoEOF();
 			if ( ch == closer ) break;
 			b.append( ch );
 		}
@@ -151,7 +151,7 @@ final class WikiParser {
 
 	public final void processInlineText( final ProcessInlineText pinline ) throws SAXException {
 		while ( pinline.canReadChar() ) {
-			final char ch = pinline.readChar();
+			final char ch = pinline.readCharNoEOF();
 			if ( ch == '\\' ) {
 				this.output_engine.accept( pinline.parseEscape() );
 			} else if ( ch == '_' || ch == '*' ) {

@@ -43,10 +43,14 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 		this.buff.setLength( 0 );
 	}
 	
-	public char readChar() {
-		return this.source.readChar();
+	public char readChar( final char default_char ) {
+		return this.source.readChar( default_char );
 	}
-	
+
+	public char readCharNoEOF() {
+		return this.source.readCharNoEOF();
+	}
+
 	private int readInt() {
 		return this.source.readInt();
 	}
@@ -75,10 +79,15 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
         this.buff.append( (char)ich );
     }
 
-    private char okChar( final int ich ) {
-        this.addChar( ich );
-        return this.readChar();
-    }
+	private char okChar( final int ich, final char default_char ) {
+		this.addChar( ich );
+		return this.readChar( default_char );
+	}
+
+	private char okCharNoEOF( final int ich ) {
+		this.addChar( ich );
+		return this.readCharNoEOF();
+	}
 
     private static boolean isSign( final char ch ) {
         return "<>!$%^&*-+=|:?/~".indexOf( ch ) >= 0;
@@ -98,82 +107,80 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 		);
     }
 
-    private void readRepetitions( final int orig ) {
+	private void readRepetitions( final int orig ) {
 		int ich = orig;
 		do {
-			ich = this.okChar( ich );
+			ich = this.okChar( ich, ' ' );
 		} while ( orig == ich );
 		this.source.pushInt( ich );
-    }
+	}
 
-    private void parseString( final char end_char ) {
-        char ch = this.readChar();   //okChar( endChar );
+	private void parseString( final char end_char ) {
+		char ch = this.readCharNoEOF();   //okChar( endChar );
 		while ( ch != end_char ) {
 			if ( ch == '\r' || ch == '\n' ) {
-                new Alert(
-                    "Unterminated string",
-                    "A newline or carriage return was encountered before the closing quotes"
-				).
-				culprit( "partial string", getErrorString() ).
-                mishap( 'T' );
-            } else if ( ch == '\\' ) {
-				ch = this.okChar( this.parseEscape() );
-            } else {
-                ch = this.okChar( ch );
-            }
-        }
-    }
-    
-    private String makeString() {
-        return this.buff.toString();
-    }
-    
-    private Token makeNameToken( final boolean hadWhite ) {
-        return new NameToken( hadWhite, this.makeString() );
-    }
-    
-    private Token readStringToken( final boolean hadWhite, final char ch ) {
-        this.parseString( ch );
-        final String s = this.makeString();
+				new Alert( "Unterminated string",
+					"A newline or carriage return was encountered before the closing quotes" ).
+					culprit( "partial string", getErrorString() ).
+					mishap( 'T' );
+			} else if ( ch == '\\' ) {
+				ch = this.okCharNoEOF( this.parseEscape() );
+			} else {
+				ch = this.okCharNoEOF( ch );
+			}
+		}
+	}
+
+	private String makeString() {
+		return this.buff.toString();
+	}
+
+	private Token makeNameToken( final boolean hadWhite ) {
+		return new NameToken( hadWhite, this.makeString() );
+	}
+
+	private Token readStringToken( final boolean hadWhite, final char ch ) {
+		this.parseString( ch );
+		final String s = this.makeString();
 		return new QuotedToken( hadWhite, s, ch );
-    }
-    
-    private Token makeIntToken( final boolean hadWhite ) {
+	}
+
+	private Token makeIntToken( final boolean hadWhite ) {
 		try {
 			return new NumberToken( hadWhite, this.makeString() );
-        } catch ( NumberFormatException ex ) {
+		} catch ( NumberFormatException ex ) {
 			this.alert( "Cannot internalize this number" ).culprit( "number", this.makeString() ).mishap();
 		}
 		return null;
-    }
-    
-    public Token readToken() {
-        return this.readToken( false );
-    }
+	}
+
+	public Token readToken() {
+		return this.readToken( false );
+	}
 
 	/**
 	 * Nested comments.  You enter here having read # and the start_char.
 	 * You return after having read the corresponding stop-char.
 	 */
 	private void readNestedCommentTo( final char start_char, final char stop_char ) {
-		char ch = this.readChar();
+		char ch = this.readCharNoEOF();
 		char nch;
 		int level = 1;
 		for (;;) {
 			if ( ch == '#' ) {
-				nch = this.readChar();
+				nch = this.readCharNoEOF();
 				if ( nch == stop_char ) {
 					level -= 1;
 					if ( level == 0 ) return;
-					ch = this.readChar();
+					ch = this.readCharNoEOF();
 				} else if ( nch == start_char ) {
 					level += 1;
-					ch = this.readChar();
+					ch = this.readCharNoEOF();
 				} else {
 					ch = nch;
 				}
 			} else {
-				ch = this.readChar();
+				ch = this.readCharNoEOF();
 			}
 		}
 	}
@@ -182,7 +189,7 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 		final StringBuffer b = new StringBuffer();
 		while ( ch != '\n' && ch != -1 ) {
 			b.append( (char)ch );
-			ch = this.readChar();
+			ch = this.readCharNoEOF();
 		}
 		return b.toString();
 	}
@@ -195,7 +202,7 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 		int ch;
 		//	  Dispose of a sequence of comments.
 		do {
-			ch = this.readChar();
+			ch = this.readCharNoEOF();
 			switch ( ch ) {
 				case ' ':
 				case '\t':
@@ -203,7 +210,7 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 				case '\r':
 				case '\n':
 					while ( ch != '\n' ) {
-						ch = this.readChar();
+						ch = this.readCharNoEOF();
 					}
 					break;
 				case '(':
@@ -231,68 +238,68 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 		this.pushInt( ch );
 	}
 
-    private Token readToken( boolean hadWhiteAtStart ) {
-        this.buff.setLength( 0 );
-        int ch = this.readInt();
-        while ( Character.isWhitespace( (char)ch ) ) {
-            hadWhiteAtStart = true;
-            ch = this.readInt();
-        }
-        if ( ch == -1 ) {
-            return null;						//	 end of file.
-        } else if ( ch == '#' ) {
-            hadWhiteAtStart = true;
+	private Token readToken( boolean hadWhiteAtStart ) {
+		this.buff.setLength( 0 );
+		int ch = this.readInt();
+		while ( Character.isWhitespace( (char)ch ) ) {
+			hadWhiteAtStart = true;
+			ch = this.readInt();
+		}
+		if ( ch == -1 ) {
+			return null;						//	 end of file.
+		} else if ( ch == '#' ) {
+			hadWhiteAtStart = true;
 			this.readComment();
-            //	Recurse.
-            return this.readToken( hadWhiteAtStart );
-        } else if ( Character.isLetter( (char)ch ) ) {
-            ch = this.okChar( ch );
-            while  ( Character.isLetterOrDigit( (char)ch ) || ch == '_'  ) {
-                ch = this.okChar( ch );
-            }
-            this.source.pushInt( ch );
-            return this.makeNameToken( hadWhiteAtStart );
-        } else if ( Character.isDigit( (char)ch ) || ch == '-' ) {
-            ch = this.okChar( ch );
-            while  ( Character.isDigit( (char)ch ) ) {
-                ch = this.okChar( ch );
-            }
+			//	Recurse.
+			return this.readToken( hadWhiteAtStart );
+		} else if ( Character.isLetter( (char)ch ) ) {
+			ch = this.okChar( ch, ' ' );
+			while ( Character.isLetterOrDigit( (char)ch ) || ch == '_' ) {
+				ch = this.okChar( ch, ' ' );
+			}
+			this.source.pushInt( ch );
+			return this.makeNameToken( hadWhiteAtStart );
+		} else if ( Character.isDigit( (char)ch ) || ch == '-' ) {
+			ch = this.okChar( ch, ' ' );
+			while ( Character.isDigit( (char)ch ) ) {
+				ch = this.okChar( ch, ' ' );
+			}
 			if ( ch == '.' ) {
-				ch = this.okChar( ch );
-				if ( ! Character.isDigit( (char)ch ) ) {
+				ch = this.okChar( ch, ' ' );
+				if ( !Character.isDigit( (char)ch ) ) {
 					this.pushInt( ch );
 					this.pushInt( '.' );
 				} else {
-					while  ( Character.isDigit( (char)ch ) ) {
-						ch = this.okChar( ch );
+					while ( Character.isDigit( (char)ch ) ) {
+						ch = this.okChar( ch, ' ' );
 					}
-					this.pushInt( ch );					
+					this.pushInt( ch );
 				}
 			} else {
 				this.pushInt( ch );
 			}
-            if ( this.buff.length() == 1 && this.buff.charAt( 0 ) == '-' ) {
-                return this.makeNameToken( hadWhiteAtStart );
-            } else {
-                return this.makeIntToken( hadWhiteAtStart );
-            }
-        } else if ( ch == '"' || ch == '\'' || ch == '`' || ch == '/' && this.source.tryRead( "/" ) ) {
-            return this.readStringToken( hadWhiteAtStart, (char)ch );
-        } else if ( ch == '.' || ch == '@' || ch == '?' ) {
-            this.readRepetitions( ch );
-            return this.makeNameToken( hadWhiteAtStart );
-        } else if ( isSign( (char)ch ) ) {
-            ch = this.okChar( ch );
-            while ( isSign( (char)ch ) && !( this.cantStick( (char)ch ) ) ) {
-                ch = this.okChar( ch );
-            }
-            this.source.pushInt( ch );
-            return this.makeNameToken( hadWhiteAtStart );
-        } else {
-            this.addChar( ch );
-            return this.makeNameToken( hadWhiteAtStart );
-        }
-    }
+			if ( this.buff.length() == 1 && this.buff.charAt( 0 ) == '-' ) {
+				return this.makeNameToken( hadWhiteAtStart );
+			} else {
+				return this.makeIntToken( hadWhiteAtStart );
+			}
+		} else if ( ch == '"' || ch == '\'' || ch == '`' || ch == '/' && this.source.tryRead( "/" ) ) {
+			return this.readStringToken( hadWhiteAtStart, (char)ch );
+		} else if ( ch == '.' || ch == '@' || ch == '?' ) {
+			this.readRepetitions( ch );
+			return this.makeNameToken( hadWhiteAtStart );
+		} else if ( isSign( (char)ch ) ) {
+			ch = this.okChar( ch, ' ' );
+			while ( isSign( (char)ch ) && !( this.cantStick( (char)ch ) ) ) {
+				ch = this.okChar( ch, ' ' );
+			}
+			this.source.pushInt( ch );
+			return this.makeNameToken( hadWhiteAtStart );
+		} else {
+			this.addChar( ch );
+			return this.makeNameToken( hadWhiteAtStart );
+		}
+	}
 
     public String getString() {
         return this.buff.toString();

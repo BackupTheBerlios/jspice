@@ -26,46 +26,55 @@ import java.io.*;
 
 
 public class Source extends SourceCore implements SourceIntf, org.openspice.jspice.tools.HasPrintName {
-    private int[] buffer;
-    private int count;
-            
-    Source( final String _origin, final Reader _reader, final String _prompt ) {
-        super( _origin, _reader, _prompt );
-        this.buffer = new int[ 0 ];
-        this.count = 0;
-    }
-    
-    public void pushInt( final int ich ) {
-        if ( this.count >= this.buffer.length ) {
-            final int[] new_buffer = new int[ 2 * this.buffer.length + 8 ];
-            for ( int i = 0; i < this.count; i++ ) {
-                new_buffer[ i ] = buffer[ i ];
-            }
-            this.buffer = new_buffer;
-        }
-        this.buffer[ this.count++ ] = ich;
-    }
-	
-    public int readInt() {
+	private int[] buffer;
+	private int count;
+
+	Source( final String _origin, final Reader _reader, final String _prompt ) {
+		super( _origin, _reader, _prompt );
+		this.buffer = new int[ 0 ];
+		this.count = 0;
+	}
+
+	public void pushInt( final int ich ) {
+		if ( this.count >= this.buffer.length ) {
+			final int[] new_buffer = new int[ 2 * this.buffer.length + 8 ];
+			for ( int i = 0; i < this.count; i++ ) {
+				new_buffer[ i ] = buffer[ i ];
+			}
+			this.buffer = new_buffer;
+		}
+		this.buffer[ this.count++ ] = ich;
+	}
+
+	public int readInt() {
 		final int ich = this.count == 0 ? this.rawReadInt() : this.buffer[ --this.count ];
 		return ich;
-    }
-    
-    public char readChar() {
-        final int ch = readInt();
-        if ( ch == -1 ) {
-            new Alert( "Unexpected end of file" ).mishap( 'T' );
-        }
-        return (char)ch;
-    }
-    
-    private boolean tryRead( final String s, final int n ) {
-        if ( n >= s.length() ) return true;
-        final int ich = this.readInt();
-        if ( ich == s.charAt( n ) && tryRead( s, n + 1 ) ) return true;
-        this.pushInt( ich );
-        return false;
-    }
+	}
+
+	public char readCharNoEOF() {
+		final int ch = readInt();
+		if ( ch == -1 ) {
+			new Alert( "Unexpected end of file" ).mishap( 'T' );
+		}
+		return (char)ch;
+	}
+
+	public char readChar( final char default_char ) {
+		final int ch = readInt();
+		return ch == -1 ? default_char : (char)ch;
+	}
+
+	private boolean tryRead( final String s, final int n ) {
+		if ( n >= s.length() ) {
+			return true;
+		}
+		final int ich = this.readInt();
+		if ( ich == s.charAt( n ) && tryRead( s, n + 1 ) ) {
+			return true;
+		}
+		this.pushInt( ich );
+		return false;
+	}
 
     public boolean tryRead( final String s ) {
         return tryRead( s, 0 );

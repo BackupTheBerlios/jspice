@@ -141,10 +141,11 @@ public final class Interpreter extends Loader {
 			try {
 				if ( parser.peekToken() == null ) break;	//	Horrible.  But exceptions need to be caught.
 				this.oneExpr( parser, petrifier, true );
-			} catch ( IntelliJHackException _ ) {
-				break;
-			} catch ( AlertException _ ) {
+			} catch ( AlertException ex ) {
 				//	The problem is reported so force continuation.
+				if ( this.isDebugging() ) {
+					ex.printStackTrace();
+				}
 				reset = true;
 			} catch ( final Throwable ex ) {
 				if ( this.isDebugging() ) {

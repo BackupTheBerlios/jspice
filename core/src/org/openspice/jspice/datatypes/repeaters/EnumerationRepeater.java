@@ -16,10 +16,31 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.main;
+package org.openspice.jspice.datatypes.repeaters;
 
-public class IntelliJHackException extends RuntimeException {
-	public IntelliJHackException( final String s ) {
-		super( s );
+import org.openspice.jspice.datatypes.repeaters.Repeater;
+import org.openspice.jspice.datatypes.Termin;
+
+import java.util.Enumeration;
+
+public final class EnumerationRepeater extends Repeater {
+
+	final Enumeration enumeration;
+
+	public EnumerationRepeater( final Enumeration enumeration ) {
+		this.enumeration = enumeration;
 	}
+
+	public Object next() {
+		if ( this.enumeration.hasMoreElements() ) {
+			return this.enumeration.nextElement();
+		} else {
+			return Termin.TERMIN;
+		}
+	}
+
+	public boolean hasNext() {
+		return this.enumeration.hasMoreElements();
+	}
+
 }
