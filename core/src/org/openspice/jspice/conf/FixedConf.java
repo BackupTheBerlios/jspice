@@ -25,6 +25,8 @@ import java.net.URLEncoder;
 import java.net.URLDecoder;
 import java.io.UnsupportedEncodingException;
 
+//	This comment is inserted as a CVS test.
+
 public abstract class FixedConf {
 
 	//	---- Versioning ----
