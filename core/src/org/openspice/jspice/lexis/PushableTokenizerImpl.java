@@ -48,8 +48,8 @@ public class PushableTokenizerImpl implements PushableTokenizer {
 
 	public Token readToken() {
 		final Token answer = this.stack.empty() ? this.tokenizer.readToken() : (Token)this.stack.pop();
-		//	Slightly naughty insofar that it assumes that the prompt gets tokenized into a NameToken.
-		if ( FixedConf.BASE_PROMPT == answer.getWord() ) return this.readToken();		//	Skip prompts.
+		//	Slightly naughty insofar that it assumes that the prompt gets tokenized into a NameToken.   todo:
+		if ( answer != null && FixedConf.BASE_PROMPT == answer.getWord() ) return this.readToken();		//	Skip prompts.
 		return answer;
 	}
 

@@ -78,7 +78,7 @@ public final class XMLElementMiniParser extends Bothfix {
 		//	Read a sequence of juxtaposed XmlElements and XmlComments.
 		final Expr e = this.readXmlElement( parser );
 		final Token tok = parser.peekToken();
-		if ( !tok.hasName( "<" ) && !tok.hasName( "<!--" ) ) {
+		if ( tok == null || !tok.hasName( "<" ) && !tok.hasName( "<!--" ) ) {	//	todo: tok == null?  is that right?
 			return e;
 		} else {
 			return CommaExpr.make( e, parser.readExpr() );

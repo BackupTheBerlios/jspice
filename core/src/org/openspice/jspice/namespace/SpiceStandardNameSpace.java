@@ -127,6 +127,7 @@ public class SpiceStandardNameSpace extends NameSpace {
 		this.install( "isMapFlavour", IsMapFlavourProc.IS_MAP_FLAVOUR_PROC );
 		this.install( "isMaplet", IsMapletProc.IS_MAPLET_PROC );
 		this.install( "isMatch", RegexProcs.isMatch );
+		this.install( "isNumber", IsNumberProc.IS_NUMBER_PROC );
 		this.install( "isPrefixMatch", RegexProcs.isPrefixMatch );
 		this.install( "isPartMatch", RegexProcs.isPartMatch );
 		this.install( "isString", IsStringProc.IS_STRING_PROC );

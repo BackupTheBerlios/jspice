@@ -31,7 +31,7 @@ public abstract class FixedConf {
 
 	final static private String major_version = "0";
 	final static private String minor_version = "4";
-	final static private String incremental_version = "10";
+	final static private String incremental_version = "11";
 
 	public static final String STD_LIB = "org.openspice.stdlib";
 
@@ -48,6 +48,7 @@ public abstract class FixedConf {
 
 	public static final char VFILE_SEPARATOR = '.';
 	public static final char VFOLDER_SEPARATOR = '-';
+	public static final char VFOLDER_TERMINATOR = '/';
 
 	static final String load_file_nam = "load";
 	static final String load_folder_nam = load_file_nam;
