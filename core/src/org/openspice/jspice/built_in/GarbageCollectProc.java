@@ -25,11 +25,19 @@ import org.openspice.jspice.vm_and_compiler.VM;
 
 public class GarbageCollectProc extends Nullary0FastProc {
 
+	{
+		this.setDescription(
+			"garbageCollect",
+			"%p()",
+			"invokes the garbage collector once"
+ 		);
+	}
+
 	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
 		System.gc();
 		return tos;
 	}
 
-	public static final Proc garbageCollectProc = new GarbageCollectProc();
+	public static final Proc GARBAGE_COLLECT_PROC = new GarbageCollectProc();
 
 }

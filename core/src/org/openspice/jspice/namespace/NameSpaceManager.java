@@ -23,6 +23,7 @@ import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.namespace.NameSpaceDirTools;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.SuperLoader;
+import org.openspice.jspice.conf.FixedConf;
 import org.openspice.vfs.VFolder;
 
 import java.util.*;
@@ -182,7 +183,7 @@ public class NameSpaceManager {
 			((SpiceStandardNameSpace)(
 				new SpiceStandardNameSpace(
 					this,
-					new Title( "spice.standard" ),
+					new Title( FixedConf.STD_LIB ),
 					null,
 					FacetSet.PUBLIC,
 					FacetSet.WELL_KNOWN,

@@ -20,6 +20,14 @@ package org.openspice.jspice.built_in.arithmetic;
 
 public final class SinProc extends Unary1FloatingPointProc {
 
+	{
+		this.setDescription(
+			"sin",
+			"%p( radians ) -> sine",
+			"returns the sine of an angle given in radians"
+ 		);
+	}
+
 	double apply( final double x ) {
 		return Math.sin( x );
 	}

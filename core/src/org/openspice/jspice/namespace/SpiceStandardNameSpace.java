@@ -100,7 +100,7 @@ public class SpiceStandardNameSpace extends NameSpace {
 		this.install( "log", new LogProc() );
 		this.install( "log2", new Log2Proc() );
 		this.install( "log10", new Log10Proc() );
-		this.install( "garbageCollect", GarbageCollectProc.garbageCollectProc );
+		this.install( "garbageCollect", GarbageCollectProc.GARBAGE_COLLECT_PROC );
 		this.install( "none", NoneProc.noneProc );
 		this.install( "not", NotProc.notProc );
 		this.install( "lastResults", LastResultsProc.LAST_RESULTS_PROC );
@@ -121,6 +121,7 @@ public class SpiceStandardNameSpace extends NameSpace {
 		this.install( "split", RegexProcs.split );
 		this.install( "sqrt", new SqrtProc() );
 		this.install( "startServer", StartServerProc.START_SERVER_PROC );
+		this.install( "tail", TailProc.TAIL_PROC );
 		this.install( "tan", new TanProc() );
 		this.install( "termin", Termin.TERMIN );
 		this.install( "toDegrees", new ToDegreesProc() );

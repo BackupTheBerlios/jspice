@@ -23,8 +23,12 @@ import org.openspice.jspice.lib.ListLib;
 
 public class SnocProc extends Binary1InvokeProc {
 
-	public String summary() {
-		return "snoc( S:seq, x ) -> seq'  # returns a copy of sequence S with x added to the back";
+	{
+		this.setDescription(
+			"snoc",
+			"%p( S:seq, x ) -> T:seq",
+			"returns a copy of sequence S with x added to the back"
+ 		);
 	}
 
 	public Object invoke( Object x, Object y ) {

@@ -20,6 +20,14 @@ package org.openspice.jspice.built_in.arithmetic;
 
 public final class CosProc extends Unary1FloatingPointProc {
 
+	{
+		this.setDescription(
+			"cos",
+			"%p( radians ) -> cosine",
+			"returns the cosine of an angle given in radians"
+ 		);
+	}
+
 	double apply( final double x ) {
 		return Math.cos( x );
 	}

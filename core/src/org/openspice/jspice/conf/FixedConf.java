@@ -31,8 +31,9 @@ public abstract class FixedConf {
 
 	final static private String major_version = "0";
 	final static private String minor_version = "4";
-	final static private String incremental_version = "1";
+	final static private String incremental_version = "2";
 
+	public static final String STD_LIB = "org.openspice.stdlib";
 
 	static final String licence_nam = "LICENSE";  			//	U.S. spelling for licence, not a spelling mistake.
 	static final String CONF_EXT = "conf";

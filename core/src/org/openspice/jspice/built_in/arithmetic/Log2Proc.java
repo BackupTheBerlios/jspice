@@ -22,6 +22,15 @@ public final class Log2Proc extends Unary1FloatingPointProc {
 
 	private static final double log_half = 1.0d / Math.log( 2.0d );
 
+
+	{
+		this.setDescription(
+			"log2",
+			"%p( N:num ) -> float",
+			"returns the logarithm to base 2 of N"
+ 		);
+	}
+
 	double apply( final double x ) {
 		return Math.log( x ) * log_half;
 	}

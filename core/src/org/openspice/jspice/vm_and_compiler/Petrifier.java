@@ -246,11 +246,11 @@ public class Petrifier extends ExprVisitor.DefaultUnimplemented {
 		}
 
 		try {
-			if ( source_arity.isFixed() ) throw FailException.failException;
+			if ( !source_arity.isFixed() ) throw FailException.failException;
 			final Pebble source_pebble = this.petrify( source_expr );
 			final StaticAssign st_ass = new StaticAssign( this, source_arity.getCount(), source_pebble );
 			return st_ass.apply( ass_expr ).result();
-		} catch ( FailException _ ) {
+		} catch ( final FailException _ ) {
 			return dynamicTotalAssignExpr( ass_expr, source_expr );
 		}
 	}

@@ -23,26 +23,69 @@ import org.openspice.jspice.vm_and_compiler.*;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.alert.AlertException;
 import org.openspice.jspice.datatypes.Arity;
-import org.openspice.jspice.built_in.*;
+import org.openspice.jspice.datatypes.SpiceObject;
+import org.openspice.jspice.built_in.inspect.FieldAdder;
+import org.openspice.jspice.tools.Consumer;
+import org.openspice.jspice.tools.PrintTools;
+import org.openspice.jspice.tools.StringBufferConsumer;
 
 import java.util.*;
 
-
-
-public abstract class Proc {
+public abstract class Proc extends SpiceObject.NonMap {
 
 	public abstract Arity inArity();
 	public abstract Arity outArity();
 	public abstract Object call( final Object tos, final VM vm, final int nargs );
 
-	//	Make this abstract when we are about to embark on hacking the summaries.
-	public String summary() {
-		return this.defaultSummary();
+	public void addInstanceFields( FieldAdder adder ) {
+		//	Skip.
 	}
 
-	protected final String defaultSummary() {
-		return "Sorry, a summary for this procedure is unavailable";
+	public void showTo( Consumer cuchar ) {
+		cuchar.outString( this.getClass().getName() );
 	}
+
+	/**
+	 * Wrong.  This should almost certainly invoke itself.  Problem - there is
+	 * no virtual machine available.
+	 * @param cuchar
+	 */
+	public void printTo( final Consumer cuchar ) {
+		cuchar.outString( this.getClass().getName() );
+	}
+
+	public final String summary() {
+		final String n = getName();
+		if ( n == null ) return null;
+		final String s = getSignature();
+		final String c = getComment();
+		final StringBufferConsumer sbc = new StringBufferConsumer();
+		PrintTools.formatTo( sbc, ( s != null ? s : "%p" ), new Object[] { n } );
+		return sbc.closeAsString() + ( c != null ? "  # " + c : "" );
+	}
+
+	String name = null;
+	String signature = null;
+	String comment = null;
+
+	public String getName() {
+		return name;
+	}
+
+	public String getSignature() {
+		return signature;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setDescription( final String name, final String signature, final String comment ) {
+		this.name = name;
+		this.signature = signature;
+		this.comment = comment;
+	}
+
 
 	public Proc inverse() {
 		return null;

@@ -23,8 +23,12 @@ import org.openspice.jspice.lib.ListLib;
 
 public class AllButLastProc extends Binary1InvokeProc {
 
-	public String summary() {
-		return "allButLast( num, seq ) -> seq'  # returns a truncated sequence";
+	{
+		this.setDescription(
+			"allButLast",
+			"%p( num, S:seq ) -> T:seq",
+			"returns a truncated copy of sequence S"
+ 		);
 	}
 
 	public Object invoke( final Object x, final Object y ) {

@@ -23,8 +23,12 @@ import org.openspice.jspice.lib.ListLib;
 
 public class JustLastProc extends Binary1InvokeProc {
 
-	public String summary() {
-		return "justLast( N, seq ) -> seq'  # returns a truncated sequence using the last N members";
+	{
+		this.setDescription(
+			"justLast",
+			"%p( N, S:seq ) -> T:seq",
+			"returns a truncated sequence using the last N members"
+ 		);
 	}
 
 	public Object invoke( final Object x, final Object y ) {

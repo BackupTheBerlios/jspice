@@ -69,9 +69,15 @@ public class FormatProc extends FastProc {
 		}
 	}
 
-	public String summary() {
-		return "format( control_string, args... ) -> formatted_string";
+	{
+		this.setDescription(
+			"format",
+			"%p( control_string, args... ) -> formatted_string",
+			"returns a string created according to the formatted printing rules"
+ 		);
 	}
+
+
 
 	public Arity inArity() {
 		return Arity.ONE_OR_MORE;

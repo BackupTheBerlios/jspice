@@ -34,6 +34,11 @@ public abstract class SpiceObject {
 	public abstract SpiceObject convertFromMap( Map map );
 	public abstract void addInstanceFields( FieldAdder adder );
 
+	//	Make this abstract when we are about to embark on hacking the summaries.
+	public String summary() {
+		return null;
+	}
+
 	public String showToString() {
 		final StringBufferConsumer sbc = new StringBufferConsumer();
 		this.showTo( sbc );

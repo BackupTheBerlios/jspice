@@ -20,6 +20,14 @@ package org.openspice.jspice.built_in.arithmetic;
 
 public final class LogProc extends Unary1FloatingPointProc {
 
+	{
+		this.setDescription(
+			"log",
+			"%p( N:num ) -> float",
+			"returns the natural logarithm of N"
+ 		);
+	}
+
 	double apply( final double x ) {
 		return Math.log( x );
 	}

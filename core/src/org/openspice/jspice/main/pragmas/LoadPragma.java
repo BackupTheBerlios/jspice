@@ -16,11 +16,12 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.main;
+package org.openspice.jspice.main.pragmas;
 
 import org.openspice.vfs.files.FileVFile;
 import org.openspice.vfs.VFile;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.main.Interpreter;
 
 import java.util.List;
 import java.util.Iterator;

@@ -28,8 +28,12 @@ import org.openspice.jspice.tools.ListTools;
 
 public class ReverseProc extends Unary1InvokeProc {
 
-	public String summary() {
-		return "reverse( seq ) -> seq'  # returns a reversed copy of a sequence (list, string, XML element, etc)";
+	{
+		this.setDescription(
+			"reverse",
+			"%p( S:seq ) -> T:seq",
+			"returns a reversed copy of a sequence (list, string, XML element, etc)"
+ 		);
 	}
 
 	public final static ReverseProc REVERSE_PROC = new ReverseProc();

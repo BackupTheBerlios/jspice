@@ -21,7 +21,16 @@ package org.openspice.jspice.built_in.arithmetic;
 public final class Log10Proc extends Unary1FloatingPointProc {
 
 	private static final double log_tenth = 1.0d / Math.log( 10.0d );
-	
+
+	{
+		this.setDescription(
+			"log10",
+			"%p( N:num ) -> float",
+			"returns the logarithm to base 10 of N"
+ 		);
+	}
+
+
 	double apply( final double x ) {
 		return Math.log( x ) * log_tenth;
 	}

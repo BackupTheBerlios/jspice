@@ -16,28 +16,26 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.datatypes;
+package org.openspice.jspice.built_in.lists;
 
-import org.openspice.jspice.tools.Consumer;
-import org.openspice.jspice.built_in.inspect.FieldAdder;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.lib.ListLib;
+import org.openspice.tools.IntegerTools;
 
-public final class Termin extends SpiceObject.NonMap {
+public class TailProc extends Unary1InvokeProc {
 
-	public String summary() {
-		return "represents the end of a stream of values; a sentinel";
+	{
+		this.setDescription(
+			"tail",
+			"%p( S:seq ) -> T:seq",
+			"returns a copy of the sequence S without the first item"
+ 		);
 	}
 
-	public void addInstanceFields( FieldAdder adder ) {
-		//	Skip.
+	public Object invoke( final Object x ) {
+		return ListLib.allbutfirst( IntegerTools.ONE, x );
 	}
 
-	public void showTo( final Consumer cuchar ) {
-		cuchar.outString( "termin" );
-	}
+	public static final TailProc TAIL_PROC =  new TailProc();
 
-	public void printTo( final Consumer cuchar ) {
-		cuchar.outString( "termin" );
-	}
-
-	public static final Termin TERMIN = new Termin();
 }

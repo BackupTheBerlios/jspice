@@ -19,7 +19,14 @@
 package org.openspice.jspice.built_in.arithmetic;
 
 public final class ToRadiansProc extends Unary1FloatingPointProc {
-	
+
+	{
+		this.setDescription(
+			"toRadians",
+			"%p( D:num ) -> num",
+			"converts D in degrees to radians"
+ 		);
+	}
 	double apply( final double x ) {
 		return Math.toRadians( x );
 	}

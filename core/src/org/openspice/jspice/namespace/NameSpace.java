@@ -55,6 +55,10 @@ public class NameSpace {
 		}
 	}
 
+	public Map getLocalBindings() {
+		return this.local_map;
+	}
+
 	public String getName() {
 		return this.name;
 	}

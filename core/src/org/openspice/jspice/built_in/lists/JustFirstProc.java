@@ -23,8 +23,12 @@ import org.openspice.jspice.lib.ListLib;
 
 public class JustFirstProc extends Binary1InvokeProc {
 
-	public String summary() {
-		return "allButFirst( N, seq ) -> seq'  # returns a truncated sequence using the first N members";
+	{
+		this.setDescription(
+			"allButFirst",
+			"%p( N, S:seq ) -> T:seq",
+			"returns a truncated sequence using the first N members"
+ 		);
 	}
 
 	public Object invoke( final Object x, final Object y ) {

@@ -23,8 +23,12 @@ import org.openspice.jspice.lib.ListLib;
 
 public class LastProc extends Unary1InvokeProc {
 
-	public String summary() {
-		return "last( seq ) -> item  # returns the last element of a sequence (list, string, XML element, etc)";
+	{
+		this.setDescription(
+			"last",
+			"%p( seq ) -> item",
+			"returns the last element of a sequence (list, string, XML element, etc)"
+ 		);
 	}
 
 	public Object invoke( final Object x ) {

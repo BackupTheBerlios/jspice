@@ -20,6 +20,11 @@ package org.openspice.jspice.built_in.arithmetic;
 
 public final class RoundProc extends Unary1FloatingPointProc {
 
+	{
+		this.setDescription( "round", "%p( num ) -> num", "rounds a number towards the nearest integral value" );
+	}
+
+
 	double apply( final double x ) {
 		return Math.round( x );
 	}

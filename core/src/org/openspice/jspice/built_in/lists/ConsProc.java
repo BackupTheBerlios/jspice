@@ -23,8 +23,12 @@ import org.openspice.jspice.lib.ListLib;
 
 public class ConsProc extends Binary1InvokeProc {
 
-	public String summary() {
-		return "cons( x, S:seq ) -> seq'  # returns a copy of sequence S with x added to the front";
+	{
+		this.setDescription(
+			"cons",
+			"%p( x, S:seq ) -> T:seq",
+			"returns a copy of sequence S with x added to the front"
+ 		);
 	}
 
 	public Object invoke( Object x, Object y ) {

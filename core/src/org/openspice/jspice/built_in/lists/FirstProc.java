@@ -23,8 +23,12 @@ import org.openspice.jspice.lib.ListLib;
 
 public class FirstProc extends Unary1InvokeProc {
 
-	public String summary() {
-		return "first( seq ) -> item  # returns the first element of a sequence (list, string, XML element, etc)";
+	{
+		this.setDescription(
+			"first",
+			"%p( seq ) -> item",
+			"returns the first element of a sequence (list, string, XML element, etc)"
+ 		);
 	}
 
 	public Object invoke( final Object x ) {

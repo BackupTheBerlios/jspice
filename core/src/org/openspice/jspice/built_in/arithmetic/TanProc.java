@@ -20,6 +20,14 @@ package org.openspice.jspice.built_in.arithmetic;
 
 public final class TanProc extends Unary1FloatingPointProc {
 
+	{
+		this.setDescription(
+			"tan",
+			"%p( radians ) -> tangent",
+			"returns the tangent of an angle given in radians"
+ 		);
+	}
+
 	double apply( final double x ) {
 		return Math.tan( x );
 	}

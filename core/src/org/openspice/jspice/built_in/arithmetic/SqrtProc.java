@@ -25,7 +25,11 @@ import org.openspice.tools.IntegerTools;
 import org.openspice.jspice.arithmetic.Sqrt;
 
 public final class SqrtProc extends Unary1InvokeProc {
-	
+
+	{
+		this.setDescription( "sqrt", "%p( N:num ) -> num", "returns the square root of a number (including negative numbers)" );
+	}
+
 	double apply( final double x ) {
 		return Math.sqrt( x );
 	}

@@ -24,6 +24,10 @@ import org.openspice.jspice.main.manual.Manual;
 import org.openspice.jspice.main.manual.ManualPragma;
 import org.openspice.jspice.main.manual.SearchPhrase;
 import org.openspice.jspice.main.jline_stuff.PrefixFilterAccumulator;
+import org.openspice.jspice.main.pragmas.LoadPragma;
+import org.openspice.jspice.main.pragmas.ListPragma;
+import org.openspice.jspice.namespace.NameSpaceManager;
+import org.openspice.jspice.namespace.NameSpace;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -56,6 +60,14 @@ public class Pragma {
 
 	public JSpiceConf getJSpiceConf() {
 		return this.interpreter.getJSpiceConf();
+	}
+
+	public NameSpace getNameSpace() {
+		return this.interpreter.getCurrentNameSpace();
+	}
+
+	public NameSpaceManager getNameSpaceManager() {
+		return this.interpreter.getCurrentNameSpace().getNameSpaceManager();
 	}
 
 	private String command() {
@@ -95,19 +107,21 @@ public class Pragma {
 
 	public void perform() {
 		final String c = this.command().intern();
-		if ( c == "debug" ) {
-			this.debugPragma();
-		} else if ( c == "quit" || c == "exit" ) {
-			System.exit( 0 );
-		} else if ( c == "conditions" || c == "warranty" ) {
+		if ( c == "conditions" || c == "warranty" ) {
 			final Manual manual = this.getJSpiceConf().getManualByName( "licence" );
 			final SearchPhrase t = new SearchPhrase();
 			t.add( "system" );
 			t.add( "." );					//	virtual package for inventory.
 			t.add( "jspice_" + c );
 			new ManualPragma().help( manual, t );
+		} else if ( c == "debug" ) {
+			this.debugPragma();
+		} else if ( c == "list" ) {
+			new ListPragma().list( this.getNameSpace(), this.arg_list );
 		} else if ( c == "load" ) {
 			new LoadPragma().load( this.interpreter, this.arg_list );
+		} else if ( c == "quit" || c == "exit" ) {
+			System.exit( 0 );
 		} else {
 			final Manual manual = this.getJSpiceConf().getManualByName( c );
 			if ( manual != null ) {
@@ -125,6 +139,7 @@ public class Pragma {
 		acc.add( "conditions" );
 		acc.add( "warranty" );
 		acc.add( "load" );
+		acc.add( "list" );
 		this.getJSpiceConf().findManualCompletions( acc );
 	}
 }
