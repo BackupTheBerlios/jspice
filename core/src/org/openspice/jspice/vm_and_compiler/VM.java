@@ -117,6 +117,7 @@ public final class VM {
 		}
 		return array;
 	}
+	
 
 	public Object get( final int n ) {
 		return this.stack.get( n );

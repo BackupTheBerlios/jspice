@@ -168,8 +168,8 @@ public abstract class Proc extends SpiceObject.NonMap {
 //	public final static Proc mulProc = new MulProc();
 //	public final static Proc divProc = new DivProc();
 //	public final static Proc modProc = new ModProc();
-//	public final static Proc mapletProc = MapletProc.MAPLET_PROC;
-//	public final static Proc listProc = ListProc.LIST_PROC;
+//	public final static Proc mapletProc = NewMapletProc.MAPLET_PROC;
+//	public final static Proc listProc = NewImmutableListProc.LIST_PROC;
 //	public final static Proc appendProc = new AppendProc();
 //
 //	public final static Proc lteProc = new LTEProc();

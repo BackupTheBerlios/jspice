@@ -53,7 +53,7 @@ public class MainWithJLine extends Main {
 	}
 
 	public static void main( final String[] args ) {
-		new MainWithJLine().perform( true, FixedConf.PROMPT );
+		new MainWithJLine().perform( true, FixedConf.PROMPT_THEN_SPACE );
 	}
 
 }

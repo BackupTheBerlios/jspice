@@ -23,6 +23,7 @@ import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.tokens.Token;
 import org.openspice.jspice.tokens.NameToken;
 import org.openspice.jspice.main.Interpreter;
+import org.openspice.jspice.conf.FixedConf;
 
 import java.util.Stack;
 import java.io.Reader;
@@ -46,9 +47,9 @@ public class PushableTokenizerImpl implements PushableTokenizer {
 	}
 
 	public Token readToken() {
-		//System.out.println( "> readToken // stack length = " + this.stack.size() );
 		final Token answer = this.stack.empty() ? this.tokenizer.readToken() : (Token)this.stack.pop();
-		//System.out.println( "< readToken " + answer + " // stack length = " + this.stack.size() );
+		//	Slightly naughty insofar that it assumes that the prompt gets tokenized into a NameToken.
+		if ( FixedConf.PROMPT == answer.getWord() ) return this.readToken();		//	Skip prompts.
 		return answer;
 	}
 

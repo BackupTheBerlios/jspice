@@ -23,7 +23,7 @@ import org.openspice.jspice.built_in.arithmetic.*;
 import org.openspice.jspice.built_in.comparisons.*;
 import org.openspice.jspice.built_in.lists.AppendProc;
 import org.openspice.jspice.built_in.lists.InvListProc;
-import org.openspice.jspice.built_in.lists.ListProc;
+import org.openspice.jspice.built_in.lists.NewImmutableListProc;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -63,8 +63,8 @@ public final class ShortCuts {
 	public final static Proc divProc = new DivProc();
 	public static final Proc divideProc = new DivideProc();
 	public final static Proc modProc = new ModProc();
-	public final static Proc mapletProc = MapletProc.MAPLET_PROC;
-	public final static Proc listProc = ListProc.LIST_PROC;
+	public final static Proc mapletProc = NewMapletProc.NEW_MAPLET_PROC;
+	public final static Proc newImmutableListProc = NewImmutableListProc.NEW_IMMUTABLE_LIST_PROC;
 	public final static Proc appendProc = new AppendProc();
 
 	public final static Proc lteProc = new LTEProc();
@@ -97,7 +97,7 @@ public final class ShortCuts {
 		put( "/", divideProc );
 		//putOne( "//", DivRatProc.proc );
 		put( "==>", mapletProc );
-		put( "{", listProc );
+		put( "{", newImmutableListProc );
 		put( "++", appendProc );
 
 		put( "<=", lteProc );

@@ -32,8 +32,9 @@ public class InvListProc extends Unary1PlusFastProc {
 
 	final static public org.openspice.jspice.built_in.lists.InvListProc INV_LIST_PROC = new org.openspice.jspice.built_in.lists.InvListProc();
 
+	//	todo: probably wrong.  should be mutable.
 	public Proc inverse() {
-		return ListProc.LIST_PROC;
+		return NewImmutableListProc.NEW_IMMUTABLE_LIST_PROC;
 	}
 
 	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
@@ -57,4 +58,5 @@ public class InvListProc extends Unary1PlusFastProc {
 		vm.drop( vargs );
 		return vm.pop();
 	}
+
 }

@@ -21,10 +21,10 @@ package org.openspice.jspice.built_in;
 import org.openspice.jspice.datatypes.Maplet;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
-import org.openspice.jspice.built_in.InvMapletProc;
 
-public class MapletProc extends Binary1InvokeProc {
-	final static public org.openspice.jspice.built_in.MapletProc MAPLET_PROC = new org.openspice.jspice.built_in.MapletProc();
+public class NewMapletProc extends Binary1InvokeProc {
+
+	final static public NewMapletProc NEW_MAPLET_PROC = new NewMapletProc();
 
 	public Proc inverse() {
 		return InvMapletProc.INV_MAPLET_PROC;

@@ -58,7 +58,7 @@ public class Main {
 	}
 
 	public static void main( final String[] args ) {
-		new Main().perform( true, FixedConf.PROMPT );
+		new Main().perform( true, FixedConf.PROMPT_THEN_SPACE );
 	}
 
 }

@@ -102,7 +102,7 @@ public final class MapLib {
 			try {
 				return new Character( ((String)obj).charAt( ((Integer)key).intValue() - 1 ) );
 			} catch ( final ClassCastException exn ) {
-				//	Arguable.
+				//	Arguable.  todo:
 				return AbsentLib.ABSENT;
 			}
 		} else if ( obj instanceof List ) {

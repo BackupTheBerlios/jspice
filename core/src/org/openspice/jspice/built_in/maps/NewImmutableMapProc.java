@@ -16,33 +16,40 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.maps;
 
+import org.openspice.jspice.datatypes.proc.FastProc;
 import org.openspice.jspice.datatypes.Arity;
-import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.datatypes.proc.UnaryFastProc;
+import org.openspice.jspice.datatypes.Deferred;
+import org.openspice.jspice.datatypes.SpiceObject;
 import org.openspice.jspice.vm_and_compiler.VM;
-import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.built_in.lists.NewListProc;
+import org.openspice.jspice.tools.MapTools;
 
-import java.util.Map;
+import java.util.*;
 
-public class InvMapletProc extends UnaryFastProc {
+public class NewImmutableMapProc extends FastProc {
 
-	final static public org.openspice.jspice.built_in.InvMapletProc INV_MAPLET_PROC = new org.openspice.jspice.built_in.InvMapletProc();
-
-	public Proc inverse() {
-		return NewMapletProc.NEW_MAPLET_PROC;
+	{
+		this.setDescription(
+			"newMap",
+			"%p( A1, ..., An ) -> map",
+			"returns an immutable map whose members are the maps or maplets A1 to An"
+ 		);
 	}
-
-	public Arity outArity() { return Arity.TWO; }
 
 	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
-		try {
-			final Map.Entry me = (Map.Entry)tos;
-			vm.push( me.getKey() );
-			return me.getValue();
-		} catch ( final ClassCastException exn ) {
-			return new Alert( "Maplet needed" ).culprit( "object", tos ).mishap();
-		}
+		return Collections.unmodifiableMap( (Map)NewMapProc.NEW_MAP_PROC.fastCall( tos, vm, nargs ) );
 	}
+
+	public Arity inArity() {
+		return Arity.ZERO_OR_MORE;
+	}
+
+	public Arity outArity() {
+		return Arity.ONE;
+	}
+
+	public static final NewImmutableMapProc NEW_IMMUTABLE_MAP_PROC = new NewImmutableMapProc();
+
 }

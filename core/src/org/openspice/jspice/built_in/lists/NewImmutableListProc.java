@@ -24,8 +24,9 @@ import org.openspice.jspice.datatypes.proc.Vary1Proc;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.built_in.lists.InvListProc;
 
-public class ListProc extends Vary1Proc {
-	final static public org.openspice.jspice.built_in.lists.ListProc LIST_PROC = new org.openspice.jspice.built_in.lists.ListProc();
+public class NewImmutableListProc extends Vary1Proc {
+
+	final static public org.openspice.jspice.built_in.lists.NewImmutableListProc NEW_IMMUTABLE_LIST_PROC = new org.openspice.jspice.built_in.lists.NewImmutableListProc();
 
 	public Proc inverse() {
 		return InvListProc.INV_LIST_PROC;
@@ -50,4 +51,5 @@ public class ListProc extends Vary1Proc {
 			}
 		}
 	}
+
 }

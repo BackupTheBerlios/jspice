@@ -21,6 +21,7 @@ import java.util.*;
  */
 
 public abstract class PseudoList extends AbstractList {
+
 	public abstract Object getObject();
 	
 	public boolean compatibleWith( final Object example ) {

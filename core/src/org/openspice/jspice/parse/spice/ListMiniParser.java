@@ -25,10 +25,21 @@ import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.expr.cases.ApplyExpr;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.built_in.ShortCuts;
+import org.openspice.jspice.built_in.lists.NewImmutableListProc;
+import org.openspice.jspice.built_in.maps.NewMapProc;
+import org.openspice.jspice.built_in.maps.NewImmutableMapProc;
 
 public final class ListMiniParser extends Prefix {
+
 	public Expr prefix( final String interned, final Parser parser ) {
-		final Expr contents = parser.readStmntsTo( "}" );
-		return ApplyExpr.make( ShortCuts.listProc, contents );
+		if ( parser.tryReadToken( "%" ) != null ) {
+			final Expr contents = parser.readStmntsTo( "%" );
+			parser.mustReadToken( "}" );
+			return ApplyExpr.make( NewImmutableMapProc.NEW_IMMUTABLE_MAP_PROC, contents );
+		} else {
+			final Expr contents = parser.readStmntsTo( "}" );
+			return ApplyExpr.make( NewImmutableListProc.NEW_IMMUTABLE_LIST_PROC, contents );
+		}
 	}
+
 }

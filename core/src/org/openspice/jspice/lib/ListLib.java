@@ -159,20 +159,17 @@ public class ListLib {
 		try {
 			final int idx = CastLib.to_int( key ) - 1;
 			if ( obj instanceof List ) {
-				return ((List)obj).set( idx, val );
+				return ( (List)obj ).set( idx, val );
 			} else if ( obj instanceof Map ) {
-				return ((Map)obj).put( key, val );
+				return ( (Map)obj ).put( key, val );
 			} else {
-				new Alert(
-					"Cannot convert object to an assignable list"
-				).culprit( "object", obj ).mishap( 'E' );
+				new Alert( "Cannot convert object to an assignable list" ).culprit( "object", obj ).mishap( 'E' );
 				return null;		//	sop
 			}
 		} catch ( final ClassCastException exn ) {
-			new Alert(
-				"Index not an integer"
-			).culprit( "index", key ).culprit( "map", obj ).mishap( 'E' );
-			return null;			//	sop
+			throw new Alert( "Index not an integer" ).culprit( "index", key ).culprit( "map", obj ).mishap( 'E' );
+		} catch ( final UnsupportedOperationException e ) {
+			throw new Alert( "Trying to update the index of an immutable object" ).culprit( "object", obj ).culprit( "index/key", key ).culprit( "value", val ).mishap( 'E' );
 		}
 	}
 	
