@@ -21,7 +21,7 @@ package org.openspice.jspice.lexis;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.conf.JSpiceConf;
 
-import java.util.List;
+import java.util.LinkedList;
 
 public abstract class ParseEscape {
 
@@ -144,18 +144,79 @@ public abstract class ParseEscape {
 		}
 	}
 
-	/**
-	 * todo: this is far too simple-minded.  We need a straightforward FSM here.
-	 */
 	private final CharSequence parseExpr() {
 		final StringBuffer buff = new StringBuffer();
+		int state = 0;
+		int paren_level = 0;
+		final LinkedList nesting_quotes = new LinkedList();	//	List<Character>
+		char quote = ' ';	//	doesn't matter
 		for(;;) {
 			final char ch = this.readCharNoEOF();
-			if ( ch == ')' ) break;
-			if ( ch == '(' ) throw new RuntimeException( "unimplemented" );
+			if ( ch == '\n' || ch == '\r' ) new Alert( "Line break before end of string" ).mishap();
+			switch ( state ) {
+				case 0:			//	outer level
+					switch ( ch ) {
+						case '"':
+						case '\'':
+						case '`':
+							state = 1;
+							quote = ch;
+							break;
+						case ')':
+							if ( paren_level == 0 ) {
+								if ( nesting_quotes.isEmpty() ) {
+									return buff.toString();
+								} else {
+									quote = ((Character)nesting_quotes.removeLast()).charValue();
+									state = 1;
+								}
+							} else {
+								paren_level -= 1;
+							}
+							break;
+						case '(':
+							paren_level += 1;
+							break;
+						default:
+							break;
+					}
+					break;
+				case 1:			//	string level
+					if ( ch == quote ) {
+						state = 0;
+					} else if ( ch == '\\' ) {
+						state = 2;
+					}
+					break;
+				case 2:			//	after backquote in string
+					int count = 0;		//	throw this many away - not very robust!
+					switch ( ch ) {
+						case '(':
+							state = 0;
+							nesting_quotes.addLast( new Character( quote ) );
+							break;
+						case '^':
+							count = 1;	//	A
+							break;
+						case '0':
+							count = 3;	//	xFF
+							break;
+						case 'u':
+							count = 4;	//	FFFF
+							break;
+					}
+					for ( int i = 0; i < count; i++ ) {
+						final char x = this.readCharNoEOF();
+						if ( !Character.isLetterOrDigit( ch ) ) {
+							new Alert( "Unexpected backquote sequence" ).culprit( "char", x +"" ).warning();
+						}
+					}
+					break;
+				default:
+					break;
+			}
 			buff.append( ch );
 		}
-		return buff;
 	}
 
 }
