@@ -1,0 +1,132 @@
+/**
+ *	JSpice, an Open Spice interpreter and library.
+ *	Copyright (C) 2003, Stephen F. K. Leach
+ *
+ * 	This program is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ * 	the Free Software Foundation; either version 2 of the License, or
+ * 	(at your option) any later version.
+ *
+ * 	This program is distributed in the hope that it will be useful,
+ * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ * 	along with this program; if not, write to the Free Software
+ *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+package org.openspice.jspice.namespace;
+
+import org.openspice.tools.BooleanTools;
+import org.openspice.jspice.lib.AbsentLib;
+import org.openspice.jspice.lib.CastLib;
+import org.openspice.jspice.datatypes.Termin;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.built_in.*;
+import org.openspice.jspice.built_in.inspect.InspectProc;
+import org.openspice.jspice.built_in.arithmetic.*;
+import org.openspice.graphics2d.ShowImage;
+
+import java.util.*;
+import java.util.List;
+import java.io.File;
+
+public class SpiceStandardNameSpace extends NameSpace {
+
+	public SpiceStandardNameSpace(
+		final NameSpaceManager _manager,
+		final Title title,
+		final File _directory,
+		final FacetSet _default_facets,
+		final List _ok_facet_list,
+		final boolean _is_std_importer
+	) {
+		super( _manager, title, _directory, _default_facets, _ok_facet_list, _is_std_importer );
+	}
+
+	private void install( final String id, final Object value ) {
+		this.install( id, value, Props.VAL );
+	}
+
+	private void install( final String id, final Object value, final Props props ) {
+		final Var.Perm perm = (
+			this.declarePerm(
+				FacetSet.PUBLIC,
+				id,
+				props,
+				false
+			)
+		);
+		//System.out.println( "location = " + perm.getLocation() );
+		perm.getLocation().setValue( value );
+	}
+
+	private void install_built_ins() {
+		this.install( "abs", new AbsProc() );
+		this.install( "absent", AbsentLib.ABSENT );
+		this.install( "acos", new ACosProc() );
+		this.install( "asin", new ASinProc() );
+		this.install( "atan", new ATanProc() );
+		this.install( "atan2", new ATan2Proc() );
+		this.install( "ceil", new CeilProc() );
+		this.install( "cos", new CosProc() );
+		this.install( "explode", ShortCuts.explodeProc );
+		this.install( "environment_variable", this.getJSpiceConf().getEnvMap() );
+		this.install( "false", BooleanTools.FALSE );
+		this.install( "floor", new FloorProc() );
+		this.install( "format", FormatProc.FORMAT_PROC );
+		this.install( "fprint", PrintProcs.FPRINT_PROC );
+		this.install( "fprintln", PrintProcs.FPRINTLN_PROC );
+		this.install( "fprintTo", PrintProcs.FPRINT_TO_PROC );
+		this.install( "fprintlnTo", PrintProcs.FPRINTLN_TO_PROC);
+		this.install( "isMatch", RegexProcs.isMatch );
+		this.install( "hasMatch", RegexProcs.hasMatch );
+		this.install( "inspect", InspectProc.INSPECT_PROC );
+		this.install( "isPrefixMatch", RegexProcs.isPrefixMatch );
+		this.install( "isPartMatch", RegexProcs.isPartMatch );
+		this.install( "allMatches", RegexProcs.allMatches );
+		this.install( "length", ShortCuts.lengthProc );
+		this.install( "loadValueFromFile", new LoadValueFromFileProc( this.getSuperLoader() ) );
+		this.install( "log", new LogProc() );
+		this.install( "log2", new Log2Proc() );
+		this.install( "log10", new Log10Proc() );
+		this.install( "garbageCollect", GarbageCollectProc.garbageCollectProc );
+		this.install( "none", NoneProc.noneProc );
+		this.install( "not", NotProc.notProc );
+		this.install( "lastResults", LastResultsProc.LAST_RESULTS_PROC );
+		this.install( "low", new PowProc() );
+		this.install( "openURL", OpenURLProc.OPEN_URL_PROC );
+		this.install( "print", PrintProcs.printProc );
+		this.install( "println", PrintProcs.printlnProc );
+		this.install( "printTo", PrintProcs.printToProc );
+		this.install( "printlnTo", PrintProcs.printlnToProc );
+		this.install( "round", new RoundProc() );
+		this.install( "show", ShowProcs.showProc );
+		this.install( "showln", ShowProcs.showlnProc );
+		this.install( "showTo", ShowProcs.showToProc );
+		this.install( "showlnTo", ShowProcs.showlnToProc );
+		this.install( "sin", new SinProc() );
+		this.install( "split", RegexProcs.split );
+		this.install( "sqrt", new SqrtProc() );
+		this.install( "startServer", StartServerProc.START_SERVER_PROC );
+		this.install( "tan", new TanProc() );
+		this.install( "termin", Termin.TERMIN );
+		this.install( "toDegrees", new ToDegreesProc() );
+		this.install( "toRadians", new ToRadiansProc() );
+		this.install( "true", BooleanTools.TRUE );
+
+		this.install( "showImage", new Unary1InvokeProc() {
+			public Object invoke( Object x ) {
+				new ShowImage( CastLib.toImage( x ) ).main();
+				return null;
+			}
+		} );
+	}
+
+	public NameSpace installBuiltIns() {
+		this.install_built_ins();
+		return this;
+	}
+
+}

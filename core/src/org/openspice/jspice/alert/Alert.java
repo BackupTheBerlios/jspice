@@ -1,0 +1,179 @@
+/**
+ *	JSpice, an Open Spice interpreter and library.
+ *	Copyright (C) 2003, Stephen F. K. Leach
+ *
+ * 	This program is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ * 	the Free Software Foundation; either version 2 of the License, or
+ * 	(at your option) any later version.
+ *
+ * 	This program is distributed in the hope that it will be useful,
+ * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ * 	along with this program; if not, write to the Free Software
+ *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+package org.openspice.jspice.alert;
+
+import java.util.List;
+import java.util.Iterator;
+
+public final class Alert {
+
+
+	//	---- Different style for raising error messages ----
+	//	new Alert( snafu, ok ).culprit( MSG, OBJ )....mishap();
+
+	final Throwable cause;
+	final String complaint;
+	final String explanation;
+	CulpritList culprits = new CulpritList();
+
+	public Alert( final Throwable t, final String _complaint, final String _explanation, final char phase ) {
+		this.cause = t;
+		this.complaint = _complaint;
+		this.explanation = _explanation;
+		this.setPhase( phase );
+	}
+
+	public Alert( final Throwable t, final String _complaint ) {
+		this( t, _complaint, null, '-' );
+	}
+
+	public Alert( final Throwable t, final String _complaint, final String _explanation ) {
+		this( t, _complaint, _explanation, '-' );
+	}
+
+	public Alert( final String _complaint, final String _explanation, final char phase ) {
+		this( null, _complaint, _explanation, phase );
+	}
+
+	public Alert( final String _snafu_message, final String _ok_message ) {
+		this( _snafu_message, _ok_message, '-' );
+	}
+
+	public Alert( final String _snafu_message, final char phase ) {
+		this( _snafu_message, null, phase );
+	}
+
+	public Alert( final String _snafu_message ) {
+		this( _snafu_message, '-' );
+	}
+
+	String getComplaint() {
+		return this.complaint;
+	}
+
+	Throwable getCause() {
+		return this.cause;
+	}
+
+	private void setPhase( final char phase ) {
+		final String p = (
+			phase == 'T' ? "Tokenization" :
+			phase == 'P' ? "Parsing" :
+			phase == 'R' ? "Resolving names" :
+			phase == 'I' ? "Importing" :
+			phase == 'G' ? "Generating code" :
+			phase == 'E' ? "Evaluation" :
+			null
+		);
+		if ( p != null ) {
+			this.culprits = this.culprits.culprit( "Phase", p );
+		}
+	}
+
+	public Alert culprit( final String desc, final Object arg ) {
+		this.culprits = this.culprits.culprit( desc, arg );
+		return this;
+	}
+
+	int arg_count = 1;
+	public Alert culprit_list( final List list ) {
+		for ( Iterator it = list.iterator(); it.hasNext(); ) {
+			this.culprit( "arg(" + this.arg_count++ + ")", it.next() );
+		}
+		return this;
+	}
+
+	public Alert hint( final String hint_text ) {
+		this.culprits = this.culprits.hint( hint_text );
+		return this;
+	}
+
+	public Alert typedCulprit( final String desc, final Object arg ) {
+		this.culprits = this.culprits.typedCulprit( desc, arg );
+		return this;
+	}
+
+	public AlertException mishap() {
+		return this.report( Abort.abort );
+	}
+
+	public AlertException mishap( final char phase ) {
+		this.setPhase( phase );
+		return this.report( Abort.abort );
+	}
+
+	public void  warning() {
+		this.report( Warning.warning );
+	}
+
+	public void internal_warning() {
+		this.report( Warning.internal );
+	}
+
+	public void warning( final char phase ) {
+		this.setPhase( phase );
+		this.report( Warning.warning );
+	}
+
+	private AlertException report( final Severity severity ) {
+		Output.println( "\n" );
+		Output.print( severity.getDescription() );
+		Output.print( " : " );
+
+		Output.println( this.complaint );
+		if ( this.explanation != null ) {
+			Output.print( "BECAUSE : " );
+			Output.println( this.explanation );
+		}
+		culprits.output();
+		Output.flushAll();
+
+		return severity.throwUp( new AlertException( this ) );
+	}
+
+	//	---- This section just deals with the statics ----
+
+	public static AlertException unreachable() {
+		throw unreachable( (Throwable)null );
+	}
+
+	public static AlertException unreachable( final Throwable t ) {
+		throw unreachable( "Internal error", t );
+	}
+
+	public static AlertException unreachable( final String msg ) {
+		throw unreachable( msg, null );
+	}
+
+	public static AlertException unreachable( final String msg, final Throwable t ) {
+		throw new Alert( t, msg, "Some supposedly unreachable code has been executed", '-' ).mishap();
+	}
+
+	public static AlertException unimplemented( final String msg ) {
+		final Alert alert = new Alert( "Internal error", "An unimplemented feature is required" );
+		alert.culprit( "message", msg );
+		throw alert.mishap();
+	}
+
+	public static AlertException unimplemented() {
+		return Alert.unimplemented( "unimplemented" );
+	}
+	
+}

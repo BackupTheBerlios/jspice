@@ -1,0 +1,17 @@
+<body>
+<p>
+This package is an initial draft for a messaging service (which may well be made obsolete by JMS).  The
+basic idea is that threads communicate asynchronously via 'letters'.   However, the main point is to
+allow both external processes and event-driven GUI threads to participate in a single unified scheme.
+</p>
+<p>
+External processes are modelled by a Reader/Writer pair.  This is undoubtedly a bit stupid as the
+NIO model is much better.  However, I'd like to get this one nailed down.
+</p>
+<p>
+GUI processes are going to be a bit more challenging.  I don't know a lot about the way GUI's work with
+threads.  Looks like I need SwingUtilities.invokeLater( Runnable ) to be invoked when letters are
+available.  The notification of letter arrival can be generalized by the Observer/Observable model.  I note
+that this has to be thread-safe.  Is Observer notification thread-safe?
+</p>
+</body>
