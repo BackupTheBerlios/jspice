@@ -18,5 +18,29 @@
  */
 package org.openspice.jspice.parse.miniparser;
 
-public final class ReservedMiniParser extends Punctuation {
+import org.openspice.jspice.expr.Expr;
+import org.openspice.jspice.parse.Parser;
+import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.alert.AlertException;
+
+public final class ReservedMiniParser extends MiniParser {
+
+	final String alt_message;
+
+	public ReservedMiniParser( String message ) {
+		this.alt_message = message;
+	}
+
+	public ReservedMiniParser() {
+		this.alt_message = null;
+	}
+
+	public Expr parse( String interned, int prec, Expr lhs, Parser parser ) {
+		Alert alert = new Alert( "Keyword reserved for future use" ).culprit( "keyword", interned );
+		if ( this.alt_message != null ) {
+			alert = alert.hint( "Use alternative, " + this.alt_message );
+		}
+		throw alert.mishap();
+	}
+
 }

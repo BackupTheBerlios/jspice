@@ -108,6 +108,10 @@ public final class SpiceMiniParserTable extends Standard {
 			new ReservedMiniParser()
 		);
 
+		install( "!=", new ReservedMiniParser( "/= or /==" ) );
+		install( "!==", new ReservedMiniParser( "/= or /==" ) );
+		install( "!", new ReservedMiniParser( "not" ) );
+
 		install(
 			new String[] {
 				"=| |=",
