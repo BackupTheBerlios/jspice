@@ -1,5 +1,29 @@
 [] Notes on the implementation of File Based VFS
 
+
+VItemRef
+	VfolderRef
+		AbsVFolderRef
+	VFileRef
+		AbsVFileRef
+
+VItem
+	VFolder
+	VFile
+	AbsVItem
+		AbsVFolder implements VFolder
+			PathAbsVFolder
+		AbsVFile implements VFile
+			PathAbsVFile
+
+Planned virtual filing systems
+	CVS
+
+Extensions
+	Signed source files
+	Multiple nested content encodings
+	Multiple nested archive encodings
+
 This is no longer correct.  Refer to the source code.  Sorry.  [Steve Leach, Aug 04]
 
 VFS = Virtual Filing System

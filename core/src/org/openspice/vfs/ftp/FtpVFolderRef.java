@@ -28,7 +28,6 @@ import org.openspice.vfs.codec.Codec;
 import org.openspice.tools.SetOfBoolean;
 import org.openspice.tools.ImmutableSetOfBoolean;
 import org.openspice.jspice.alert.Alert;
-import org.apache.commons.net.ftp.FTPClient;
 
 
 public class FtpVFolderRef extends AbsVFolderRef implements VFolderRef {
@@ -47,16 +46,19 @@ public class FtpVFolderRef extends AbsVFolderRef implements VFolderRef {
 	public FtpVFolderRef( final FtpVVolume vvol, final String path ) {
 		this.path = path;
 		this.fvol = vvol;
+//		System.err.println( "new FTPVFolderRef: path = " + path );
+//		if ( path.charAt( path.length() - 1) != '/' ) throw new RuntimeException( "bah" );
 	}
 
 	public VFileRef getVFileRef( String nam, String ext ) {
 		final String name = FileNameCodec.FILE_NAME_CODEC.encode( nam,ext );
-		return new FtpVFileRef( this.fvol, FtpTools.fileName( this.path, name ) );
+		final String full_path = FtpTools.fileName( this.path, name );
+		return new FtpVFileRef( this.fvol, full_path );
 	}
 
 	public VFolderRef getVFolderRef( String nam, String ext ) {
 		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( nam,ext );
-		return new FtpVFolderRef( this.fvol, FtpTools.fileName( this.path, name ) );
+		return new FtpVFolderRef( this.fvol, FtpTools.folderName( this.path, name ) );
 	}
 
 	public boolean exists() {

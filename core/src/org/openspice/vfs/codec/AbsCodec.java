@@ -90,7 +90,8 @@ public abstract class AbsCodec implements Codec {
 	}
 
 	public String[] decode( final String name, final boolean nam_wanted, final boolean ext_wanted, final String[] result ) {
-		final int n = name.indexOf( separator );
+		if ( name.indexOf( '/' ) != -1 ) throw new RuntimeException();
+		final int n = name.lastIndexOf( separator );
 		if ( n < 0 ) {
 			if ( nam_wanted ) result[0] = this.basic_decode( name );
 			if ( ext_wanted ) result[1] = null;

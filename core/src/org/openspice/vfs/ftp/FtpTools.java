@@ -37,9 +37,16 @@ public abstract class FtpTools {
 	}
 
 	public static final String getName( final String path ) {
-		final int n = path.indexOf( FixedConf.VFOLDER_TERMINATOR );
+		final int n = path.lastIndexOf( FixedConf.VFOLDER_TERMINATOR );
 		if ( n < 0 ) {
 			return path;
+		} else if ( n == path.length() - 1 ) {
+			final int k = path.lastIndexOf( FixedConf.VFOLDER_TERMINATOR, n - 1 );
+			if ( k < 0 ) {
+				return path.substring( 0, n );
+			} else {
+				return path.substring( k + 1, n );
+			}
 		} else {
 			return path.substring( n + 1 );
 		}

@@ -27,40 +27,38 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPConnectionClosedException;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.SocketException;
+import java.net.*;
 import java.io.IOException;
 
 public class FtpVVolume extends AbsVVolume implements VVolume {
 
-	final URI root_uri;
+	final URL root_url;
 	final FTPClient ftp_client = new FTPClient();
 
-	private static final URI toURI( final String s ) {
+	private static final URL toURL( final String s ) {
 		try {
-			return new URI( s );
-		} catch ( URISyntaxException e ) {
+			return new URL( s );
+		} catch ( MalformedURLException e ) {
 			throw new RuntimeException( e );
 		}
 	}
 
-	public FtpVVolume( final String uri ) {
-		this( toURI( uri ) );
+	public FtpVVolume( final String url ) {
+		this( toURL( url ) );
 	}
 
-	public FtpVVolume( final URI uri ) {
-		if ( "ftp".equals( uri.getScheme() ) ) {
-			this.root_uri = uri;
+	public FtpVVolume( final URL url ) {
+		if ( "ftp".equals( url.getProtocol() ) ) {
+			this.root_url = url;
 		} else {
-			this.root_uri = null;
-			throw new Alert( "Not an FTP URI" ).culprit(  "uri", uri ).mishap();
+			this.root_url = null;
+			throw new Alert( "Not an FTP URL" ).culprit(  "url", url ).mishap();
 		}
 	}
 
 
 	public VFolderRef getRootVFolderRef() {
-		return new FtpVFolderRef( this, this.root_uri.getPath() );
+		return new FtpVFolderRef( this, this.root_url.getPath() );
 	}
 
 	public FTPClient getFTPClient() {
@@ -69,20 +67,20 @@ public class FtpVVolume extends AbsVVolume implements VVolume {
 
 	private void reconnect( final FTPClient ftpc ) throws IOException {
 		Print.println( Print.FTP, "Reconnecting ..." );
-		final String user_info = this.root_uri.getUserInfo();
+		final String user_info = this.root_url.getUserInfo();
 		final int n = user_info.indexOf( ':' );
 		final String user = n >= 0 ? user_info.substring( 0, n ) : user_info;
 		final String pw = n >= 0 ? user_info.substring( n + 1 ) : "";
 		if ( Print.wouldPrint( Print.FTP ) ) {
 			Print.println( "User ID : " + user );
 			Print.println( "Password: " + pw );
-			Print.println( "Host    : " + root_uri.getHost() );
+			Print.println( "Host    : " + root_url.getHost() );
 		}
-		ftpc.connect( this.root_uri.getHost() );
+		ftpc.connect( this.root_url.getHost() );
 
 		final boolean ok = ftpc.login( user, pw );
 		if ( !ok ) {
-			new Alert( "Cannot connect to FTP server" ).culprit( "host", root_uri.getHost() ).mishap();
+			new Alert( "Cannot connect to FTP server" ).culprit( "host", root_url.getHost() ).mishap();
 		}
 		if ( !ftpc.setFileType( FTP.BINARY_FILE_TYPE ) ) {
 			new Alert( "Cannot set file type" ).mishap();
@@ -108,12 +106,12 @@ public class FtpVVolume extends AbsVVolume implements VVolume {
 		} catch ( final IOException e ) {
 			throw new RuntimeException( e );
 		}
-		try {
+//		try {
 			ftpc.enterLocalPassiveMode();
-			ftpc.setSoTimeout( 30 * 1000 );			//	Set 30 second timeout.
-		} catch ( SocketException e ) {
-			throw new RuntimeException( e );
-		}
+//			ftpc.setSoTimeout( 30 * 1000 );			//	Set 30 second timeout.
+//		} catch ( SocketException e ) {
+//			throw new RuntimeException( e );
+//		}
 		return ftpc;
 	}
 

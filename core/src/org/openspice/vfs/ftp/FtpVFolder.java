@@ -22,7 +22,6 @@ import org.openspice.vfs.*;
 import org.openspice.vfs.codec.FolderNameCodec;
 import org.openspice.vfs.codec.Codec;
 import org.openspice.jspice.alert.Alert;
-import org.openspice.tools.SetOfBoolean;
 import org.openspice.tools.ImmutableSetOfBoolean;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -69,6 +68,8 @@ public class FtpVFolder extends PathAbsVFolder implements VFolder {
 	private FtpVFolder( final FtpVVolume vvol, final String path ) {
 		this.fvol = vvol;
 		this.path = path;
+//		System.err.println( "new FTPVFolder: path = " + path );
+//		if ( path.charAt( path.length() - 1) != '/' ) throw new RuntimeException( "bah" );
 	}
 
 	public VFolder newVFolder( String nam, String ext ) {
@@ -84,15 +85,25 @@ public class FtpVFolder extends PathAbsVFolder implements VFolder {
 	}
 
 	private List list( final boolean want_folders, final boolean want_files ) {
+//		System.err.println( "folders = " + want_folders );
+//		System.err.println( "files = " + want_files );
 		try {
 			final FTPClient ftpc = this.fvol.getConnectedFTPClient();
-			final FTPFile[] files = ftpc.listFiles();
+			final FTPFile[] files = ftpc.listFiles( this.path );
+//			{
+//				System.err.println( "List of files is " + files.length + " long" );
+//				for ( int n = 0; n < files.length; n++ ) {
+//					System.err.println( "["+n+"]. " + files[n] + " " + ( files[n].isDirectory() ? "d" : "-" ) + ( files[n].isFile() ? "f" : "-" ) );
+//				}
+//			}
 			final List answer = new ArrayList();
 			for ( int i = 0; i < files.length; i++ ) {
 				final FTPFile file = files[ i ];
 				if ( want_folders && file.isDirectory() ) {
+//					System.err.println( "adding FOLDER " + file );
 					answer.add( new FtpVFolder( this.fvol, FtpTools.folderName( this.path, file.getName() ) ) );
-				} else if ( want_files && file.isFile() ) {
+				} else if ( want_files && ( file.isFile() || file.isSymbolicLink() ) ) {
+//					System.err.println( "adding FILE " + file );
 					answer.add( FtpVFile.uncheckedMake( this.fvol, FtpTools.fileName( this.path, file.getName() ) ) );
 				}
 			}

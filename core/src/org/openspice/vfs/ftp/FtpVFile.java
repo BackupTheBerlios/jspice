@@ -25,14 +25,9 @@ import org.openspice.vfs.codec.Codec;
 import org.openspice.vfs.codec.FileNameCodec;
 import org.openspice.jspice.conf.FixedConf;
 import org.openspice.jspice.alert.Alert;
-import org.openspice.jspice.class_builder.ByteSink;
 import org.openspice.jspice.main.Print;
-import org.openspice.tools.NullOutputStream;
-import org.openspice.tools.SetOfBoolean;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 
-import java.net.URI;
 import java.io.*;
 
 public class FtpVFile extends PathAbsVFile implements VFile {
@@ -53,7 +48,7 @@ public class FtpVFile extends PathAbsVFile implements VFile {
 		return FtpTools.getParentPath( this.path );
 	}
 
-	static final FtpVFile make(  final FtpVVolume fvol, final String path  ) {
+	static final FtpVFile make( final FtpVVolume fvol, final String path  ) {
 		final boolean file_exists = FtpTools.fileExists( fvol, path );
 		if ( file_exists ) {
 			return new FtpVFile( fvol, path );
@@ -74,11 +69,15 @@ public class FtpVFile extends PathAbsVFile implements VFile {
 		this.path = path;
 	}
 
-	protected char separator() {
-		return FixedConf.VFILE_SEPARATOR;
+	public Reader readContents() {
+		return new InputStreamReader( this.inputStreamContents() );
 	}
 
-	public Reader readContents() {
+	public Writer writeContents() {
+		throw new RuntimeException( "tbd" );	//	todo:
+	}
+
+	public InputStream inputStreamContents() {
 		if ( Print.wouldPrint( Print.FTP ) ) {
 			Print.println( "Trying to read contents of file " + this.path );
 			Print.println( "path = " + this.path );
@@ -95,24 +94,14 @@ public class FtpVFile extends PathAbsVFile implements VFile {
 				if ( s.length() < 100 ) {
 					if ( Print.wouldPrint( Print.FTP ) ) Print.println( "s = " + s );
 				}
-				return new InputStreamReader( new ByteArrayInputStream( output.toByteArray() ) );
+				return new ByteArrayInputStream( output.toByteArray() );
 			} else {
 				if ( Print.wouldPrint( Print.FTP ) ) Print.println( "reply code = " + ftpc.getReplyCode() );
-				new Alert( "Cannot retrieve file from FTP server" ).culprit( "file", this.path ).mishap();
+				throw new Alert( "Cannot retrieve file from FTP server" ).culprit( "file", this.path ).mishap();
 			}
-			return new StringReader( "" );
 		} catch ( IOException e ) {
 			throw new RuntimeException( e );
 		}
-
-	}
-
-	public Writer writeContents() {
-		throw new RuntimeException( "tbd" );	//	todo:
-	}
-
-	public InputStream inputStreamContents() {
-		throw new RuntimeException( "tbd" );	//	todo:
 	}
 
 	public OutputStream outputStreamContents() {

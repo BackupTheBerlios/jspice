@@ -29,6 +29,7 @@ import org.openspice.jspice.class_builder.JSpiceClassLoader;
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFile;
 import org.openspice.vfs.VVolume;
+import org.openspice.vfs.url.UrlVVolume;
 import org.openspice.vfs.zip.ZipVVolume;
 import org.openspice.vfs.ftp.FtpVFolder;
 import org.openspice.vfs.ftp.FtpVVolume;
@@ -41,6 +42,7 @@ import java.util.*;
 import java.util.zip.ZipFile;
 import java.util.regex.Pattern;
 import java.io.*;
+import java.net.URL;
 
 public final class JSpiceConf {
 
@@ -346,8 +348,8 @@ public final class JSpiceConf {
 
 
 	public JSpiceConf() {
-//		final VVolume volume = new FtpVVolume( "ftp://heather:lucy@127.0.0.1" + home() + "/" );
-		final VVolume volume = new FileVVolume( home() );
+		final VVolume volume = UrlVVolume.make( "ftp://heather:lucy@127.0.0.1" + home() + "/" );
+//		final VVolume volume = new FileVVolume( home() );
 		this.jspice_home = volume.getRootVFolder();
 		if ( this.jspice_home == null ) {
 			new Alert( "Cannot locate JSpice home directory" ).warning();
