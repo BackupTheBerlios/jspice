@@ -16,24 +16,25 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.main.test;
+package org.openspice.jspice.built_in.maplets;
 
-import junit.framework.TestSuite;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.lib.CastLib;
 
-public class TestPackageMain extends SpiceTestBase {
+public class MapletKeyProc extends Unary1InvokeProc {
 
-	public TestPackageMain() {
+	{
+		setDescription(
+			"mapletKey",
+			"%p( k ==> v ) -> k",
+			"returns the key (left hand side) of a maplet"
+		);
 	}
 
-	public static TestSuite suite() {
-		TestSuite result = new TestSuite();
-		result.addTest( TestElement.suite() );
-		result.addTest( TestFor.suite() );
-		result.addTest( TestLambda.suite() );
-		result.addTest( TestLiteralEvaluation.suite() );
-		result.addTest( TestSimpleArithmetic.suite() );
-		result.addTest( TestXMLTags.suite() );
-		return result;
+	public Object invoke( final Object x ) {
+		return CastLib.toMaplet( x ).getKey();
 	}
+
+	public static final MapletKeyProc MAPLET_KEY_PROC = new MapletKeyProc();
 
 }

@@ -23,8 +23,12 @@ public class StartWithJLine {
 	public static void main( final String[] args ) {
 		final CmdLineOptions cmd = new CmdLineOptions();
 		cmd.process( args );
+		main( cmd );
+	}
+
+	public static final void main( final CmdLineOptions cmd ) {
 		final AbsMain main = cmd.jline ? new MainWithJLine() : new Main();
-		main.perform( args );
+		main.perform( cmd );		
 	}
 
 }

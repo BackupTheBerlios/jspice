@@ -54,6 +54,7 @@ public final class XMLElementMiniParser extends Bothfix {
 		} while ( true );
 
 		final Expr el_body = parser.readStmnts();
+//		System.err.println( "peeking = " + parser.peekToken() );
 		if ( parser.tryReadToken( "</" ) != null ) {
 			parser.peekXmlName();
 			final Token closing_tok = parser.readToken();

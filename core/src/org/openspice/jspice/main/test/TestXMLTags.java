@@ -19,21 +19,24 @@
 package org.openspice.jspice.main.test;
 
 import junit.framework.TestSuite;
+import org.openspice.tools.IntegerTools;
+import org.openspice.jspice.datatypes.elements.XmlElement;
+import org.openspice.jspice.datatypes.Symbol;
 
-public class TestPackageMain extends SpiceTestBase {
+import java.util.TreeMap;
 
-	public TestPackageMain() {
+public class TestXMLTags extends SpiceTestBase {
+
+	public TestXMLTags() {
 	}
 
-	public static TestSuite suite() {
-		TestSuite result = new TestSuite();
-		result.addTest( TestElement.suite() );
-		result.addTest( TestFor.suite() );
-		result.addTest( TestLambda.suite() );
-		result.addTest( TestLiteralEvaluation.suite() );
-		result.addTest( TestSimpleArithmetic.suite() );
-		result.addTest( TestXMLTags.suite() );
-		return result;
+	public static final TestSuite suite() {
+		return new TestSuite( TestXMLTags.class );
+	}
+
+	public void testAnonCloser() {
+		final XmlElement e = new XmlElement( Symbol.make( "alpha" ), new TreeMap(), new Object[] {} );
+		assertEquals( one( e ), interpret( "<alpha></>" ) );
 	}
 
 }

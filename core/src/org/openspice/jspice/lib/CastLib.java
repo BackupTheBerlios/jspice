@@ -142,6 +142,19 @@ public class CastLib {
 		}
 	}
 
+	public static Map.Entry toMaplet( final Object obj ) {
+		try {
+			if ( obj != null ) return (Map.Entry)obj;
+			throw oops( "Maplet needed", obj );
+		} catch ( final ClassCastException _ ) {
+			try {
+				return toMaplet( ((Deferred)obj).get() );
+			} catch ( final ClassCastException exn ) {
+				throw oops( exn, "Maplet needed", obj );
+			}
+		}
+	}
+
 	public static Number toNumber( final Object obj ) {
 		try {
 			if ( obj != null ) return (Number)obj;

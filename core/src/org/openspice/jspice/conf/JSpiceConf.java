@@ -346,6 +346,10 @@ public final class JSpiceConf {
 
 	public JSpiceConf() {
 //		this.jspice_home = UrlVFolderRef.make( "ftp://heather:lucy@127.0.0.1" + home() + "/" ).getVFolder( ImmutableSetOfBoolean.ONLY_TRUE,  false );
+		final File h = home();
+		if ( h == null ) {
+			new Alert( "Cannot determine JSpice home directory" ).mishap();
+		}
 		this.jspice_home = new FileVVolume( home() ).getRootVFolderRef().getVFolder( ImmutableSetOfBoolean.ONLY_TRUE, false );
 		if ( this.jspice_home == null ) {
 			new Alert( "Cannot locate JSpice home directory" ).warning();

@@ -18,14 +18,12 @@
  */
 package org.openspice.jspice.main;
 
-import java.awt.Frame;
-import java.awt.Toolkit;
-import java.net.URL;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Observer;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Code based on article in http://www.randelshofer.ch/oop/javasplash/javasplash.html
@@ -34,26 +32,20 @@ import java.util.Observable;
 public class StartSplash {
 
 	public static void main( final String[] args ) {
-		boolean splash = false;
-		for ( int i = 0; i < args.length; i++ ) {
-			final String option = args[ i ];
-			if ( option.startsWith( "--splash" ) ) {
-				splash = option.equals( "--splash" ) || option.equals( "--splash=on" );
-			}
-		}
-
-		if ( splash ) {
-			splash_main( args );
+		final CmdLineOptions cmd = new CmdLineOptions();
+		cmd.process( args );
+		if ( cmd.splash ) {
+			splash_main( cmd );
 		} else {
-			no_splash_main( args );
+			no_splash_main( cmd );
 		}
 	}
 
-	private static void no_splash_main( final String[] args ) {
+	private static void no_splash_main( final CmdLineOptions cmd ) {
 		try {
 			final Class start_class = Class.forName( "org.openspice.jspice.main.StartWithJLine" );
-			final Method perform = start_class.getMethod( "main", new Class[] { String[].class } );
-			perform.invoke( null, new Object[] { args } );
+			final Method perform = start_class.getMethod( "main", new Class[] { CmdLineOptions.class } );
+			perform.invoke( null, new Object[] { cmd } );
 		} catch ( ClassNotFoundException e ) {
 			throw new RuntimeException( e );
 		} catch ( NoSuchMethodException e ) {
@@ -65,10 +57,10 @@ public class StartSplash {
 		}
 	}
 
-	private static void splash_main( final String[] args ) {
+	private static void splash_main( final CmdLineOptions cmd ) {
 		//  Read the image data and display the splash screen
 
-		final URL imageURL = StartSplash.class.getResource( "splashdaw.jpg" );
+		final URL imageURL = StartSplash.class.getResource( "splashdaw.gif" );
 		if ( imageURL != null ) {
 			final Frame splashFrame = SplashWindow.splash( Toolkit.getDefaultToolkit().createImage( imageURL ) );
 			Hooks.READY.addObserver(
@@ -83,7 +75,7 @@ public class StartSplash {
 			);
 		}
 
-		no_splash_main( args );
+		no_splash_main( cmd );
 
 	}
 

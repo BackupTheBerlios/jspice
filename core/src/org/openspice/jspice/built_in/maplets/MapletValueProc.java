@@ -16,26 +16,45 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in.elements;
+package org.openspice.jspice.built_in.maplets;
 
-import org.openspice.jspice.datatypes.proc.Unary1FastProc;
-import org.openspice.jspice.vm_and_compiler.VM;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.datatypes.Arity;
 import org.openspice.jspice.lib.CastLib;
+import org.openspice.jspice.vm_and_compiler.VM;
 
-public class ElementChildrenProc extends Unary1FastProc {
+import java.util.Map;
 
+public class MapletValueProc extends Unary1InvokeProc {
+	
 	{
 		setDescription(
-			"elementChildren",
-			"%p( element ) -> list",
-			"returns the children of an element as a list"
+			"mapletValue",
+			"%p( k ==> v ) -> v",
+			"returns the value (right hand side) of a maplet"
 		);
 	}
 
-	public Object fastCall( Object tos, VM vm, int nargs ) {
-		return CastLib.toXmlElement( tos ).getChildren();
+	public Object invoke( final Object x ) {
+		return CastLib.toMaplet( x ).getValue();
 	}
 
-	public static final ElementChildrenProc ELEMENT_CHILDREN_PROC = new ElementChildrenProc();
+	public Arity keysUArity() {
+		return Arity.ONE;
+	}
 
+	public Arity valsUArity() {
+		return Arity.ONE;
+	}
+
+	public Object ucall( final Object value, final VM vm, final int vargs, final int kargs ) {
+		Arity.ONE.check( vargs );
+		Arity.ONE.check( kargs );
+		final Map.Entry maplet = CastLib.toMaplet( vm.pop() );
+		maplet.setValue( value );
+		return vm.pop();
+	}
+
+	public static final MapletValueProc MAPLET_VALUE_PROC = new MapletValueProc();
+	
 }
