@@ -16,20 +16,13 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.vfs;
+package org.openspice.tools;
 
-import org.openspice.tools.SetOfBoolean;
+import java.util.Set;
 
-public interface VFolderRef extends VItemRef {
+public interface SetOfBoolean extends Set {
 
-	VFolder getVFolder( SetOfBoolean if_exists, boolean create_if_needed );
-	VFileRef getVFileRef( final String nam,  final String ext );
-	VFolderRef getVFolderRef( final String nam,  final String ext );
+	boolean contains( boolean flag );
+	boolean isFull();
 
-	VFolderRef getVFolderRefFromPath( String path );
-	VFileRef getVFileRefFromPath( String path );
-	VFolder getVFolderFromPath( String path );
-	VFile getVFileFromPath( String path );
-
-	VItem getVItemFromPath( String path );
 }

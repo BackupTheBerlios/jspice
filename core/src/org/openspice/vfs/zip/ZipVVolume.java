@@ -16,29 +16,32 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.vfs.file;
+package org.openspice.vfs.zip;
 
-import org.openspice.vfs.*;
-import org.openspice.jspice.alert.Alert;
+import org.openspice.vfs.AbsVVolume;
+import org.openspice.vfs.VFolderRef;
 
-import java.io.File;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.ArrayList;
 
-public class FileVItemRef extends AbsVFileRef implements VFileRef {
+public class ZipVVolume extends AbsVVolume {
 
-	private final File file;
+	final ZipFile zip_file;
+	final List zip_entries = new ArrayList();
 
-	FileVItemRef( File file ) {
-		this.file = file;
+	public ZipVVolume( ZipFile zip_file ) {
+		this.zip_file = zip_file;
+		for ( Enumeration enum = this.zip_file.entries(); enum.hasMoreElements(); ) {
+			final ZipEntry e = (ZipEntry)enum.nextElement();
+			zip_entries.add( e.getName() );
+		}
 	}
 
-	public VFile getVFile() {
-		return new FileVFile( this.file );
-	}
-
-	
-
-	public boolean exists() {
-		return this.file.exists();
+	public VFolderRef getRootVFolderRef() {
+		return new ZipVFolderRef( this, "" );
 	}
 
 }

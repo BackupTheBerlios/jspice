@@ -24,10 +24,10 @@ import org.openspice.jspice.conf.FixedConf;
 /**
  * Implements a Codec appropriate for a filing system.
  */
-public class AbsCodec implements Codec {
+public abstract class AbsCodec implements Codec {
 
  	private final char esc_char;
-	private final char forbidden_char;
+	protected final char forbidden_char;
 	private final char separator;
 
 	public AbsCodec( char separator ) {
@@ -87,10 +87,6 @@ public class AbsCodec implements Codec {
 		} else {
 			return this.basic_encode( nam, separator ) + separator + this.basic_encode( ext, separator );
 		}
-	}
-
-	public String encode( final String previous, final String nam, final String ext ) {
-		return previous + forbidden_char + encode( nam, ext );
 	}
 
 	public String[] decode( final String name, final boolean nam_wanted, final boolean ext_wanted, final String[] result ) {

@@ -22,37 +22,41 @@ import org.openspice.vfs.VFileRef;
 import org.openspice.vfs.VFile;
 import org.openspice.vfs.AbsVFileRef;
 import org.openspice.vfs.VItem;
+import org.openspice.tools.SetOfBoolean;
+import org.openspice.tools.ImmutableSetOfBoolean;
+import org.openspice.jspice.alert.Alert;
+import org.apache.commons.net.ftp.FTPClient;
 
 import java.net.URI;
 
 public class FtpVFileRef extends AbsVFileRef implements VFileRef {
 
-	final URI uri;
-	final FtpVVolume vvol;
+	final FtpVVolume fvol;
+	final String path;
 
-	public FtpVFileRef( URI uri, FtpVVolume vvol ) {
-		this.uri = uri;
-		this.vvol = vvol;
+	public FtpVFileRef( FtpVVolume fvol, String path ) {
+		this.fvol = fvol;
+		this.path = path;
 	}
 
-	public VFile getVFile() {
-		return FtpVFile.make( this.uri, this.vvol, true );
-	}
-
-	public VItem getVItem() {
-		return this.getVFile();
-	}
-
-	public boolean isVFileRef() {
-		return true;
-	}
-
-	public boolean isVFolderRef() {
-		return false;
-	}
 
 	public boolean exists() {
-		return this.getVFile() != null;
+		return this.getVFile( ImmutableSetOfBoolean.EITHER, false ) != null;
+	}
+
+	public VFile getVFile( final SetOfBoolean if_exists, final boolean create_if_needed ) {
+		final boolean file_exists = FtpTools.fileExists( this.fvol, this.path );
+		if ( !if_exists.contains( file_exists ) ) {
+			throw new Alert( file_exists ? "File already exists" : "File does not exist (may be directory)" ).culprit( "folder", path ).mishap();
+		} else if ( file_exists ) {
+			return FtpVFile.uncheckedMake( fvol, path );
+		} else {
+			if ( create_if_needed ) {
+				throw new RuntimeException( "tbd" ); 	//	todo: to be defined
+			} else {
+				return null;
+			}
+		}
 	}
 
 }

@@ -21,6 +21,8 @@ package org.openspice.vfs;
 import org.openspice.jspice.conf.FixedConf;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.vfs.codec.Codec;
+import org.openspice.tools.ImmutableSetOfBoolean;
+import org.openspice.tools.SetOfBoolean;
 
 import java.util.StringTokenizer;
 
@@ -67,29 +69,29 @@ public abstract class AbsVFolderRef implements VFolderRef {
 	}
 
 	public VFolder getVFolderFromPath( final String path ) {
-		return this.getVFolderRefFromPath( path ).getVFolder();
+		return this.getVFolderRefFromPath( path ).getVFolder( ImmutableSetOfBoolean.EITHER, false );
 	}
 
 	public VFile getVFileFromPath( final String path ) {
-		return this.getVFileRefFromPath( path ).getVFile();
+		return this.getVFileRefFromPath( path ).getVFile( ImmutableSetOfBoolean.EITHER, false );
 	}
 
-	public VItem getVItem() {
-		return this.getVFolder();
+	public final VItem getVItem( final SetOfBoolean if_exists, final boolean create_if_needed ) {
+		return this.getVFolder( if_exists, create_if_needed );
 	}
 
-	public boolean isVFileRef() {
+	public final boolean isVFileRef() {
 		return false;
 	}
 
-	public boolean isVFolderRef() {
+	public final boolean isVFolderRef() {
 		return true;
 	}
 
 	public VItem getVItemFromPath( String path ) {
 		final VFileRef vfileref = this.getVFileRefFromPath( path );
 		if ( vfileref.exists() ) {
-			return vfileref.getVFile();
+			return vfileref.getVFile( ImmutableSetOfBoolean.ONLY_TRUE, false );
 		} else {
 			return this.getVFolderFromPath( path );
 		}

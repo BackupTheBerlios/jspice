@@ -16,20 +16,32 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.vfs;
+package org.openspice.vfs.zip;
 
+import org.openspice.vfs.AbsVFileRef;
+import org.openspice.vfs.VFile;
 import org.openspice.tools.SetOfBoolean;
 
-public interface VFolderRef extends VItemRef {
+import java.util.zip.ZipEntry;
 
-	VFolder getVFolder( SetOfBoolean if_exists, boolean create_if_needed );
-	VFileRef getVFileRef( final String nam,  final String ext );
-	VFolderRef getVFolderRef( final String nam,  final String ext );
+public class ZipVFileRef extends AbsVFileRef {
 
-	VFolderRef getVFolderRefFromPath( String path );
-	VFileRef getVFileRefFromPath( String path );
-	VFolder getVFolderFromPath( String path );
-	VFile getVFileFromPath( String path );
+	final String path;
+	final ZipVVolume zvol;
 
-	VItem getVItemFromPath( String path );
+	public ZipVFileRef( ZipVVolume zvol, String path ) {
+		this.path = path;
+		this.zvol = zvol;
+	}
+
+	public final VFile getVFile( final SetOfBoolean if_exists, final boolean create_if_needed ) {
+//		return ZipVFile.make( this.zvol, this.path );
+		throw new RuntimeException( "tbd" );	//	todo:
+	}
+
+	public final boolean exists() {
+		final ZipEntry e = this.zvol.zip_file.getEntry( this.path );
+		return e != null && !e.isDirectory();
+	}
+
 }

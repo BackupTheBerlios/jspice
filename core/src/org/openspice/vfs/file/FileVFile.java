@@ -20,20 +20,47 @@ package org.openspice.vfs.file;
 
 import org.openspice.vfs.VFile;
 import org.openspice.vfs.VFileRef;
+import org.openspice.vfs.PathAbsVFile;
 import org.openspice.vfs.codec.Codec;
 import org.openspice.vfs.codec.FileNameCodec;
 import org.openspice.jspice.alert.Alert;
 
 import java.io.*;
 
-public class FileVFile extends AbsFileVItem implements VFile {
+public class FileVFile extends PathAbsVFile implements VFile {
 
 	protected Codec codec() {
 		return FileNameCodec.FILE_NAME_CODEC;
 	}
 
-	FileVFile( final File file ) {
-		super( file );
+	protected String getPath() {
+		return this.file.getPath();
+	}
+
+	protected String getName() {
+		return this.file.getName();
+	}
+
+	protected String getParentPath() {
+		return this.file.getParent();
+	}
+
+	private File file;
+
+	private FileVFile( final File file ) {
+		this.file = file;
+	}
+
+	public static final FileVFile make( final File file ) {
+		if ( file.exists() ) {
+			return new FileVFile( file );
+		} else {
+			throw new Alert( "File does not exist" ).culprit(  "file", file ).mishap();
+		}
+	}
+
+	public static final FileVFile uncheckedMake( final File file ) {
+		return new FileVFile( file );
 	}
 
 

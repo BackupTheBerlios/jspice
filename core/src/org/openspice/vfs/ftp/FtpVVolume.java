@@ -19,7 +19,6 @@
 package org.openspice.vfs.ftp;
 
 import org.openspice.vfs.VVolume;
-import org.openspice.vfs.VFolder;
 import org.openspice.vfs.AbsVVolume;
 import org.openspice.vfs.VFolderRef;
 import org.openspice.jspice.alert.Alert;
@@ -59,12 +58,9 @@ public class FtpVVolume extends AbsVVolume implements VVolume {
 		}
 	}
 
-	public VFolder getRootVFolder() {
-		return FtpVFolder.make( this.root_uri, this, true );
-	}
 
 	public VFolderRef getRootVFolderRef() {
-		return new FtpVFolderRef( this.root_uri, this );
+		return new FtpVFolderRef( this, this.root_uri.getPath() );
 	}
 
 	public FTPClient getFTPClient() {

@@ -27,7 +27,7 @@ public interface VItem {
 
 	void setNamExt( final String nam, final String ext );
 
-	String getFullName();
+//	String getFullName();
 
 	void delete();
 

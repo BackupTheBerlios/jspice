@@ -34,17 +34,12 @@ public class FileVVolume extends AbsVVolume implements VVolume {
 		this.root_file = new File( "./" );		//	todo: have to work out the concept of current directory
 	}
 
-	public VFolder getRootVFolder() {
-		return this.root_file.exists() ? new FileVFolder( this.root_file ) : null;
-
-	}
-
 	public VFolderRef getRootVFolderRef() {
 		return new FileVFolderRef( this.root_file );
 	}
 
-	public VFile getVFileFromFile( final File file ) {
-		return new FileVFile( file );
+	public static final VFile getVFile( final File file ) {
+		return FileVFile.make( file );
 	}
 
 }

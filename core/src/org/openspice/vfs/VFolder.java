@@ -29,7 +29,7 @@ public interface VFolder extends VItem {
 
 	List listVItems();
 
-	VFolder newVFolder( String name, String ext );
+	VFolder newVFolder( String nam, String ext );
 
 	VFile newVFile( String nam, String ext, Reader contents );
 

@@ -25,8 +25,10 @@ import org.openspice.vfs.AbsVFolderRef;
 import org.openspice.vfs.codec.FileNameCodec;
 import org.openspice.vfs.codec.FolderNameCodec;
 import org.openspice.vfs.codec.Codec;
-
-import java.net.URI;
+import org.openspice.tools.SetOfBoolean;
+import org.openspice.tools.ImmutableSetOfBoolean;
+import org.openspice.jspice.alert.Alert;
+import org.apache.commons.net.ftp.FTPClient;
 
 
 public class FtpVFolderRef extends AbsVFolderRef implements VFolderRef {
@@ -39,28 +41,41 @@ public class FtpVFolderRef extends AbsVFolderRef implements VFolderRef {
 		return FolderNameCodec.FOLDER_NAME_CODEC;
 	}
 
-	final URI uri;
-	final FtpVVolume vvol;
+	final String path;
+	final FtpVVolume fvol;
 
-	public FtpVFolderRef( URI uri, FtpVVolume vvol ) {
-		this.uri = uri;
-		this.vvol = vvol;
-	}
-
-	public VFolder getVFolder() {
-		return FtpVFolder.make( this.uri,  this.vvol, true );
+	public FtpVFolderRef( final FtpVVolume vvol, final String path ) {
+		this.path = path;
+		this.fvol = vvol;
 	}
 
 	public VFileRef getVFileRef( String nam, String ext ) {
-		return new FtpVFileRef( FtpTools.nextURI( this.uri, FileNameCodec.FILE_NAME_CODEC, nam,ext ), this.vvol );
+		final String name = FileNameCodec.FILE_NAME_CODEC.encode( nam,ext );
+		return new FtpVFileRef( this.fvol, FtpTools.fileName( this.path, name ) );
 	}
 
 	public VFolderRef getVFolderRef( String nam, String ext ) {
-		return new FtpVFolderRef( FtpTools.nextURI( this.uri, FolderNameCodec.FOLDER_NAME_CODEC, nam,ext ), this.vvol );
+		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( nam,ext );
+		return new FtpVFolderRef( this.fvol, FtpTools.fileName( this.path, name ) );
 	}
 
 	public boolean exists() {
-		return this.getVFolder() != null;
+		return this.getVFolder( ImmutableSetOfBoolean.EITHER, false ) != null;
+	}
+
+	public VFolder getVFolder( final SetOfBoolean if_exists, final boolean create_if_needed ) {
+		final boolean folder_exists = FtpTools.folderExists( fvol, this.path );
+		if ( !if_exists.contains( folder_exists ) ) {
+			throw new Alert( folder_exists ? "Folder already exists" : "Folder does not exist (may be non-directory)" ).culprit( "folder", path ).mishap();
+		} else if ( folder_exists ) {
+			return FtpVFolder.uncheckedMake( fvol, path );
+		} else {
+			if ( create_if_needed ) {
+				throw new RuntimeException( "tbd" ); 	//	todo: to be defined
+			} else {
+				return null;
+			}
+		}
 	}
 
 }

@@ -28,4 +28,9 @@ public class FolderNameCodec extends AbsCodec {
 
 	public static final FolderNameCodec FOLDER_NAME_CODEC = new FolderNameCodec();
 
+
+//	public String encodePath( String previous, String nam, String ext ) {
+//		return previous + encode( nam, ext ) + forbidden_char;
+//	}
+
 }

@@ -20,6 +20,7 @@ package org.openspice.vfs.ftp;
 
 import org.openspice.vfs.VFile;
 import org.openspice.vfs.VFileRef;
+import org.openspice.vfs.PathAbsVFile;
 import org.openspice.vfs.codec.Codec;
 import org.openspice.vfs.codec.FileNameCodec;
 import org.openspice.jspice.conf.FixedConf;
@@ -27,40 +28,78 @@ import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.class_builder.ByteSink;
 import org.openspice.jspice.main.Print;
 import org.openspice.tools.NullOutputStream;
+import org.openspice.tools.SetOfBoolean;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.net.URI;
 import java.io.*;
 
-public class FtpVFile extends AbsFtpVItem implements VFile {
+public class FtpVFile extends PathAbsVFile implements VFile {
 
 	protected Codec codec() {
 		return FileNameCodec.FILE_NAME_CODEC;
 	}
 
-	public static final FtpVFile make( final URI uri, final FtpVVolume vvol, final boolean null_allowed ) {
-		final FTPClient ftpc = vvol.getConnectedFTPClient();
-		try {
-			final FTPFile[] files = ftpc.listFiles( uri.getPath() );
-			if ( files.length != 1 ) {
-				if ( null_allowed ) return null;
-				throw new Alert( "Cannot determine this URI is a file" ).culprit(  "URI", uri ).mishap();
-			} else {
-				return new FtpVFile( uri, vvol );
-			}
-		} catch ( IOException e ) {
-			if ( null_allowed ) return null;
-			throw new RuntimeException( e );
+	protected String getPath() {
+		return this.path;
+	}
+
+	protected String getName() {
+		return FtpTools.getName( this.path );
+	}
+
+	protected String getParentPath() {
+		return FtpTools.getParentPath( this.path );
+	}
+
+
+//	public static final FtpVFile make( final FtpVVolume vvol, final String path, final SetOfBoolean if_exists, final boolean create_if_needed ) {
+//		final FTPClient ftpc = vvol.getConnectedFTPClient();
+//		boolean exists = false;
+//		try {
+//			final FTPFile[] files = ftpc.listFiles( path );
+//			if ( files.length == 1 ) {
+//				exists = true;
+//			} else if ( files.length > 1 ) {
+//				throw new Alert( "Cannot determine this path is a file" ).culprit(  "path", path ).mishap();
+//			}
+//		} catch ( IOException e ) {
+//			throw new RuntimeException( e );
+//		}
+//		if ( !if_exists.contains( exists ) ) {
+//			throw new Alert( exists ? "File already exists" : "File does not exist" ).culprit( "file", path ).mishap();
+//		} else if ( exists ) {
+//			return new FtpVFile( vvol, path );
+//		} else {
+//			if ( create_if_needed ) {
+//				throw new RuntimeException( "tbd" ); 	//	todo: to be defined
+//			} else {
+//				return null;
+//			}
+//		}
+//	}
+
+	static final FtpVFile make(  final FtpVVolume fvol, final String path  ) {
+//		final FTPClient ftpc = fvol.getConnectedFTPClient();
+		final boolean file_exists = FtpTools.fileExists( fvol, path );
+		if ( file_exists ) {
+			return new FtpVFile( fvol, path );
+		} else {
+			throw new Alert( "File does not exist" ).culprit( "path", path ).mishap();
 		}
 	}
 
-	static final FtpVFile uncheckedMake( final URI uri, final FtpVVolume vvol ) {
-		return new FtpVFile( uri, vvol );
+	static final FtpVFile uncheckedMake( final FtpVVolume fvol, final String path ) {
+		return new FtpVFile( fvol, path );
 	}
 
-	private FtpVFile( final URI uri, final FtpVVolume vvol ) {
-		super( uri, vvol );
+	final FtpVVolume fvol;
+	final String path;
+
+	private FtpVFile( FtpVVolume fvol, String path ) {
+		this.fvol = fvol;
+		this.path = path;
 	}
 
 	protected char separator() {
@@ -69,14 +108,14 @@ public class FtpVFile extends AbsFtpVItem implements VFile {
 
 	public Reader readContents() {
 		if ( Print.wouldPrint( Print.FTP ) ) {
-			Print.println( "Trying to read contents of file " + this.uri );
-			Print.println( "path = " + this.uri.getPath() );
+			Print.println( "Trying to read contents of file " + this.path );
+			Print.println( "path = " + this.path );
 		}
-		final FTPClient ftpc = this.getConnectedFTPClient();
+		final FTPClient ftpc = this.fvol.getConnectedFTPClient();
 		Print.println( Print.FTP,  "Connected .... " );
 		try {
 			final ByteArrayOutputStream output = new ByteArrayOutputStream();
-			if ( ftpc.retrieveFile( this.uri.getPath(), output ) ) {
+			if ( ftpc.retrieveFile( this.path, output ) ) {
 				final String s  = new String( output.toByteArray() );
 				if ( Print.wouldPrint( Print.FTP ) ) {
 					Print.println( "Got file: " + s.length() );
@@ -87,7 +126,7 @@ public class FtpVFile extends AbsFtpVItem implements VFile {
 				return new InputStreamReader( new ByteArrayInputStream( output.toByteArray() ) );
 			} else {
 				if ( Print.wouldPrint( Print.FTP ) ) Print.println( "reply code = " + ftpc.getReplyCode() );
-				new Alert( "Cannot retrieve file from FTP server" ).culprit( "file", this.uri ).mishap();
+				new Alert( "Cannot retrieve file from FTP server" ).culprit( "file", this.path ).mishap();
 			}
 			return new StringReader( "" );
 		} catch ( IOException e ) {
@@ -113,7 +152,7 @@ public class FtpVFile extends AbsFtpVItem implements VFile {
 	}
 
 	public VFileRef getVFileRef() {
-		return new FtpVFileRef( this.uri, this.vvol );
+		return new FtpVFileRef( this.fvol, this.path );
 	}
 
 }

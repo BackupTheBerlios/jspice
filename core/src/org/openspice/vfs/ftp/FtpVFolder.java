@@ -18,61 +18,65 @@
  */
 package org.openspice.vfs.ftp;
 
-import org.openspice.vfs.VFolder;
-import org.openspice.vfs.VFile;
-import org.openspice.vfs.VFolderRef;
-import org.openspice.vfs.VFileRef;
-import org.openspice.vfs.codec.FileNameCodec;
+import org.openspice.vfs.*;
 import org.openspice.vfs.codec.FolderNameCodec;
 import org.openspice.vfs.codec.Codec;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.tools.SetOfBoolean;
+import org.openspice.tools.ImmutableSetOfBoolean;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.io.Reader;
 import java.io.IOException;
 
-public class FtpVFolder extends AbsFtpVItem implements VFolder {
+public class FtpVFolder extends PathAbsVFolder implements VFolder {
 
 	protected Codec codec() {
 		return FolderNameCodec.FOLDER_NAME_CODEC;
 	}
 
-	public static final FtpVFolder make( final URI uri, final FtpVVolume vvol, final boolean null_allowed ) {
-		final FTPClient ftpc = vvol.getConnectedFTPClient();
-		try {
-			if ( ftpc.changeWorkingDirectory( uri.getPath() ) ) {
-				return new FtpVFolder( uri, vvol );
-			} else {
-				if ( null_allowed )return null;
-				throw new Alert( "Could not verify URI is directory" ).culprit( "URI", uri ).mishap();
-			}
-		} catch ( IOException e ) {
-			if ( null_allowed ) return null;
-			throw new RuntimeException( e );
+	protected String getPath() {
+		return this.path;
+	}
+
+	protected String getName() {
+		return FtpTools.getName( this.path );
+	}
+
+	protected String getParentPath() {
+		return FtpTools.getParentPath( this.path );
+	}
+
+	public static final FtpVFolder make( final FtpVVolume fvol, final String path ) {
+		if ( FtpTools.folderExists( fvol, path ) ) {
+			return new FtpVFolder( fvol, path );
+		} else {
+			throw new Alert( "Cannot verify folder exists" ).culprit( "path", path ).mishap();
 		}
 	}
 
-	private FtpVFolder( final URI uri, final FtpVVolume vvol ) {
-		super( uri, vvol );
+	public static final FtpVFolder uncheckedMake( final FtpVVolume fvol, final String path ) {
+		return new FtpVFolder( fvol, path );
+	}
+
+	private FtpVVolume fvol;
+	private String path;
+
+	private FtpVFolder( final FtpVVolume vvol, final String path ) {
+		this.fvol = vvol;
+		this.path = path;
 	}
 
 	public VFolder newVFolder( String nam, String ext ) {
-		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( this.uri.toString(), nam, ext );
-		try {
-			return new FtpVFolder( new URI( name ), this.vvol );
-		} catch ( URISyntaxException e ) {
-			throw new RuntimeException( e );
-		}
+		return this.getVFolderRef().getVFolderRef( nam, ext ).getVFolder( ImmutableSetOfBoolean.ONLY_FALSE, true );
 	}
 
 	public VFile newVFile( final String nam, final String ext, Reader contents ) {
-		final String name = FileNameCodec.FILE_NAME_CODEC.encode( this.uri.toString(), nam, ext );
-		throw new RuntimeException( "tbd" ); 	//	todo: to be defined
+		return this.getVFolderRef().getVFileRef( nam, ext ).getVFile( ImmutableSetOfBoolean.ONLY_FALSE, true );
 	}
 
 	public void delete() {
@@ -81,25 +85,19 @@ public class FtpVFolder extends AbsFtpVItem implements VFolder {
 
 	private List list( final boolean want_folders, final boolean want_files ) {
 		try {
-			final FTPClient ftpc = this.getConnectedFTPClient();
+			final FTPClient ftpc = this.fvol.getConnectedFTPClient();
 			final FTPFile[] files = ftpc.listFiles();
 			final List answer = new ArrayList();
 			for ( int i = 0; i < files.length; i++ ) {
 				final FTPFile file = files[ i ];
 				if ( want_folders && file.isDirectory() ) {
-					final String[] namext = FolderNameCodec.FOLDER_NAME_CODEC.decode( file.getName() );
-					final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( this.uri.toString(), namext[0], namext[1] );
-					answer.add( new FtpVFolder( new URI( name ), this.vvol ) );
+					answer.add( new FtpVFolder( this.fvol, FtpTools.folderName( this.path, file.getName() ) ) );
 				} else if ( want_files && file.isFile() ) {
-					final String[] namext = FileNameCodec.FILE_NAME_CODEC.decode( file.getName() );
-					final String name = FileNameCodec.FILE_NAME_CODEC.encode( this.uri.toString(), namext[0], namext[1] );
-					answer.add( FtpVFile.uncheckedMake( new URI( this.uri.toString() + file.getName() ), this.vvol ) );
+					answer.add( FtpVFile.uncheckedMake( this.fvol, FtpTools.fileName( this.path, file.getName() ) ) );
 				}
 			}
 			return answer;
 		} catch ( IOException e ) {
-			throw new RuntimeException( e );
-		} catch ( URISyntaxException e ) {
 			throw new RuntimeException( e );
 		}
 	}
@@ -116,44 +114,8 @@ public class FtpVFolder extends AbsFtpVItem implements VFolder {
 		return this.list( false, true );
 	}
 
-	public VFolder getVFolder( final String nam, final String ext ) {
-		try {
-			final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( this.uri.toString(), nam, ext );
-			return FtpVFolder.make( new URI( name ), this.vvol, true );
-		} catch ( URISyntaxException e ) {
-			throw new RuntimeException( e );
-		}
-	}
-
-	public VFile getVFile( final String nam, final String ext ) {
-		try {
-			final String name = FileNameCodec.FILE_NAME_CODEC.encode( this.uri.toString(), nam, ext );
-			return FtpVFile.make( new URI( name ), this.vvol, true );
-		} catch ( URISyntaxException e ) {
-			throw new RuntimeException( e );
-		}
-	}
-
-	public VFolderRef getVFolderRef( String nam, String ext ) {
-		try {
-			final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( this.uri.toString(), nam, ext );
-			return new FtpVFolderRef( new URI( name ), this.vvol );
-		} catch ( URISyntaxException e ) {
-			throw new RuntimeException( e );
-		}
-	}
-
-	public VFileRef getVFileRef( String nam, String ext ) {
-		try {
-			final String name = FileNameCodec.FILE_NAME_CODEC.encode( this.uri.toString(), nam, ext );
-			return new FtpVFileRef( new URI( name ), this.vvol );
-		} catch ( URISyntaxException e ) {
-			throw new RuntimeException( e );
-		}
-	}
-
 	public VFolderRef getVFolderRef() {
-		return new FtpVFolderRef( this.uri, this.vvol );
+		return new FtpVFolderRef( this.fvol, this.path );
 	}
 
 }

@@ -245,7 +245,7 @@ public class NameSpace {
 				for ( Iterator jt = d.listVItems().iterator(); jt.hasNext(); ) {
 					final VItem f = (VItem)jt.next();
 					if ( this.getSuperLoader().couldLoadVItem( f ) ) {
-						Print.println( Print.AUTOLOAD, "autoloadable file: " + f.getFullName() );
+						Print.println( Print.AUTOLOAD, "autoloadable file: " + f );
 						this.addAutoloadable( f, facet, f.getNam() );
 					}
 				}

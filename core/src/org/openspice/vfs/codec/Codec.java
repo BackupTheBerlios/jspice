@@ -20,10 +20,38 @@ package org.openspice.vfs.codec;
 
 public interface Codec {
 
-	String encode( String previous, String nam, String ext );
+//	/**
+//	 * Composes path + NAM + EXT components into a path
+//	 * @param previous
+//	 * @param nam
+//	 * @param ext
+//	 * @return
+//	 */
+//	String encodePath( String previous, String nam, String ext );
+
+	/**
+	 * Composes NAM and EXT components into an item.
+	 * @param nam
+	 * @param ext
+	 * @return
+	 */
 	String encode( String nam, String ext );
+
+	/**
+	 * Decomposes an item into its NAM + EXT components.
+	 * @param name
+	 * @return
+	 */
 	String[] decode( String name );
 	String decodeNam( String name );
 	String decodeExt( String name );
+
+//	/**
+//	 * Decomposes a path into a NAM + EXT + path
+//	 */
+//	String[] decodePath( String path );
+//	String decodePathNam( String path );
+//	String decodePathExt( String path );
+//	String decodePathPath( String path );
 
 }

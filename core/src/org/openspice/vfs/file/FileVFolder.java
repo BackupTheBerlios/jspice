@@ -28,17 +28,39 @@ import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class FileVFolder extends AbsFileVItem implements VFolder {
+public class FileVFolder extends PathAbsVFolder implements VFolder {
 
 	protected Codec codec() {
 		return FolderNameCodec.FOLDER_NAME_CODEC;
 	}
 
-	FileVFolder( final File file ) {
-		super( file );
-		if ( !this.file.isDirectory() ) {
+	protected String getPath() {
+		return this.file.getPath();
+	}
+
+	protected String getName() {
+		return this.file.getName();
+	}
+
+	protected String getParentPath() {
+		return this.file.getParent();
+	}
+
+	private File file;
+
+	private FileVFolder( final File file ) {
+		this.file = file;
+	}
+
+	public static final FileVFolder make( final File file ) {
+		if ( !file.isDirectory() ) {
 			throw new RuntimeException( "directory needed: " + file );
 		}
+		return new FileVFolder( file );
+	}
+
+	public static final FileVFolder uncheckedMake( final File file ) {
+		return new FileVFolder( file );
 	}
 
 	public List listVFolders() {
@@ -70,7 +92,7 @@ public class FileVFolder extends AbsFileVItem implements VFolder {
 		);
 		final List list = new ArrayList();
 		for ( int i = 0; i < files.length; i++ ) {
-			list.add( new FileVFile( files[ i ] ) );
+			list.add( FileVFile.uncheckedMake( files[ i ] ) );
 		}
 		return list;
 	}
@@ -88,61 +110,9 @@ public class FileVFolder extends AbsFileVItem implements VFolder {
 		final List list = new ArrayList();
 		for ( int i = 0; i < files.length; i++ ) {
 			final File file = files[ i ];
-			list.add( file.isFile() ? (VItem)new FileVFile( file ) : (VItem)new FileVFolder( file ) );
+			list.add( file.isFile() ? (VItem)FileVFile.uncheckedMake( file ) : (VItem)FileVFolder.uncheckedMake( file ) );
 		}
 		return list;
-	}
-
-
-	public VFolder newVFolder( final String nam, final String ext ) {
-		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( nam, ext );
-		final File d = new File( this.file, name );
-		if ( d.mkdir() ) {
-			return new FileVFolder( d );
-		} else {
-			throw new RuntimeException( "Filed to create directory: " + d );
-		}
-	}
-
-	public VFile newVFile( final String nam, final String ext, final Reader reader ) {
-		final String name = FileNameCodec.FILE_NAME_CODEC.encode( nam, ext );
-		final File f = new File( this.file, name );
-		if ( f.exists() ) {
-			throw new RuntimeException( "file already exists: " + f );
-		} else {
-			try {
-				ReaderWriterTools.readerToWriter( reader, new FileWriter( f ) );
-			} catch ( IOException e ) {
-				throw new RuntimeException( e );
-			}
-		}
-		return new FileVFile( f );
-	}
-
-	public VFolder getVFolder( final String nam, String ext ) {
-		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( nam, ext );
-		final File file = new File( this.file, name );
-		if ( !file.isDirectory() ) return null;
-		return new FileVFolder( file );
-	}
-
-	public VFile getVFile( String nam, String ext ) {
-		final String name = FileNameCodec.FILE_NAME_CODEC.encode( nam, ext );
-		final File file = new File( this.file, name );
-		if ( !file.exists() ) return null;
-		return new FileVFile( file );
-	}
-
-	public VFolderRef getVFolderRef( String nam, String ext ) {
-		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( nam, ext );
-		final File file = new File( this.file, name );
-		return new FileVFolderRef( file );
-	}
-
-	public VFileRef getVFileRef( String nam, String ext ) {
-		final String name = FileNameCodec.FILE_NAME_CODEC.encode( nam, ext );
-		final File file = new File( this.file, name );
-		return new FileVFileRef( file );
 	}
 
 	public VFolderRef getVFolderRef() {

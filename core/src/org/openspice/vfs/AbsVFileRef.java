@@ -18,26 +18,29 @@
  */
 package org.openspice.vfs;
 
+import org.openspice.tools.ImmutableSetOfBoolean;
+import org.openspice.tools.SetOfBoolean;
+
 import java.io.Reader;
 
 public abstract class AbsVFileRef implements VFileRef {
 
 	public Reader readContents() {
-		final VFile vfile = this.getVFile();
+		final VFile vfile = this.getVFile( ImmutableSetOfBoolean.EITHER, false );
 		if ( vfile == null ) return null;
 		return vfile.readContents();
 	}
 
-	public VItem getVItem() {
-		return this.getVFile();
+	public final VItem getVItem( final SetOfBoolean if_exists, final boolean create_if_needed ) {
+		return this.getVFile( if_exists, create_if_needed );
 	}
 
 
-	public boolean isVFileRef() {
+	public final boolean isVFileRef() {
 		return true;
 	}
 
-	public boolean isVFolderRef() {
+	public final boolean isVFolderRef() {
 		return false;
 	}
 	

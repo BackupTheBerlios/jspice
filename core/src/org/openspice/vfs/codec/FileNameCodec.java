@@ -28,4 +28,8 @@ public class FileNameCodec extends AbsCodec {
 
 	public static final FileNameCodec FILE_NAME_CODEC = new FileNameCodec();
 
+//	public String encodePath( final String previous, final String nam, final String ext ) {
+//		return previous + encode( nam, ext );
+//	}
+
 }

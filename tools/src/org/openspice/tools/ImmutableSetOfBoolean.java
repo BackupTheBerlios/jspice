@@ -16,20 +16,32 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.vfs;
+package org.openspice.tools;
 
-import org.openspice.tools.SetOfBoolean;
+import java.util.Set;
+import java.util.AbstractSet;
+import java.util.Iterator;
 
-public interface VFolderRef extends VItemRef {
+public class ImmutableSetOfBoolean extends AbsSetOfBoolean implements SetOfBoolean {
 
-	VFolder getVFolder( SetOfBoolean if_exists, boolean create_if_needed );
-	VFileRef getVFileRef( final String nam,  final String ext );
-	VFolderRef getVFolderRef( final String nam,  final String ext );
+	private final int state;
 
-	VFolderRef getVFolderRefFromPath( String path );
-	VFileRef getVFileRefFromPath( String path );
-	VFolder getVFolderFromPath( String path );
-	VFile getVFileFromPath( String path );
+	public ImmutableSetOfBoolean( final int state ) {
+		this.state = state;
+	}
 
-	VItem getVItemFromPath( String path );
+	public int getState() {
+		return state;
+	}
+
+	protected final Object clone() throws CloneNotSupportedException {
+		return new ImmutableSetOfBoolean( this.getState() );
+	}
+
+
+	public static final ImmutableSetOfBoolean NEITHER = new ImmutableSetOfBoolean( 0 );
+	public static final ImmutableSetOfBoolean ONLY_FALSE = new ImmutableSetOfBoolean( 1 );
+	public static final ImmutableSetOfBoolean ONLY_TRUE = new ImmutableSetOfBoolean( 2 );
+	public static final ImmutableSetOfBoolean EITHER = new ImmutableSetOfBoolean( 3 );
+
 }

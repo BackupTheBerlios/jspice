@@ -16,17 +16,20 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.vfs.ftp;
+package org.openspice.vfs.zip;
 
-
+import org.openspice.vfs.VItemRef;
+import org.openspice.vfs.VItem;
+import org.openspice.vfs.codec.Codec;
 import org.openspice.jspice.conf.FixedConf;
-import org.openspice.jspice.alert.Alert;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.io.IOException;
 
-public abstract class FtpTools {
+public abstract class ZipTools {
 
 	public static final String folderName( final String path, final String name ) {
 		return path + name + FixedConf.VFOLDER_TERMINATOR;
@@ -52,37 +55,6 @@ public abstract class FtpTools {
 		} else {
 			return path.substring( 0, n );
 		}
-	}
-
-	public static final boolean folderExists( final FTPClient ftpc, final String path ) {
-		try {
-			return ftpc.changeWorkingDirectory( path );
-		} catch ( Exception e ) {
-			throw new RuntimeException( e );
-		}
-	}
-
-	public static final boolean folderExists( final FtpVVolume fvol, final String path ) {
-		return folderExists( fvol.getConnectedFTPClient(), path );
-	}
-
-	public static final boolean fileExists( final FtpVVolume fvol, final String path ) {
-		return fileExists( fvol.getConnectedFTPClient(), path );
-	}
-	
-	public static final boolean fileExists( final FTPClient ftpc, final String path ) {
-		boolean exists = false;
-		try {
-			final FTPFile[] files = ftpc.listFiles( path );
-			if ( files.length == 1 ) {
-				exists = true;
-			} else if ( files.length > 1 ) {
-				throw new Alert( "Cannot determine this path is a file" ).culprit(  "path", path ).mishap();
-			}
-		} catch ( IOException e ) {
-			throw new RuntimeException( e );
-		}
-		return exists;
 	}
 
 }

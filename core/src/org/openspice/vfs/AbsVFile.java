@@ -18,18 +18,5 @@
  */
 package org.openspice.vfs;
 
-import org.openspice.tools.SetOfBoolean;
-
-public interface VFolderRef extends VItemRef {
-
-	VFolder getVFolder( SetOfBoolean if_exists, boolean create_if_needed );
-	VFileRef getVFileRef( final String nam,  final String ext );
-	VFolderRef getVFolderRef( final String nam,  final String ext );
-
-	VFolderRef getVFolderRefFromPath( String path );
-	VFileRef getVFileRefFromPath( String path );
-	VFolder getVFolderFromPath( String path );
-	VFile getVFileFromPath( String path );
-
-	VItem getVItemFromPath( String path );
+public abstract class AbsVFile extends AbsVItem implements VFile {
 }

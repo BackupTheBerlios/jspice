@@ -20,32 +20,32 @@ package org.openspice.vfs;
 
 import org.openspice.tools.ImmutableSetOfBoolean;
 
-public abstract class AbsVVolume implements VVolume {
+import java.io.Reader;
 
-	public abstract VFolderRef getRootVFolderRef();
+public abstract class AbsVFolder extends AbsVItem implements VFolder {
 
-	public VFolder getRootVFolder() {
-		return this.getRootVFolderRef().getVFolder( ImmutableSetOfBoolean.EITHER, false );
+	public VFolder newVFolder( String nam, String ext ) {
+		return this.getVFolderRef( nam, ext ).getVFolder( ImmutableSetOfBoolean.ONLY_FALSE, true );
 	}
 
-	public VFolderRef getVFolderRefFromPath( final String path ) {
-		return this.getRootVFolderRef().getVFolderRefFromPath( path );
+	public VFile newVFile( String nam, String ext, Reader contents ) {
+		return this.getVFileRef( nam, ext ).getVFile( ImmutableSetOfBoolean.ONLY_FALSE, true );
 	}
 
-	public VFileRef getVFileRefFromPath( String path ) {
-		return this.getRootVFolderRef().getVFileRefFromPath( path );
+	public VFolder getVFolder( final String nam, String ext ) {
+		return this.getVFolderRef( nam, ext ).getVFolder( ImmutableSetOfBoolean.EITHER, false );
 	}
 
-	public VFolder getVFolderFromPath( String path ) {
-		return this.getRootVFolderRef().getVFolderFromPath( path );
+	public VFile getVFile( String nam, String ext ) {
+		return this.getVFileRef( nam, ext ).getVFile( ImmutableSetOfBoolean.EITHER, false );
 	}
 
-	public VFile getVFileFromPath( String path ) {
-		return this.getRootVFolderRef().getVFileFromPath( path );
+	public VFolderRef getVFolderRef( String nam, String ext ) {
+		return this.getVFolderRef().getVFolderRef( nam, ext );
 	}
 
-	public VItem getVItemFromPath( String path ) {
-		return this.getRootVFolderRef().getVItemFromPath( path );
+	public VFileRef getVFileRef( String nam, String ext ) {
+		return this.getVFolderRef().getVFileRef( nam, ext );
 	}
 
 }

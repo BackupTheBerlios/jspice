@@ -18,34 +18,29 @@
  */
 package org.openspice.vfs;
 
-import org.openspice.tools.ImmutableSetOfBoolean;
+import org.openspice.vfs.codec.Codec;
 
-public abstract class AbsVVolume implements VVolume {
+public abstract class PathAbsVFile extends AbsVFile implements VFile {
 
-	public abstract VFolderRef getRootVFolderRef();
+	abstract protected Codec codec();
+	abstract protected String getPath();
+	abstract protected String getName();
+	abstract protected String getParentPath();
 
-	public VFolder getRootVFolder() {
-		return this.getRootVFolderRef().getVFolder( ImmutableSetOfBoolean.EITHER, false );
+	public String getNam() {
+		return this.codec().decodeNam( this.getName() );
 	}
 
-	public VFolderRef getVFolderRefFromPath( final String path ) {
-		return this.getRootVFolderRef().getVFolderRefFromPath( path );
+	public String getExt() {
+		return this.codec().decodeExt( this.getName() );
 	}
 
-	public VFileRef getVFileRefFromPath( String path ) {
-		return this.getRootVFolderRef().getVFileRefFromPath( path );
+	public Comparable getUniqueID() {
+		return this.getPath();
 	}
 
-	public VFolder getVFolderFromPath( String path ) {
-		return this.getRootVFolderRef().getVFolderFromPath( path );
-	}
-
-	public VFile getVFileFromPath( String path ) {
-		return this.getRootVFolderRef().getVFileFromPath( path );
-	}
-
-	public VItem getVItemFromPath( String path ) {
-		return this.getRootVFolderRef().getVItemFromPath( path );
+	public String toString() {
+		return "VFILE(" + this.getPath() +")";
 	}
 
 }

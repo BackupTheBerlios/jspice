@@ -18,8 +18,10 @@
  */
 package org.openspice.vfs;
 
+import org.openspice.tools.SetOfBoolean;
+
 public interface VItemRef {
-	VItem getVItem();
+	VItem getVItem( SetOfBoolean if_exists, boolean create_if_needed );
 	boolean isVFileRef();
 	boolean isVFolderRef();
 	boolean exists();

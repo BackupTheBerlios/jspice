@@ -35,7 +35,7 @@ public final class LoadPragma {
 			final String fname = (String)it.next();
 			final File f = new File( fname );
 			if ( f.exists() ) {
-				final VFile vfile = new FileVVolume().getVFileFromFile( new File( fname ) );
+				final VFile vfile = FileVVolume.getVFile( new File( fname ) );
 				new Interpreter( interpreter.getCurrentNameSpace() ).loadVFile( vfile );
 			} else {
 				new Alert( "Cannot find file" ).culprit( "file", f ).warning();

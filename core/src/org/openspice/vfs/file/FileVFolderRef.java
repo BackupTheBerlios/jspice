@@ -22,6 +22,8 @@ import org.openspice.vfs.*;
 import org.openspice.vfs.codec.FileNameCodec;
 import org.openspice.vfs.codec.FolderNameCodec;
 import org.openspice.vfs.codec.Codec;
+import org.openspice.jspice.alert.Alert;
+import org.openspice.tools.SetOfBoolean;
 
 import java.io.File;
 
@@ -41,12 +43,25 @@ public class FileVFolderRef extends AbsVFolderRef implements VFolderRef {
 		this.file = file;
 	}
 
-	public VFolder getVFolder() {
-		return new FileVFolder( this.file );
-	}
-
-	public VItem getVItem() {
-		return this.getVFolder();
+	public VFolder getVFolder( final SetOfBoolean if_exists, final boolean create_if_needed ) {
+		if ( !if_exists.isFull() ) {
+			final boolean is_dir = this.file.isDirectory();
+			if ( ! if_exists.contains( is_dir ) ) {
+				new Alert( is_dir ? "Directory already exists" : "Directory needed" ).culprit(  "file", this.file ).mishap();
+			}
+		}
+		if ( create_if_needed ) {
+			if ( !this.file.exists() ) {
+				if ( !this.file.mkdir() ) {
+					new Alert( "Could not create new directory" ).culprit( "path", this.file ).mishap();
+				}
+			}
+		}
+		if ( this.file.isDirectory() ) {
+			return FileVFolder.make( this.file );
+		} else {
+			return null;
+		}
 	}
 
 	public VFileRef getVFileRef( final String nam, final String ext ) {
@@ -59,16 +74,33 @@ public class FileVFolderRef extends AbsVFolderRef implements VFolderRef {
 		return new FileVFolderRef( new File( this.file, name ) );
 	}
 
-	public boolean isVFileRef() {
-		return false;
-	}
-
-	public boolean isVFolderRef() {
-		return true;
-	}
-
 	public boolean exists() {
 		return this.file.exists();
 	}
-	
+
+	//	public VFolder newVFolder( final String nam, final String ext ) {
+//		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( nam, ext );
+//		final File d = new File( this.file, name );
+//		if ( d.mkdir() ) {
+//			return new FileVFolder( d );
+//		} else {
+//			throw new RuntimeException( "Filed to create directory: " + d );
+//		}
+//	}
+//
+//	public VFile newVFile( final String nam, final String ext, final Reader reader ) {
+//		final String name = FileNameCodec.FILE_NAME_CODEC.encode( nam, ext );
+//		final File f = new File( this.file, name );
+//		if ( f.exists() ) {
+//			throw new RuntimeException( "file already exists: " + f );
+//		} else {
+//			try {
+//				ReaderWriterTools.readerToWriter( reader, new FileWriter( f ) );
+//			} catch ( IOException e ) {
+//				throw new RuntimeException( e );
+//			}
+//		}
+//		return FileVFile.make( f );
+//	}
+
 }

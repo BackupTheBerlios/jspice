@@ -117,6 +117,11 @@ public final class XmlElement extends SpiceObject {
 		for ( Iterator it = set.iterator(); it.hasNext(); ) {
 			final Map.Entry e = (Map.Entry)it.next();
 			cuchar.out( ' ' );
+			if (!(e.getKey() instanceof Symbol)) {
+				System.err.println( this.attributes );
+				System.err.println( "key = '" + e.getKey() + "' (" + e.getKey().getClass().getName() + ")" );
+				System.err.println( "val = '" + e.getValue() + "' (" + e.getValue().getClass().getName() + ")" );
+			}
 			cuchar.outCharSequence( ((Symbol)e.getKey()).getInternedString() );
 			cuchar.out( '=' );
 			PrintTools.show( e.getValue() );
@@ -210,7 +215,7 @@ public final class XmlElement extends SpiceObject {
 		for ( int i = 0; i < len; i++ ) {
 			final String localName = attributes.getLocalName( i );
 			final String value = attributes.getValue( i );
-			map.put( localName, value );
+			map.put( Symbol.make( localName ), value );
 		}
 		return map;
 	}

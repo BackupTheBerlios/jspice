@@ -77,7 +77,7 @@ public class CommandLineBoxServlet extends HttpServlet {
 		String message;
 		if ( activity == null ) {
 			//	Horrible, horrible hack to get the test code started.
-			final VFile game_file = new FileVVolume().getVFileFromFile( new File( "inventory/tads2-pkg/public-auto/ccr.gam" ) );
+			final VFile game_file = FileVVolume.getVFile( new File( "inventory/tads2-pkg/public-auto/ccr.gam" ) );
 			activity = new CuteActivity( new GameBox( game_file ) );
 			session.setAttribute( attr, activity );
 			activity.start();
@@ -97,7 +97,7 @@ public class CommandLineBoxServlet extends HttpServlet {
 			out.println( "</pre>");
 			if ( ! activity.isShutdown() ) {
 				out.println( "<hr>" );
-				out.println( "<form method=\"post\" action=\"hello\">" );
+				out.println( "<form method=\"post\" action=\"ccr\">" );
 				out.println( "command: <input type=\"text\" name=\"command\">" );
 				out.println( "</form>" );
 			}

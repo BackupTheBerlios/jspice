@@ -18,9 +18,11 @@
  */
 package org.openspice.vfs;
 
+import org.openspice.tools.SetOfBoolean;
+
 import java.io.Reader;
 
 public interface VFileRef extends VItemRef {
-	VFile getVFile();
+	VFile getVFile( SetOfBoolean if_exists, boolean create_if_needed );
 	Reader readContents();
 }
