@@ -1,4 +1,6 @@
 package org.openspice.jspice.datatypes;
+import org.openspice.jspice.datatypes.elements.XmlElement;
+
 import java.util.*;
 
 /**

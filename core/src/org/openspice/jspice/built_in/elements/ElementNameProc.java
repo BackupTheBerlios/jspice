@@ -21,12 +21,20 @@ package org.openspice.jspice.built_in.elements;
 import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
 import org.openspice.jspice.lib.CastLib;
 
-public class TagNameProc extends Unary1InvokeProc {
+public class ElementNameProc extends Unary1InvokeProc {
+
+	{
+		setDescription(
+			"elementName",
+			"%p( element ) -> symbol",
+			"returns the name of an element as a symbol"
+		);
+	}
 
 	public Object invoke( final Object x ) {
 		return CastLib.toXmlElement( x ).getTypeSymbol();
 	}
 
-	public static final TagNameProc TAG_NAME_PROC = new TagNameProc();
+	public static final ElementNameProc ELEMENT_NAME_PROC = new ElementNameProc();
 
 }

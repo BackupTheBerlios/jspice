@@ -16,32 +16,24 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.loader;
+package org.openspice.jspice.built_in.elements;
 
-import org.openspice.jspice.namespace.NameSpace;
-import org.openspice.jspice.datatypes.elements.XmlElement;
-import org.openspice.vfs.VItem;
-import org.openspice.vfs.VFile;
+import org.openspice.jspice.datatypes.proc.Unary1FastProc;
+import org.openspice.jspice.vm_and_compiler.VM;
+import org.openspice.jspice.lib.CastLib;
 
-import java.io.*;
+public class ElementChildrenProc extends Unary1FastProc {
 
-public class XmlLoaderBuilder extends ValueLoaderBuilder {
-
-	static final class XmlLoader extends ValueLoader {
-
-		private XmlLoader( final ValueLoaderBuilder vlb, final NameSpace ns ) {
-			super( vlb, ns );
-		}
-
+	{
+		setDescription(
+			"elementChildren",
+			"%p( element ) -> list",
+			"returns the children of an element as a list"
+		);
 	}
 
-	public ValueLoader newValueLoader( final NameSpace current_ns ) {
-		return new XmlLoaderBuilder.XmlLoader( this, current_ns );
-	}
-
-
-	public Object loadValueFromVFile( final VFile file ) throws IOException {
-		return XmlElement.readXmlElement( file.inputStreamContents() );
+	public Object fastCall( Object tos, VM vm, int nargs ) {
+		return CastLib.toXmlElement( tos ).getChildren();
 	}
 
 }

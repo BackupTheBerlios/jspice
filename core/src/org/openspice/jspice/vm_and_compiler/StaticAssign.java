@@ -77,7 +77,11 @@ final class StaticAssign extends ExprVisitor.DefaultUnreachable implements Clone
 			return null;
 		}
 	}
-	
+
+	public Object visitInitExpr( final InitExpr expr, final Object _arg ) {
+		return this.visit( expr.getInitExpr(), _arg );
+	}
+
 	public Object visitHelloExpr( final HelloExpr hello_expr, final Object _arg ) {
 		return this.visitNameExpr( hello_expr.getNameExpr(), _arg );
 	}

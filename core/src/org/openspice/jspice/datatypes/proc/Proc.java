@@ -83,6 +83,9 @@ public abstract class Proc extends SpiceObject.NonMap {
 	public void setDescription( final String name, final String signature, final String comment ) {
 		this.name = name;
 		this.signature = signature;
+		if ( signature != null && signature.indexOf( "%p" ) < 0 ) {
+			new Alert( "Missing %p in signature string" ).culprit( "name", name ).culprit( "signature", signature ).warning();
+		}
 		this.comment = comment;
 	}
 

@@ -23,7 +23,7 @@ import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.datatypes.Deferred;
 import org.openspice.jspice.datatypes.SpiceClass;
-import org.openspice.jspice.datatypes.XmlElement;
+import org.openspice.jspice.datatypes.elements.XmlElement;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.tools.Consumer;
 

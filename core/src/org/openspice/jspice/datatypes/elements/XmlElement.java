@@ -1,4 +1,4 @@
-package org.openspice.jspice.datatypes;
+package org.openspice.jspice.datatypes.elements;
 
 import org.openspice.jspice.tools.*;
 import org.openspice.jspice.datatypes.*;
@@ -12,9 +12,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
 import org.openspice.tools.EmptyMap;
-import org.openspice.tools.IntStack;
 
 /**
  *	JSpice, an Open Spice interpreter and library.
@@ -36,16 +34,16 @@ import org.openspice.tools.IntStack;
  */
 
 public final class XmlElement extends SpiceObject {
-    private Symbol name;
-    private Map attributes;
-    private Object[] children;
+    Symbol name;
+	Map attributes;
+    Object[] children;
 	
 	public Symbol getTypeSymbol() {
 		return this.name;
 	}
 	
 	public Map getAttributes() {
-		//	Should we copy?
+		//	Should we copy?  Depends on whether or not this is a mutable element.
 		return this.attributes;
 	}
 	
@@ -162,45 +160,7 @@ public final class XmlElement extends SpiceObject {
 	}
 
 	//	This constructor is private - used by Factory exclusively.
-	private XmlElement() {
-	}
-	
-	static final class Factory {
-		private Symbol name;
-		private TreeMap attributes;
-		private ArrayList children;
-		
-		Factory( final Symbol _name ) {
-			this.name = _name;
-			this.attributes = new TreeMap();
-			this.children  = new ArrayList();
-		}
-		
-		Factory addChild( final Object x ) {
-			this.children.add( x );
-			return this;
-		}
-		
-		Factory addAttribute( final String key, final Object value ) {
-			this.attributes.put( key, value );
-			return this;
-		}
-		
-		XmlElement make() {
-			final XmlElement answer = new XmlElement();
-			answer.name = Symbol.make( this.name.getInternedString() );
-			if ( !this.attributes.isEmpty() ) {
-				answer.attributes = this.attributes;
-			} else {
-				answer.attributes = XmlElement.EMPTY_MAP;
-			}
-			if ( !this.children.isEmpty() ) {
-				answer.children = this.children.toArray();
-			} else {
-				answer.children = XmlElement.EMPTY_ARRAY;
-			}
-			return answer;
-		}
+	XmlElement() {
 	}
 
 
@@ -234,46 +194,6 @@ public final class XmlElement extends SpiceObject {
 		return map;
 	}
 
-	public static class XmlElementHandler extends DefaultHandler {
-		final LinkedList open_stack = new LinkedList();
-		final LinkedList kid_stack = new LinkedList();
-		final IntStack count_stack = new IntStack();
-
-		static final Object[] dummy = new Object[ 0 ];
-
-		public void startElement( final String nameSpace, final String localName, final String fullName, final Attributes attributes ) throws SAXException {
-			this.count_stack.push( this.kid_stack.size() );
-			this.open_stack.addLast( new XmlElement( Symbol.make( fullName ), attributesToMap( attributes ), dummy ) );
-		}
-
-		public void endElement( final String nameSpace, final String localName, final String fullName ) throws SAXException {
-			final int n_kids = this.kid_stack.size() - this.count_stack.pop();
-			final Object[] kids = new Object[ n_kids ];
-			for ( int i = n_kids - 1; i >= 0; i -= 1 ) {
-				kids[ i ] = this.kid_stack.removeLast();
-			}
-			final XmlElement e = (XmlElement)this.open_stack.removeLast();
-			e.children = kids;
-			this.kid_stack.addLast( e );
-		}
-
-		public void characters( final char[] chars, final int offset, final int count ) throws SAXException {
-			this.kid_stack.addLast( new String( chars, offset, count ) );
-		}
-
-		public void processingInstruction( final String s, final String s1 ) throws SAXException {
-			throw new RuntimeException( "tbd" );    // todo:
-		}
-
-		public XmlElement giveItUp() {
-			final XmlElement e = (XmlElement)this.kid_stack.removeLast();
-			assert this.kid_stack.isEmpty();
-			assert this.open_stack.isEmpty();
-			assert this.count_stack.isEmpty();
-			return e;
-		}
-	}
-
 	//	todo:	This is very free with the items it allocates, I suspect.  Review.
 	static public XmlElement readXmlElement( final InputStream inputStream ) {
 		final InputSource inputSrc = new InputSource( inputStream );
@@ -297,4 +217,5 @@ public final class XmlElement extends SpiceObject {
    		adder.add( "attributes", this.attributes );
     	adder.add( "children", this.children );
 	}
+
 }

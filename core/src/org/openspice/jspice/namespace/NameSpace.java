@@ -367,7 +367,7 @@ public class NameSpace {
 		final Var.Perm answer = this.tryFetchUnqualifiedPerm( FacetSet.ALL, id );
 		if ( answer != null ) return answer;
 		new Alert(
-			"Undeclared identfier",
+			"Undeclared variable",
 			"Neither declared locally nor importable"
 		).
 		culprit( "identifier", id ).

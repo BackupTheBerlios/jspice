@@ -1,6 +1,7 @@
 package org.openspice.jspice.datatypes;
 import org.openspice.jspice.lib.AbsentLib;
 import org.openspice.jspice.datatypes.Maplet;
+import org.openspice.jspice.datatypes.elements.XmlElement;
 
 import java.util.*;
 

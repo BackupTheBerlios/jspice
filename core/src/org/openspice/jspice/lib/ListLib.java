@@ -37,7 +37,7 @@ public class ListLib {
 			} else {
 				return ListTools.convertTo( obj ).get( n );
 			}
-		} catch ( java.lang.ArrayIndexOutOfBoundsException e ) {
+		} catch ( java.lang.IndexOutOfBoundsException e ) {
 			throw new Alert( "Index out of bounds" ).culprit(  "item", obj ).culprit( "index", new Integer( n ) ).mishap();
 		}
 	}
@@ -70,46 +70,94 @@ public class ListLib {
 	public static final Object allbutfirst( final Object n, final Object obj ) {
 		final int k = CastLib.to_int( n );
 		if ( obj instanceof List ) {
-			return ListTools.allbutfirst( k, (List)obj );
+			try {
+				return ListTools.allbutfirst( k, (List)obj );
+			} catch ( java.lang.IllegalArgumentException e ) {
+				throw new Alert( e, "Invalid arguments" ).culprit( "number to remove", n ).culprit( "list", obj ).mishap();
+			}
 		} else if ( obj instanceof String ) {
-			return ((String)obj).substring( k );
+			try {
+				return ((String)obj).substring( k );
+			} catch ( java.lang.StringIndexOutOfBoundsException e ) {
+				throw new Alert( e, "Invalid arguments" ).culprit( "number to remove", n ).culprit( "string", obj ).mishap();
+			}
 		} else {
-			return ListTools.convertFrom( ListTools.allbutfirst( k, ListTools.convertTo( obj ) ), obj );
+			try {
+				return ListTools.convertFrom( ListTools.allbutfirst( k, ListTools.convertTo( obj ) ), obj );
+			} catch ( java.lang.IllegalArgumentException e ) {
+				throw new Alert( e, "Invalid arguments" ).culprit( "number to remove", n ).culprit( "list", obj ).mishap();
+			}
 		}
 	}
 
 	public static final Object justfirst( final Object n, final Object seq ) {
 		final int k = CastLib.to_int( n );
 		if ( seq instanceof List ) {
-			return ListTools.justfirst( k, (List)seq );
+			try {
+				return ListTools.justfirst( k, ((List)seq) );
+			} catch ( java.lang.IndexOutOfBoundsException e ) {
+				throw new Alert( e, "Invalid argument" ).culprit( "number to extract", n ).culprit( "list", seq ).mishap();
+			}
 		} else if ( seq instanceof String ) {
-			return ((String)seq).substring( 0, k );
+			try {
+				return ((String)seq).substring( 0, k );
+			} catch ( java.lang.StringIndexOutOfBoundsException e ) {
+				throw new Alert( e, "Invalid arguments" ).culprit( "number to extract", n ).culprit( "string", seq ).mishap();
+			}
 		} else {
-			return ListTools.convertFrom( ListTools.justfirst( k, ListTools.convertTo( seq ) ), seq );
+			try {
+				return ListTools.convertFrom( ListTools.justfirst( k, ListTools.convertTo( seq ) ), seq );
+			} catch ( java.lang.IndexOutOfBoundsException e ) {
+				throw new Alert( e, "Invalid argument" ).culprit( "number to extract", n ).culprit( "list", seq ).mishap();
+			}
 		}
 	}
 
 	public static final Object allbutlast( final Object n, final Object seq ) {
 		final int k = CastLib.to_int( n );
 		if ( seq instanceof List ) {
-			return ListTools.allbutlast( k, (List)seq );
+			try {
+				return ListTools.allbutlast( k, (List)seq );
+			} catch ( java.lang.IllegalArgumentException e ) {
+				throw new Alert( e, "Invalid argument" ).culprit( "number to remove", n ).culprit( "list", seq ).mishap();
+			}
 		} else if ( seq instanceof String ) {
 			final String s = (String)seq;
-			return ((String)seq).substring( 0, s.length() - k );
+			try {
+				return ((String)seq).substring( 0, s.length() - k );
+			} catch ( java.lang.StringIndexOutOfBoundsException e ) {
+				throw new Alert( e, "Invalid argument" ).culprit( "number to remove", n ).culprit( "string", seq ).mishap();
+			}
 		} else {
-			return ListTools.convertFrom( ListTools.allbutlast( k, ListTools.convertTo( seq ) ), seq );
+			try {
+				return ListTools.convertFrom( ListTools.allbutlast( k, ListTools.convertTo( seq ) ), seq );
+			} catch ( java.lang.IllegalArgumentException e ) {
+				throw new Alert( e, "Invalid argument" ).culprit( "number to remove", n ).culprit( "list", seq ).mishap();
+			}
 		}
 	}
 
 	public static final Object justlast( final Object n, final Object seq ) {
 		final int k = CastLib.to_int( n );
 		if ( seq instanceof List ) {
-			return ListTools.justlast( k, (List)seq );
+			try {
+				return ListTools.justlast( k, (List)seq );
+			} catch ( java.lang.IndexOutOfBoundsException e ) {
+				throw new Alert( e, "Invalid argument" ).culprit( "number to extract", n ).culprit( "list", seq ).mishap();
+			}
 		} else if ( seq instanceof String ) {
 			final String s = (String)seq;
-			return s.substring( s.length() - k );
+			try {
+				return s.substring( s.length() - k );
+			} catch ( java.lang.StringIndexOutOfBoundsException e ) {
+				throw new Alert( e, "Invalid argument" ).culprit( "number to extract", n ).culprit( "string", seq ).mishap();
+			}
 		} else {
-			return ListTools.convertFrom( ListTools.justlast( k, ListTools.convertTo( seq ) ), seq );
+			try {
+				return ListTools.convertFrom( ListTools.justlast( k, ListTools.convertTo( seq ) ), seq );
+			} catch ( java.lang.IndexOutOfBoundsException e ) {
+				throw new Alert( e, "Invalid argument" ).culprit( "number to extract", n ).culprit( "list", seq ).mishap();
+			}
 		}
 	}
 

@@ -18,7 +18,7 @@
  */
 package snippets;
 
-import org.openspice.jspice.datatypes.XmlElement;
+import org.openspice.jspice.datatypes.elements.XmlElement;
 
 import javax.xml.transform.*;
 

@@ -5,6 +5,7 @@ import org.openspice.jspice.tools.ListTools;
 import org.openspice.jspice.tools.Consumer;
 import org.openspice.jspice.datatypes.SpiceObject;
 import org.openspice.jspice.built_in.inspect.FieldAdder;
+import org.openspice.jspice.alert.Alert;
 
 import java.util.*;
 
@@ -70,19 +71,23 @@ public class Symbol extends SpiceObject implements Comparable {
 	}
 
 	public List convertToList() {
-		return ListTools.convertTo( this.symbol );
+		throw new Alert( "Cannot convert a symbol to a list" ).culprit( "symbol", this ).mishap();
+//		return ListTools.convertTo( this.symbol );
 	}
 	
 	public SpiceObject convertFromList( final List list ) {
-		return make( (String)ListTools.convertFrom( list, "" ) );
+		throw Alert.unreachable();
+//		return make( (String)ListTools.convertFrom( list, "" ) );
 	}
 	
 	public Map convertToMap() {
-		return MapLib.convertTo( this.symbol );
+		throw new Alert( "Cannot convert a symbol to a map" ).culprit( "symbol", this ).mishap();
+//		return MapLib.convertTo( this.symbol );
 	}
 	
 	public SpiceObject convertFromMap( final Map map ) {
-		return make( (String)MapLib.convertFrom( map, "" ) );
+		throw Alert.unreachable();
+//		return make( (String)MapLib.convertFrom( map, "" ) );
 	}
 
 }

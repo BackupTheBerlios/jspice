@@ -18,7 +18,8 @@
  */
 package org.openspice.jspice.tests;
 
-import org.openspice.jspice.datatypes.XmlElement;
+import org.openspice.jspice.datatypes.elements.XmlElement;
+import org.openspice.jspice.datatypes.elements.XmlElement;
 import org.openspice.jspice.tools.PrintTools;
 import org.w3c.dom.Document;
 

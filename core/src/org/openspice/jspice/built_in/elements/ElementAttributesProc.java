@@ -21,12 +21,20 @@ package org.openspice.jspice.built_in.elements;
 import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
 import org.openspice.jspice.lib.CastLib;
 
-public class AttributeMapProc extends Unary1InvokeProc {
+public class ElementAttributesProc extends Unary1InvokeProc {
+
+	{
+		setDescription(
+			"elementAttributes",
+			"%p( element ) -> map",
+			"returns the attributes of an element as a map"
+		);
+	}
 
 	public Object invoke( final Object x ) {
 		return CastLib.toXmlElement( x ).getAttributes();
 	}
 
-	public static final AttributeMapProc ATTRIBUTE_MAP_PROC = new AttributeMapProc();
+	public static final ElementAttributesProc ELEMENT_ATTRIBUTES_PROC = new ElementAttributesProc();
 
 }

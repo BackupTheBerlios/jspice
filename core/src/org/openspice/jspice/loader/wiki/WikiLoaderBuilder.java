@@ -21,7 +21,9 @@ package org.openspice.jspice.loader.wiki;
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.loader.ValueLoader;
 import org.openspice.jspice.loader.ValueLoaderBuilder;
-import org.openspice.jspice.datatypes.XmlElement;
+import org.openspice.jspice.datatypes.elements.XmlElement;
+import org.openspice.jspice.datatypes.elements.XmlElement;
+import org.openspice.jspice.datatypes.elements.XmlElementHandler;
 import org.openspice.vfs.VFile;
 import org.xml.sax.SAXException;
 
@@ -37,7 +39,7 @@ public class WikiLoaderBuilder extends ValueLoaderBuilder {
 
 	public Object loadValueFromVFile( final VFile file ) {
 		try {
-			final XmlElement.XmlElementHandler h = new XmlElement.XmlElementHandler();
+			final XmlElementHandler h = new XmlElementHandler();
 			new WikiParser( this.getJSpiceConf(), h ).parse( new BufferedReader( file.readContents() ) );
 			return h.giveItUp();
 		} catch ( IOException e ) {
