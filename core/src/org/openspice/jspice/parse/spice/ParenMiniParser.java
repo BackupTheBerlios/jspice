@@ -41,7 +41,15 @@ public final class ParenMiniParser extends Bothfix {
 		if ( parser.tryReadToken( "=|" ) != null ) {
 			return this.defer( parser );
 		} else {
-			return parser.readStmntsTo( ")" );
+			final Expr lhs = parser.readStmnts();
+			if ( parser.tryReadToken( "=>" ) != null || parser.tryReadToken( "as" ) != null ) {
+				final Expr rhs = parser.readStmntsTo( ")" );
+				final Decurrier d = new Decurrier( lhs, rhs ).canonize();
+				return FunMiniParser.make( d );
+			} else {
+				parser.mustReadToken( "=>" );
+				return lhs;
+			}
 		}
 	}
 

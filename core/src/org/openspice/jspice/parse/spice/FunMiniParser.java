@@ -27,12 +27,15 @@ import org.openspice.jspice.expr.cases.ApplyExpr;
 
 public final class FunMiniParser extends Prefix {
 
-	public Expr prefix( final String interned, final Parser parser ) {
-		final Decurrier decurrier = Decurrier.parse( parser, "endfun" );
+	public static final Expr make( final Decurrier decurrier ) {
 		final ApplyExpr app = decurrier.getApp();
 		final Expr body = decurrier.getBody();
 		final LambdaExpr lambda =  LambdaExpr.make( app, body );
 		return lambda;
+	}
+
+	public Expr prefix( final String _interned, final Parser parser ) {
+		return make( Decurrier.parse( parser, "endfun" ) );
 	}
 
 }
