@@ -16,27 +16,20 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.symbols;
 
 import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
 import org.openspice.jspice.datatypes.Symbol;
-import org.openspice.jspice.lib.CastLib;
-import org.openspice.jspice.lib.ConvertLib;
+import org.openspice.jspice.tools.PrintTools;
 
-public class NewSymbolProc extends Unary1InvokeProc {
+public class GensymProc extends Unary1InvokeProc {
 
-	{
-		setDescription(
-			"newSymbolProc",
-			"%p( char|string... ) -> r",
-			"constructs a new symbol"
-		);
-	}
+	public static int count = 0;
 
 	public Object invoke( final Object x ) {
-		return Symbol.make( ConvertLib.convertString( x ) );
+		return Symbol.make( PrintTools.printToString( x ) + count++ );
 	}
 
-	public static final NewSymbolProc NEW_SYMBOL_PROC = new NewSymbolProc();
+	public static final GensymProc GENSYM_PROC = new GensymProc();
 
 }

@@ -16,20 +16,26 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.maplets;
 
-import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
-import org.openspice.jspice.datatypes.Symbol;
-import org.openspice.jspice.tools.PrintTools;
+import org.openspice.jspice.datatypes.proc.Unary1BoolInvokeProc;
+import org.openspice.jspice.lib.IsLib;
 
-public class GensymProc extends Unary1InvokeProc {
+public class IsMapletProc extends Unary1BoolInvokeProc {
 
-	public static int count = 0;
-
-	public Object invoke( final Object x ) {
-		return Symbol.make( PrintTools.printToString( x ) + count++ );
+	{
+		setDescription(
+			"isMaplet",
+			"%p( item ) -> bool",
+			"return true if item is a maplet, otherwise false"
+		);
 	}
 
-	public static final GensymProc GENSYM_PROC = new GensymProc();
+	public Object invoke( final Object x ) {
+		return Boolean.valueOf( IsLib.isMapEntry( x ) );
+	}
+
+	public static final IsMapletProc IS_MAPLET_PROC= new IsMapletProc();
+
 
 }

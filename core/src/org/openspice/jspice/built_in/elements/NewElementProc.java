@@ -16,17 +16,33 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.elements;
 
-import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.datatypes.proc.Trinary1InvokeProc;
+import org.openspice.jspice.datatypes.Symbol;
+import org.openspice.jspice.datatypes.elements.XmlElement;
 import org.openspice.jspice.lib.CastLib;
 
-public class SymbolStringProc extends Unary1InvokeProc {
+import java.util.Map;
+import java.util.List;
 
-	public Object invoke( Object x ) {
-		return CastLib.toSymbol( x ).getInternedString();
+public class NewElementProc extends Trinary1InvokeProc {
+
+	{
+		setDescription(
+			"newElement",
+			"%p( name : symbol, attrs : map, kids : list ) -> element",
+			"constructs a new XML element"
+		);
 	}
 
-	public static final SymbolStringProc SYMBOL_STRING_PROC = new SymbolStringProc();
+	public Object invoke( final Object name, final Object attrs, final Object kids ) {
+		final Symbol sym_name = CastLib.toSymbol( name );
+		final Map attr_map = CastLib.toMap( attrs );
+		final List list_kids = CastLib.toList( kids );
+		return XmlElement.make( sym_name, attr_map, list_kids );
+	}
+
+	public static final NewElementProc NEW_ELEMENT_PROC = new NewElementProc();
 
 }

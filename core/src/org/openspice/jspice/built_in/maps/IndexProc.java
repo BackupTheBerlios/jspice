@@ -16,33 +16,30 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.maps;
 
-import org.openspice.jspice.datatypes.Arity;
-import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.datatypes.proc.UnaryFastProc;
+import org.openspice.jspice.lib.MapLib;
 import org.openspice.jspice.vm_and_compiler.VM;
-import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.datatypes.Arity;
+import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
 
-import java.util.Map;
+public final class IndexProc extends Binary1InvokeProc {
 
-public class InvMapletProc extends UnaryFastProc {
-
-	final static public org.openspice.jspice.built_in.InvMapletProc INV_MAPLET_PROC = new org.openspice.jspice.built_in.InvMapletProc();
-
-	public Proc inverse() {
-		return NewMapletProc.NEW_MAPLET_PROC;
+	public Object invoke( final Object key, final Object obj ) {
+		return MapLib.getAt( obj, key );
 	}
 
-	public Arity outArity() { return Arity.TWO; }
-
-	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
-		try {
-			final Map.Entry me = (Map.Entry)tos;
-			vm.push( me.getKey() );
-			return me.getValue();
-		} catch ( final ClassCastException exn ) {
-			return new Alert( "Maplet needed" ).culprit( "object", tos ).mishap();
-		}
+	public Object ucall( final Object tos, final VM vm, final int vargs, final int kargs ) {
+		Arity.TWO.check( kargs );
+		//	I strongly suspect I've got these arguments round the wrong way.
+		final Object map_like = tos;
+		final Object key = vm.pop();
+		Arity.ONE.check( vargs );
+		final Object val = vm.pop();
+		MapLib.putAt( map_like, key, val );
+		return vm.pop();
 	}
+
+	public final static IndexProc INDEX_PROC = new IndexProc();
+
 }

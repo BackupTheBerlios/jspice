@@ -16,41 +16,21 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.maplets;
 
-import org.openspice.jspice.datatypes.Arity;
+import org.openspice.jspice.datatypes.Maplet;
 import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.vm_and_compiler.VM;
+import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
 
-public final class NoneProc extends Proc {
+public class NewMapletProc extends Binary1InvokeProc {
 
-	{
-		setDescription(
-			"none",
-			"%p( a1, ..., aN ) -> ()",
-			"ignores its arguments and returns no results"
-		);
+	final static public NewMapletProc NEW_MAPLET_PROC = new NewMapletProc();
+
+	public Proc inverse() {
+		return InvMapletProc.INV_MAPLET_PROC;
 	}
 
-	public Arity inArity() {
-		return Arity.ZERO_OR_MORE;
+	public Object invoke( final Object x, final Object y ) {
+		return new Maplet( x, y );
 	}
-
-	public Arity outArity() {
-		return Arity.ZERO;
-	}
-
-	public Object call( final Object tos, final VM vm, int nargs ) {
-		if ( nargs > 0 ) {
-			//	Repeat nargs-1 times.
-			vm.drop( nargs - 1 );
-			return vm.pop();
-		} else {
-			return tos;
-		}
-	}
-
-	static public Proc NONE_PROC = new NoneProc();
-
 }

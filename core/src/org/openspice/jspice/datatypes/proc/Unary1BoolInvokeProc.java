@@ -16,28 +16,15 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.datatypes.proc;
 
-import org.openspice.jspice.lib.MapLib;
-import org.openspice.jspice.vm_and_compiler.VM;
 import org.openspice.jspice.datatypes.Arity;
-import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
+import org.openspice.jspice.vm_and_compiler.VM;
 
-class IndexProc extends Binary1InvokeProc {
-	final static org.openspice.jspice.built_in.IndexProc INDEX_PROC = new org.openspice.jspice.built_in.IndexProc();
+public abstract class Unary1BoolInvokeProc extends Unary1InvokeProc {
 
-	public Object invoke( final Object key, final Object obj ) {
-		return MapLib.getAt( obj, key );
+	{
+		setDescription( null, "%p( x ) -> bool", null );
 	}
 
-	public Object ucall( final Object tos, final VM vm, final int vargs, final int kargs ) {
-		Arity.TWO.check( kargs );
-		//	I strongly suspect I've got these arguments round the wrong way.
-		final Object map_like = tos;
-		final Object key = vm.pop();
-		Arity.ONE.check( vargs );
-		final Object val = vm.pop();
-		MapLib.putAt( map_like, key, val );
-		return vm.pop();
-	}
 }

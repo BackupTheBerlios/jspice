@@ -23,6 +23,9 @@ import org.openspice.jspice.built_in.lists.NewImmutableListProc;
 import org.openspice.jspice.built_in.lists.InvListProc;
 import org.openspice.jspice.built_in.arithmetic.*;
 import org.openspice.jspice.built_in.comparisons.*;
+import org.openspice.jspice.built_in.maplets.NewMapletProc;
+import org.openspice.jspice.built_in.maps.LengthProc;
+import org.openspice.jspice.built_in.maps.IndexProc;
 import org.openspice.jspice.datatypes.proc.Proc;
 
 import java.util.Map;
@@ -87,7 +90,7 @@ public final class ShortCuts {
 	public final static Proc notEqualProc = new NotEqualProc();
 
 	public final static Proc explodeProc = InvListProc.INV_LIST_PROC;
-	public final static Proc noneProc = NoneProc.noneProc;
+	public final static Proc noneProc = NoneProc.NONE_PROC;
 
 	public final static Proc indexProc = IndexProc.INDEX_PROC;
 	public final static Proc lengthProc = LengthProc.LENGTH_PROC;

@@ -16,15 +16,25 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.absent;
 
-import org.openspice.jspice.lib.ListLib;
-import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.datatypes.proc.Unary1BoolInvokeProc;
+import org.openspice.jspice.lib.IsLib;
 
-class LengthProc extends Unary1InvokeProc {
-	final static public org.openspice.jspice.built_in.LengthProc LENGTH_PROC = new org.openspice.jspice.built_in.LengthProc();
+public class IsAbsentProc extends Unary1BoolInvokeProc {
 
-	public Object invoke( final Object lengthable ) {
-		return ListLib.length( lengthable );
+	{
+		setDescription(
+			"isAbsent",
+			"%p( item ) -> bool",
+			"returns true if x is absent, otherwise false"
+		);
 	}
+
+	public Object invoke( Object x ) {
+		return Boolean.valueOf( IsLib.isAbsent( x ) );
+	}
+
+	public static final IsAbsentProc IS_ABSENT_PROC = new IsAbsentProc();
+
 }

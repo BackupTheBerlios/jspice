@@ -167,6 +167,9 @@ public final class XmlElement extends SpiceObject {
 	XmlElement() {
 	}
 
+	public static XmlElement make( final Symbol _name, final Map _map, final List _list ) {
+		return new XmlElement( _name, _map, _list );
+	}
 
 	public List convertToList() {
 		return new XmlElementAsList( this );

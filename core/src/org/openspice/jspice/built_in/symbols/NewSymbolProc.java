@@ -16,41 +16,27 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.symbols;
 
-import org.openspice.jspice.datatypes.Arity;
-import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.vm_and_compiler.VM;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.datatypes.Symbol;
+import org.openspice.jspice.lib.CastLib;
+import org.openspice.jspice.lib.ConvertLib;
 
-public final class NoneProc extends Proc {
+public class NewSymbolProc extends Unary1InvokeProc {
 
 	{
 		setDescription(
-			"none",
-			"%p( a1, ..., aN ) -> ()",
-			"ignores its arguments and returns no results"
+			"newSymbolProc",
+			"%p( char|string... ) -> r",
+			"constructs a new symbol"
 		);
 	}
 
-	public Arity inArity() {
-		return Arity.ZERO_OR_MORE;
+	public Object invoke( final Object x ) {
+		return Symbol.make( ConvertLib.convertString( x ) );
 	}
 
-	public Arity outArity() {
-		return Arity.ZERO;
-	}
-
-	public Object call( final Object tos, final VM vm, int nargs ) {
-		if ( nargs > 0 ) {
-			//	Repeat nargs-1 times.
-			vm.drop( nargs - 1 );
-			return vm.pop();
-		} else {
-			return tos;
-		}
-	}
-
-	static public Proc NONE_PROC = new NoneProc();
+	public static final NewSymbolProc NEW_SYMBOL_PROC = new NewSymbolProc();
 
 }

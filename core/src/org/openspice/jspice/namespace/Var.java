@@ -44,7 +44,7 @@ public abstract class Var {
 		PermFlags( final Props _props ) {
 			super( _props );
 		}
-		
+
 		boolean getBit( final int bit ) {
 			return ( this.flags & ( 1 << bit ) ) != 0;
 		}
@@ -75,6 +75,10 @@ public abstract class Var {
 
 		public String getName() {
 			return this.id;
+		}
+
+		public String toString() {
+			return "permanent variable(" + this.id +")";
 		}
 
 		FacetSet getFacetSet() {
@@ -149,7 +153,11 @@ public abstract class Var {
 		public Anon( final Props _props ) {
 			super( _props );
 		}
-	
+
+		public String toString() {
+			return "anonymous variable(_)";
+		}
+
 		public boolean isGlobal() {
 			return false;
 		}
@@ -178,14 +186,18 @@ public abstract class Var {
 			this.title = _title;
 			this.lambda = _lambda;
 		}
-		
+
+		public String toString() {
+			return "local variable(" + this.title +")";
+		}
+
 		public String getTitle() {
 			return this.title;
 		}
 		
-		public String toString() {
-			return "<" + this.title + ":" + this.slot + ":#" + this.count + ":" + this.lambda + ">";
-		}
+//		public String toString() {
+//			return "<" + this.title + ":" + this.slot + ":#" + this.count + ":" + this.lambda + ">";
+//		}
 		
 		public int getOffset() {
 			if ( Print.wouldPrint( Print.PARSE ) ) {

@@ -129,6 +129,19 @@ public class CastLib {
 		}
 	}
 
+	public static Map toMap( final Object obj ) {
+		try {
+			if ( obj != null ) return (Map)obj;
+			throw oops( "Map needed", obj );
+		} catch ( final ClassCastException _ ) {
+			try {
+				return toMap( ((Deferred)obj).get() );
+			} catch ( final ClassCastException exn ) {
+				throw oops( exn, "Map needed", obj );
+			}
+		}
+	}
+
 	public static Number toNumber( final Object obj ) {
 		try {
 			if ( obj != null ) return (Number)obj;
@@ -188,12 +201,12 @@ public class CastLib {
 	public static final Symbol toSymbol( final Object obj ) {
 		try {
 			if ( obj != null ) return (Symbol)obj;
-			throw oops( "Symbol needed", obj );
+			throw oops( "AltSymbol needed", obj );
 		} catch ( final ClassCastException _ ) {
 			try {
 				return toSymbol( ((Deferred)obj).get() );
 			} catch ( final ClassCastException exn ) {
-				throw oops( exn, "Symbol needed", obj );
+				throw oops( exn, "AltSymbol needed", obj );
 			}
 		}
 	}

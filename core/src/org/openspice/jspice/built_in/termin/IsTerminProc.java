@@ -16,21 +16,24 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.termin;
 
-import org.openspice.jspice.datatypes.Maplet;
-import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
+import org.openspice.jspice.datatypes.proc.Unary1BoolInvokeProc;
+import org.openspice.jspice.lib.IsLib;
 
-public class NewMapletProc extends Binary1InvokeProc {
+public class IsTerminProc extends Unary1BoolInvokeProc {
 
-	final static public NewMapletProc NEW_MAPLET_PROC = new NewMapletProc();
-
-	public Proc inverse() {
-		return InvMapletProc.INV_MAPLET_PROC;
+	{
+		setDescription(
+			"isTermin",
+			"%p( item ) -> bool",
+			"returns true if item is termin, otherwise false"
+		);
 	}
 
-	public Object invoke( final Object x, final Object y ) {
-		return new Maplet( x, y );
+	public Object invoke( Object x ) {
+		return Boolean.valueOf( IsLib.isTermin( x ) );
 	}
+
+	public static final IsTerminProc IS_TERMIN_PROC = new IsTerminProc();
 }

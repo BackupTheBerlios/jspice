@@ -16,41 +16,34 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.maplets;
 
 import org.openspice.jspice.datatypes.Arity;
 import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.datatypes.proc.Proc;
+import org.openspice.jspice.datatypes.proc.UnaryFastProc;
 import org.openspice.jspice.vm_and_compiler.VM;
+import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.built_in.maplets.NewMapletProc;
 
-public final class NoneProc extends Proc {
+import java.util.Map;
 
-	{
-		setDescription(
-			"none",
-			"%p( a1, ..., aN ) -> ()",
-			"ignores its arguments and returns no results"
-		);
+public class InvMapletProc extends UnaryFastProc {
+
+	final static public org.openspice.jspice.built_in.maplets.InvMapletProc INV_MAPLET_PROC = new org.openspice.jspice.built_in.maplets.InvMapletProc();
+
+	public Proc inverse() {
+		return NewMapletProc.NEW_MAPLET_PROC;
 	}
 
-	public Arity inArity() {
-		return Arity.ZERO_OR_MORE;
-	}
+	public Arity outArity() { return Arity.TWO; }
 
-	public Arity outArity() {
-		return Arity.ZERO;
-	}
-
-	public Object call( final Object tos, final VM vm, int nargs ) {
-		if ( nargs > 0 ) {
-			//	Repeat nargs-1 times.
-			vm.drop( nargs - 1 );
-			return vm.pop();
-		} else {
-			return tos;
+	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
+		try {
+			final Map.Entry me = (Map.Entry)tos;
+			vm.push( me.getKey() );
+			return me.getValue();
+		} catch ( final ClassCastException exn ) {
+			return new Alert( "Maplet needed" ).culprit( "object", tos ).mishap();
 		}
 	}
-
-	static public Proc NONE_PROC = new NoneProc();
-
 }

@@ -16,13 +16,18 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.main;
+package snippets;
 
-import java.util.*;
-import java.lang.ref.WeakReference;
 import java.io.Serializable;
+import java.util.Comparator;
+import java.util.TreeMap;
+import java.util.Iterator;
+import java.lang.ref.WeakReference;
+
 
 /**
+ * Alternative implementation of Symbol class.
+ *
  * This class need not be final - I have done this as general good practice.
  * As a rough rule: it is good practice for your own internal classes to be
  * defined as final and bad practice for external classes to be defined as
@@ -36,22 +41,22 @@ import java.io.Serializable;
  *
  * Anyone for assembly programming?
  */
-public final class Symbol implements CharSequence, Comparable, Serializable {
+public final class AltSymbol implements CharSequence, Comparable, Serializable {
 
-	/**
-	 * Because Java incorrectly defines the equality for arrays (*sigh*) we
-	 * have to take over.  I notice that there are some improvements in Java 1.5
-	 * in this general area.  Breath holding is not advocated.
-	 *
-	 * Note that I do not implement the usual alphabetic ordering.  Nothing
-	 * says you have to - and this one is far more efficient.  Don't like it?
-	 * Unlucky, 'cos the Java team made a good call on this one.
-	 */
+//	/**
+//	 * Because Java incorrectly defines the equality for arrays (*sigh*) we
+//	 * have to take over.  I notice that there are some improvements in Java 1.5
+//	 * in this general area.  Breath holding is not advocated.
+//	 *
+//	 * Note that I do not implement the usual alphabetic ordering.  Nothing
+//	 * says you have to - and this one is far more efficient.  Don't like it?
+//	 * Unlucky, 'cos the Java team made a good call on this one.
+//	 */
 	static class CharArrayComparator implements Comparator {
 
 		/**
 		 * We need the static method to avoid a pointless allocation cost
-		 * when Symbol comparison.  But because Java does not have first
+		 * when AltSymbol comparison.  But because Java does not have first
 		 * class functions, we also need to implement it as an instance
 		 * method.  More stupid plumbing games caused by more stupid
 		 * design mistakes.  (*sigh*)
@@ -97,7 +102,7 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 	private final char[] contents;
 
 	//	The constructor must be hidden.
-	private Symbol( final char[] chars ) {
+	private AltSymbol( final char[] chars ) {
 		this.contents = chars;
 	}
 
@@ -105,7 +110,7 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 	 * This is where we will keep the symbols.  Because WeakHashMaps are
 	 * "tmpboth" and not "tmpval" (or "tmparg") we have to manually implement
 	 * a tmpval mapping.
-	 * 		TreeMap< char[], WeakReference( Symbol ) >
+	 * 		TreeMap< char[], WeakReference( AltSymbol ) >
 	 * Unfortunately this
 	 */
     private static TreeMap table = new TreeMap( new CharArrayComparator() );
@@ -129,7 +134,7 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 	 * the table.
 	 */
 	protected void finalize() throws Throwable {
-		final WeakReference ref = (WeakReference)this.table.get( this.contents );
+		final WeakReference ref = (WeakReference)table.get( this.contents );
 		//	Check that the reference is _still_ to itself.  It does not have to be.
 		if ( ref.get() == null ) {
 			//	It is - so knock it out.
@@ -137,17 +142,17 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 		}
 	}
 
-	private static Symbol fetch( final char[] immutable_chars ) {
+	private static AltSymbol fetch( final char[] immutable_chars ) {
 		final WeakReference ref = (WeakReference)table.get( immutable_chars );
 		if ( ref == null ){
-			final Symbol sym = new Symbol( immutable_chars );
+			final AltSymbol sym = new AltSymbol( immutable_chars );
 			table.put( immutable_chars, new WeakReference( sym ) );
 //			System.gc();		//	Need to do at least one test with this in.
 			return sym;
 		} else {
-			Symbol sym = (Symbol)ref.get();
+			AltSymbol sym = (AltSymbol)ref.get();
 			if ( sym == null ) {
-				sym = new Symbol( immutable_chars );
+				sym = new AltSymbol( immutable_chars );
 				table.put( immutable_chars, sym );
 			}
 			return sym;
@@ -156,17 +161,17 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 
 	/**
 	 * This is the main allocator for Symbols.  Given a String (which could be
-	 * widened to include other types) it returns a Symbol.  It returns a new
-	 * Symbol if required - otherwise the old matching Symbol.
+	 * widened to include other types) it returns a AltSymbol.  It returns a new
+	 * AltSymbol if required - otherwise the old matching AltSymbol.
 	 */
-	public static Symbol fetchSymbol( final String name ) {
+	public static AltSymbol fetchSymbol( final String name ) {
 		return fetch( name.toCharArray() );
     }
 
 	/**
 	 * But this subsidary allocator is useful, to.
 	 */
-	public static Symbol fetchSymbol( final CharSequence seq ) {
+	public static AltSymbol fetchSymbol( final CharSequence seq ) {
 		final char[] chars = new char[ seq.length() ];
 		for ( int i = 0; i < chars.length; i++ ) {
 			chars[ i ] = seq.charAt( i );
@@ -202,7 +207,7 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 		return this.asString().subSequence( i, i1 );
 	}
 
-	public int compareTo( final Symbol that ) {
+	public int compareTo( final AltSymbol that ) {
 		return CharArrayComparator.compareTo( this.contents, that.contents );
 	}
 
@@ -212,18 +217,18 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 		 * 	throws ClassCastException - if the specified object's type prevents it
 		 * 	from being compared to this Object.
 		 */
-		return this.compareTo( (Symbol)obj );
+		return this.compareTo( (AltSymbol)obj );
 	}
 
-	public int compareToIgnoreCase( final Symbol that ) {
+	public int compareToIgnoreCase( final AltSymbol that ) {
 		return CharArrayComparator.compareToIgnoreCase( this.contents, that.contents );
 	}
 
-	public boolean equalsIgnoreCase( final Symbol that ) {
+	public boolean equalsIgnoreCase( final AltSymbol that ) {
 		return this.compareToIgnoreCase( that ) == 0;
 	}
 
-	public Symbol concat( final Symbol that ) {
+	public AltSymbol concat( final AltSymbol that ) {
 		final StringBuffer b = new StringBuffer();
 		b.append( this.contents );
 		b.append( that.contents );
@@ -280,12 +285,12 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 		return this.asString().substring( beginIndex, endIndex );
 	}
 
-	public Symbol subsymbol( int beginIndex ) {
+	public AltSymbol subsymbol( int beginIndex ) {
 		return this.subsymbol( beginIndex, this.length() );
 	}
 
 	//	Slightly Lazy.
-	public Symbol subsymbol( int beginIndex, int endIndex ) {
+	public AltSymbol subsymbol( int beginIndex, int endIndex ) {
 		return fetchSymbol( this.substring( beginIndex, endIndex ) );
 	}
 
@@ -296,7 +301,7 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 		return answer;
 	}
 
-	public Symbol toLowerCase() {
+	public AltSymbol toLowerCase() {
 		boolean changed = false;
 		final char[] chars = this.toCharArray();
 		for ( int i = 0; i < chars.length; i++ ) {
@@ -310,7 +315,7 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 		return changed ? fetch( chars ) : this;
 	}
 
-	public Symbol toUpperCase() {
+	public AltSymbol toUpperCase() {
 		boolean changed = false;
 		final char[] chars = this.toCharArray();
 		for ( int i = 0; i < chars.length; i++ ) {
@@ -325,12 +330,12 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 	}
 
 	//	Lazy
-	public Symbol toLowerCase( final java.util.Locale locale ) {
+	public AltSymbol toLowerCase( final java.util.Locale locale ) {
 		return fetchSymbol( this.asString().toLowerCase( locale ) );
 	}
 
 	//	Lazy
-	public Symbol toUpperCase( final java.util.Locale locale ) {
+	public AltSymbol toUpperCase( final java.util.Locale locale ) {
 		return fetchSymbol( this.asString().toUpperCase( locale ) );
 	}
 
@@ -345,7 +350,7 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 	}
 
 	//	Lazy
-	public Symbol trim() {
+	public AltSymbol trim() {
 		return fetchSymbol( this.asString().trim() );
 	}
 
@@ -359,3 +364,4 @@ public final class Symbol implements CharSequence, Comparable, Serializable {
 	//		split (2 variants)
 
 }
+

@@ -16,41 +16,26 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.booleans;
 
-import org.openspice.jspice.datatypes.Arity;
 import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.vm_and_compiler.VM;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.tools.BooleanTools;
 
-public final class NoneProc extends Proc {
+public final class NotProc extends Unary1InvokeProc {
 
 	{
 		setDescription(
-			"none",
-			"%p( a1, ..., aN ) -> ()",
-			"ignores its arguments and returns no results"
+			"not",
+			"%p( bool ) -> bool",
+			"inverts a boolean value"
 		);
 	}
 
-	public Arity inArity() {
-		return Arity.ZERO_OR_MORE;
+	public Object invoke( final Object tos ) {
+		return BooleanTools.not( tos );
 	}
 
-	public Arity outArity() {
-		return Arity.ZERO;
-	}
-
-	public Object call( final Object tos, final VM vm, int nargs ) {
-		if ( nargs > 0 ) {
-			//	Repeat nargs-1 times.
-			vm.drop( nargs - 1 );
-			return vm.pop();
-		} else {
-			return tos;
-		}
-	}
-
-	static public Proc NONE_PROC = new NoneProc();
+	public static final Proc NOT_PROC = new NotProc();
 
 }

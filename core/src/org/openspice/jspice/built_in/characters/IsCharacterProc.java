@@ -16,18 +16,24 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.characters;
 
-import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
-import org.openspice.tools.BooleanTools;
+import org.openspice.jspice.datatypes.proc.Unary1BoolInvokeProc;
+import org.openspice.jspice.lib.IsLib;
 
-public final class NotProc extends Unary1InvokeProc {
+public class IsCharacterProc extends Unary1BoolInvokeProc {
 
-	public Object invoke( final Object tos ) {
-		return BooleanTools.not( tos );
+	{
+		setDescription(
+			"isCharacter",
+			"%p( item ) -> bool",
+			"returns true if item is a character, otherwise false"
+		);
 	}
 
-	public static final Proc notProc = new NotProc();
+	public Object invoke( final Object x ) {
+		return Boolean.valueOf( IsLib.isCharacter( x ) );
+	}
 
+	public static final IsCharacterProc IS_CHARACTER_PROC = new IsCharacterProc();
 }
