@@ -16,28 +16,34 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.main;
+package org.openspice.vfs;
 
-import org.openspice.jspice.conf.JSpiceConf;
-import org.openspice.jspice.vm_and_compiler.VM;
+public abstract class AbsVVolume implements VVolume {
 
-import java.io.StringReader;
-import java.util.List;
+	public abstract VFolderRef getRootVFolderRef();
 
-public class StringInterpreter {
-
-	JSpiceConf jspice_conf;
-
-	public StringInterpreter() {
-		this.jspice_conf = new JSpiceConf();
+	public VFolder getRootVFolder() {
+		return this.getRootVFolderRef().getVFolder();
 	}
 
-	public List interpret( final String s ) {
-		final SuperLoader super_loader = new SuperLoader( this.jspice_conf );
-		final Interpreter interpreter = new Interpreter( super_loader.getNameSpace( "spice.interactive_mode" ) );
-		interpreter.simple_interpret( new StringReader( s ) );
-		final VM vm = interpreter.getVM();
-		return vm.getAllResults();
+	public VFolderRef getVFolderRefFromPath( final String path ) {
+		return this.getRootVFolderRef().getVFolderRefFromPath( path );
+	}
+
+	public VFileRef getVFileRefFromPath( String path ) {
+		return this.getRootVFolderRef().getVFileRefFromPath( path );
+	}
+
+	public VFolder getVFolderFromPath( String path ) {
+		return this.getRootVFolderRef().getVFolderFromPath( path );
+	}
+
+	public VFile getVFileFromPath( String path ) {
+		return this.getRootVFolderRef().getVFileFromPath( path );
+	}
+
+	public VItem getVItemFromPath( String path ) {
+		return this.getRootVFolderRef().getVItemFromPath( path );
 	}
 
 }

@@ -19,6 +19,7 @@
 package org.openspice.jspice.main.pragmas;
 
 import org.openspice.vfs.file.FileVFile;
+import org.openspice.vfs.file.FileVVolume;
 import org.openspice.vfs.VFile;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.Interpreter;
@@ -34,7 +35,7 @@ public final class LoadPragma {
 			final String fname = (String)it.next();
 			final File f = new File( fname );
 			if ( f.exists() ) {
-				final VFile vfile = new FileVFile( new File( fname ) );
+				final VFile vfile = new FileVVolume().getVFileFromFile( new File( fname ) );
 				new Interpreter( interpreter.getCurrentNameSpace() ).loadVFile( vfile );
 			} else {
 				new Alert( "Cannot find file" ).culprit( "file", f ).warning();

@@ -22,6 +22,7 @@ import org.openspice.jspice.conf.JSpiceConf;
 import org.openspice.vfs.VFSTools;
 import org.openspice.vfs.VFile;
 import org.openspice.vfs.file.FileVFile;
+import org.openspice.vfs.file.FileVVolume;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -76,7 +77,7 @@ public class CommandLineBoxServlet extends HttpServlet {
 		String message;
 		if ( activity == null ) {
 			//	Horrible, horrible hack to get the test code started.
-			final VFile game_file = new FileVFile( new File( "inventory/tads2-pkg/public-auto/ccr.gam" ) );
+			final VFile game_file = new FileVVolume().getVFileFromFile( new File( "inventory/tads2-pkg/public-auto/ccr.gam" ) );
 			activity = new CuteActivity( new GameBox( game_file ) );
 			session.setAttribute( attr, activity );
 			activity.start();

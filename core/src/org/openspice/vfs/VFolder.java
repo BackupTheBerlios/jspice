@@ -37,4 +37,10 @@ public interface VFolder extends VItem {
 
 	VFile getVFile( String nam, String ext );
 
+	VFolderRef getVFolderRef( String nam, String ext );
+
+	VFileRef getVFileRef( String nam, String ext );
+
+	VFolderRef getVFolderRef();
+
 }

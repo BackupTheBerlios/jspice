@@ -59,7 +59,7 @@ public class ServerMain implements Observer {
 
 		// 	Create a context - this aggregates handlers e.g. ServletHandlers.
 		final HttpContext context = new HttpContext();
-		context.setContextPath( "/mystuff/*" );
+		context.setContextPath( "/games/*" );
 		server.addContext( context );
 
 		// 	Create a servlet container.
@@ -69,13 +69,15 @@ public class ServerMain implements Observer {
 
 		// 	Map a servlet onto the container.
 		servlets.addServlet( "Dump", "/Dump/*", "org.mortbay.servlet.Dump" );
-		final ServletHolder holder = servlets.addServlet( "Hello", "/hello/*", CommandLineBoxServlet.class.getName() );
+		final ServletHolder holder = servlets.addServlet( "CCR", "/ccr/*", CommandLineBoxServlet.class.getName() );
 
 
 
 		// Serve static content from the context.
-		context.setResourceBase( new File( ((FileVFolder)jconf.getHome()).getFile(), "tut" ).getPath() + "/" );
-		context.addHandler( new ResourceHandler() );
+		//	Commented out because I cannot guarantee that there is any real filing system!
+
+//		context.setResourceBase( new File( jconf.getHome().getFile(), "tut" ).getPath() + "/" );
+//		context.addHandler( new ResourceHandler() );
 
 		// Start the http server.
 		try {

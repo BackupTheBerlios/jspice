@@ -16,21 +16,30 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.vfs.file;
+package org.openspice.vfs.codec;
 
 import org.openspice.tools.CharArrayTools;
+import org.openspice.jspice.conf.FixedConf;
 
 /**
- * todo: Must cope with / - that's forbidden in UNIX.  Might have to forbid lots of stuff.
+ * Implements a Codec appropriate for a filing system.
  */
-public class FileNameTools {
+public class AbsCodec implements Codec {
 
-	public static final char esc_char = '%';
-	public static final char forbidden_char = '/';
+ 	private final char esc_char;
+	private final char forbidden_char;
+	private final char separator;
+
+	public AbsCodec( char separator ) {
+		this.esc_char = FixedConf.VITEM_ESCAPE;					//	The character reserved for encoding.
+		this.forbidden_char = FixedConf.VFOLDER_TERMINATOR;		//	The folder terminator.
+		this.separator = separator;								//	The character reserved for separating nam from ext.
+	}
+
 
 	//	%UUUU -> hex
 
-	public static final String decode( final String s ) {
+	private final String basic_decode( final String s ) {
 		if ( s.indexOf( esc_char ) == -1 ) {
 			return s;
 		}
@@ -54,7 +63,7 @@ public class FileNameTools {
 	 * @param separator the separator character to be protected
 	 * @return the encoded (partial) file name
 	 */
-	public static final String encode( final String s, final char separator ) {
+	private final String basic_encode( final String s, final char separator ) {
 		if ( s.indexOf( separator ) == -1 && s.indexOf( esc_char ) == -1 && s.indexOf( forbidden_char ) == -1 ) {
 			return s;
 		}
@@ -72,26 +81,40 @@ public class FileNameTools {
 		return buff.toString();
 	}
 
-	public static final String makeFileName( final String nam, final char sep, final String ext ) {
+	public String encode( final String nam, final String ext ) {
 		if ( ext == null ) {
-			return encode( nam, sep );
+			return this.basic_encode( nam, separator );
 		} else {
-			return encode( nam, sep ) + sep + encode( ext, sep );
+			return this.basic_encode( nam, separator ) + separator + this.basic_encode( ext, separator );
 		}
 	}
 
-	public static final int find_separator( final String name, final char sep ) {
-		return name.indexOf( sep );
+	public String encode( final String previous, final String nam, final String ext ) {
+		return previous + forbidden_char + encode( nam, ext );
 	}
 
-	public static final String extractNam( final String name, final char sep ) {
-		final int n = find_separator( name, sep );
-		return n == -1 ? name : name.substring( 0, n );
+	public String[] decode( final String name, final boolean nam_wanted, final boolean ext_wanted, final String[] result ) {
+		final int n = name.indexOf( separator );
+		if ( n < 0 ) {
+			if ( nam_wanted ) result[0] = this.basic_decode( name );
+			if ( ext_wanted ) result[1] = null;
+		} else {
+			if ( nam_wanted ) result[0] = this.basic_decode( name.substring( 0, n ) );
+			if ( ext_wanted ) result[1] = this.basic_decode( name.substring( n + 1 ) );
+		}
+		return result;
 	}
 
-	public static final String extractExt( final String name, final char sep ) {
-		final int n = find_separator( name, sep );
-		return n == -1 ? null : name.substring( n + 1 );
+	public String[] decode( String name ) {
+		return decode( name, true, true, new String[ 2 ] );
+	}
+
+	public String decodeNam( final String name ) {
+		return decode( name, true, false, new String[ 1 ] )[ 0 ];
+	}
+
+	public String decodeExt( final String name ) {
+		return decode( name, false, true, new String[ 2 ] )[ 1 ];
 	}
 
 }

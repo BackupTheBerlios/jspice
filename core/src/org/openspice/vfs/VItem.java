@@ -21,11 +21,11 @@ package org.openspice.vfs;
 public interface VItem {
 
 	String getNam();
-	void setNam( final String nam );
 
 	String getExt();
-	void setExt( final String ext );
 	boolean hasExt( final String ext );
+
+	void setNamExt( final String nam, final String ext );
 
 	String getFullName();
 

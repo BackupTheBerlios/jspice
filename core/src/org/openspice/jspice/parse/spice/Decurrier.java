@@ -53,7 +53,7 @@ final class Decurrier {
 			app = (ApplyExpr)app.getFun();
 		}
 		if ( ! ( app.getFun() instanceof NameExpr ) ) {
-			new Alert( "Invalid procedure header" ).mishap( 'P' );
+			new Alert( "Invalid procedure header" ).culprit( "expr", app.getFun() ).mishap( 'P' );
 		}
 		return this;
 	}

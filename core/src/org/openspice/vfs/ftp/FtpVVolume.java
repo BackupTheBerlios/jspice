@@ -20,18 +20,25 @@ package org.openspice.vfs.ftp;
 
 import org.openspice.vfs.VVolume;
 import org.openspice.vfs.VFolder;
+import org.openspice.vfs.AbsVVolume;
+import org.openspice.vfs.VFolderRef;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.main.Print;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPConnectionClosedException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.SocketException;
+import java.io.IOException;
 
-public class FtpVVolume implements VVolume {
+public class FtpVVolume extends AbsVVolume implements VVolume {
 
 	final URI root_uri;
 	final FTPClient ftp_client = new FTPClient();
 
-	public static final URI toURI( final String s ) {
+	private static final URI toURI( final String s ) {
 		try {
 			return new URI( s );
 		} catch ( URISyntaxException e ) {
@@ -53,8 +60,65 @@ public class FtpVVolume implements VVolume {
 	}
 
 	public VFolder getRootVFolder() {
-		final FTPClient ftpc = new FTPClient();
-		throw new RuntimeException( "tbd" ); 	//	todo: to be defined
+		return FtpVFolder.make( this.root_uri, this, true );
+	}
+
+	public VFolderRef getRootVFolderRef() {
+		return new FtpVFolderRef( this.root_uri, this );
+	}
+
+	public FTPClient getFTPClient() {
+		return this.ftp_client;
+	}
+
+	private void reconnect( final FTPClient ftpc ) throws IOException {
+		Print.println( Print.FTP, "Reconnecting ..." );
+		final String user_info = this.root_uri.getUserInfo();
+		final int n = user_info.indexOf( ':' );
+		final String user = n >= 0 ? user_info.substring( 0, n ) : user_info;
+		final String pw = n >= 0 ? user_info.substring( n + 1 ) : "";
+		if ( Print.wouldPrint( Print.FTP ) ) {
+			Print.println( "User ID : " + user );
+			Print.println( "Password: " + pw );
+			Print.println( "Host    : " + root_uri.getHost() );
+		}
+		ftpc.connect( this.root_uri.getHost() );
+
+		final boolean ok = ftpc.login( user, pw );
+		if ( !ok ) {
+			new Alert( "Cannot connect to FTP server" ).culprit( "host", root_uri.getHost() ).mishap();
+		}
+		if ( !ftpc.setFileType( FTP.BINARY_FILE_TYPE ) ) {
+			new Alert( "Cannot set file type" ).mishap();
+		}
+	}
+
+	public FTPClient getConnectedFTPClient() {
+		Print.println( Print.FTP, "Trying to connect to FTP server ...." );
+		final FTPClient ftpc = this.getFTPClient();
+		try {
+			if ( !ftpc.isConnected() ) {
+				Print.println( Print.FTP, "Not connected - trying to reconnect" );
+				this.reconnect( ftpc );
+			}
+			ftpc.noop();
+		} catch ( final FTPConnectionClosedException e ) {
+			try {
+				ftpc.disconnect();
+				this.reconnect( ftpc );
+			} catch ( IOException e1 ) {
+				throw new RuntimeException( e1 );
+			}
+		} catch ( final IOException e ) {
+			throw new RuntimeException( e );
+		}
+		try {
+			ftpc.enterLocalPassiveMode();
+			ftpc.setSoTimeout( 30 * 1000 );			//	Set 30 second timeout.
+		} catch ( SocketException e ) {
+			throw new RuntimeException( e );
+		}
+		return ftpc;
 	}
 
 }

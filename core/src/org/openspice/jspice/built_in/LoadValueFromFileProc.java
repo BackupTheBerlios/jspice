@@ -25,6 +25,8 @@ import org.openspice.jspice.vm_and_compiler.VM;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.SuperLoader;
 import org.openspice.vfs.file.FileVFile;
+import org.openspice.vfs.file.FileVVolume;
+import org.openspice.vfs.VItem;
 
 import java.io.File;
 
@@ -41,7 +43,8 @@ public class LoadValueFromFileProc extends Unary1InvokeProc {
 	}
 	
 	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
-		return sloader.loadValueFromVItem( new FileVFile( new File( ConvertLib.convertString( tos ) ) ) );
+		final VItem vitem = new FileVVolume().getVItemFromPath( ConvertLib.convertString( tos ) );;
+		return sloader.loadValueFromVItem( vitem );
 	}
 
 }

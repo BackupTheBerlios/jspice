@@ -225,11 +225,11 @@ public final class XmlElement extends SpiceObject {
 			parser.parse( inputSrc, h );
 			return h.giveItUp();
 		} catch ( final IOException e ) {
-			throw new RuntimeException( e );	//	todo:
+			throw new RuntimeException( e );
 		} catch ( final ParserConfigurationException e ) {
-			throw new RuntimeException( e );    // todo:
+			throw new RuntimeException( e );
 		} catch ( final SAXException e ) {
-			throw new RuntimeException( e );    // todo:
+			throw new RuntimeException( e );
 		}
 	}
 

@@ -68,7 +68,7 @@ public class StartSplash {
 	private static void splash_main( final String[] args ) {
 		//  Read the image data and display the splash screen
 
-		final URL imageURL = StartSplash.class.getResource( "splash.gif" );
+		final URL imageURL = StartSplash.class.getResource( "splashdaw.jpg" );
 		if ( imageURL != null ) {
 			final Frame splashFrame = SplashWindow.splash( Toolkit.getDefaultToolkit().createImage( imageURL ) );
 			Hooks.READY.addObserver(

@@ -16,28 +16,43 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.main;
+package org.openspice.vfs.ftp;
 
-import org.openspice.jspice.conf.JSpiceConf;
-import org.openspice.jspice.vm_and_compiler.VM;
+import org.openspice.vfs.VFileRef;
+import org.openspice.vfs.VFile;
+import org.openspice.vfs.AbsVFileRef;
+import org.openspice.vfs.VItem;
 
-import java.io.StringReader;
-import java.util.List;
+import java.net.URI;
 
-public class StringInterpreter {
+public class FtpVFileRef extends AbsVFileRef implements VFileRef {
 
-	JSpiceConf jspice_conf;
+	final URI uri;
+	final FtpVVolume vvol;
 
-	public StringInterpreter() {
-		this.jspice_conf = new JSpiceConf();
+	public FtpVFileRef( URI uri, FtpVVolume vvol ) {
+		this.uri = uri;
+		this.vvol = vvol;
 	}
 
-	public List interpret( final String s ) {
-		final SuperLoader super_loader = new SuperLoader( this.jspice_conf );
-		final Interpreter interpreter = new Interpreter( super_loader.getNameSpace( "spice.interactive_mode" ) );
-		interpreter.simple_interpret( new StringReader( s ) );
-		final VM vm = interpreter.getVM();
-		return vm.getAllResults();
+	public VFile getVFile() {
+		return FtpVFile.make( this.uri, this.vvol, true );
+	}
+
+	public VItem getVItem() {
+		return this.getVFile();
+	}
+
+	public boolean isVFileRef() {
+		return true;
+	}
+
+	public boolean isVFolderRef() {
+		return false;
+	}
+
+	public boolean exists() {
+		return this.getVFile() != null;
 	}
 
 }

@@ -18,8 +18,11 @@
  */
 package org.openspice.vfs;
 
-import org.openspice.vfs.VFolder;
-
 public interface VVolume {
 	VFolder getRootVFolder();
+	VFolderRef getRootVFolderRef();
+	VFolderRef getVFolderRefFromPath( String path );
+	VFileRef getVFileRefFromPath( String path );
+	VFolder getVFolderFromPath( String path );
+	VFile getVFileFromPath( String path );
 }

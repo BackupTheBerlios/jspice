@@ -130,6 +130,16 @@ public final class Interpreter extends Loader {
 		}
 	}
 
+	public void simple_interpret( final Reader reader ) {
+		final Petrifier petrifier = new Petrifier();
+		SpiceParser parser = new SpiceParser( this, "<stdin>", reader, null );
+		Hooks.READY.ping();
+		for (;;) {
+			if ( parser.peekToken() == null ) break;	//	Horrible.  But exceptions need to be caught.
+			this.oneExpr( parser, petrifier, true );
+		}		
+	}
+
 	public void interpret( final String origin, final Reader reader, final String prompt ) {
 		final Petrifier petrifier = new Petrifier();
 		SpiceParser parser = new SpiceParser( this, origin, reader, prompt );

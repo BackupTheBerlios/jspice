@@ -27,6 +27,9 @@ public class TestPackageMain extends SpiceTestBase {
 
 	public static TestSuite suite() {
 		TestSuite result = new TestSuite();
+		result.addTest( TestElement.suite() );
+		result.addTest( TestFor.suite() );
+		result.addTest( TestLambda.suite() );
 		result.addTest( TestLiteralEvaluation.suite() );
 		result.addTest( TestSimpleArithmetic.suite() );
 		return result;

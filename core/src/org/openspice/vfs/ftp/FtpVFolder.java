@@ -20,6 +20,12 @@ package org.openspice.vfs.ftp;
 
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFile;
+import org.openspice.vfs.VFolderRef;
+import org.openspice.vfs.VFileRef;
+import org.openspice.vfs.codec.FileNameCodec;
+import org.openspice.vfs.codec.FolderNameCodec;
+import org.openspice.vfs.codec.Codec;
+import org.openspice.jspice.alert.Alert;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -30,22 +36,43 @@ import java.util.ArrayList;
 import java.io.Reader;
 import java.io.IOException;
 
-public class FtpVFolder extends AbsFtpVThing implements VFolder {
+public class FtpVFolder extends AbsFtpVItem implements VFolder {
 
-	public FtpVFolder( final URI uri, final FtpVVolume vvol ) {
+	protected Codec codec() {
+		return FolderNameCodec.FOLDER_NAME_CODEC;
+	}
+
+	public static final FtpVFolder make( final URI uri, final FtpVVolume vvol, final boolean null_allowed ) {
+		final FTPClient ftpc = vvol.getConnectedFTPClient();
+		try {
+			if ( ftpc.changeWorkingDirectory( uri.getPath() ) ) {
+				return new FtpVFolder( uri, vvol );
+			} else {
+				if ( null_allowed )return null;
+				throw new Alert( "Could not verify URI is directory" ).culprit( "URI", uri ).mishap();
+			}
+		} catch ( IOException e ) {
+			if ( null_allowed ) return null;
+			throw new RuntimeException( e );
+		}
+	}
+
+	private FtpVFolder( final URI uri, final FtpVVolume vvol ) {
 		super( uri, vvol );
 	}
 
-	protected char separator() {
-		return AbsFtpVThing.vfolder_separator;
+	public VFolder newVFolder( String nam, String ext ) {
+		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( this.uri.toString(), nam, ext );
+		try {
+			return new FtpVFolder( new URI( name ), this.vvol );
+		} catch ( URISyntaxException e ) {
+			throw new RuntimeException( e );
+		}
 	}
 
-	public VFolder newVFolder( String name, String ext ) {
-		throw new RuntimeException( "tbd" );	//	todo:
-	}
-
-	public VFile newVFile( String nam, String ext, Reader contents ) {
-		throw new RuntimeException( "tbd" );	//	todo:
+	public VFile newVFile( final String nam, final String ext, Reader contents ) {
+		final String name = FileNameCodec.FILE_NAME_CODEC.encode( this.uri.toString(), nam, ext );
+		throw new RuntimeException( "tbd" ); 	//	todo: to be defined
 	}
 
 	public void delete() {
@@ -60,9 +87,13 @@ public class FtpVFolder extends AbsFtpVThing implements VFolder {
 			for ( int i = 0; i < files.length; i++ ) {
 				final FTPFile file = files[ i ];
 				if ( want_folders && file.isDirectory() ) {
-					answer.add( new FtpVFolder( new URI( this.uri.toString() + file.getName() + AbsFtpVThing.vfolder_terminator ), this.vvol ) );
+					final String[] namext = FolderNameCodec.FOLDER_NAME_CODEC.decode( file.getName() );
+					final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( this.uri.toString(), namext[0], namext[1] );
+					answer.add( new FtpVFolder( new URI( name ), this.vvol ) );
 				} else if ( want_files && file.isFile() ) {
-					answer.add( new FtpVFile( new URI( this.uri.toString() + file.getName() ), this.vvol ) );
+					final String[] namext = FileNameCodec.FILE_NAME_CODEC.decode( file.getName() );
+					final String name = FileNameCodec.FILE_NAME_CODEC.encode( this.uri.toString(), namext[0], namext[1] );
+					answer.add( FtpVFile.uncheckedMake( new URI( this.uri.toString() + file.getName() ), this.vvol ) );
 				}
 			}
 			return answer;
@@ -87,7 +118,8 @@ public class FtpVFolder extends AbsFtpVThing implements VFolder {
 
 	public VFolder getVFolder( final String nam, final String ext ) {
 		try {
-			return new FtpVFolder( new URI( this.uri.toString() + nam + AbsFtpVThing.vfolder_separator + ext + AbsFtpVThing.vfolder_terminator ), this.vvol );
+			final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( this.uri.toString(), nam, ext );
+			return FtpVFolder.make( new URI( name ), this.vvol, true );
 		} catch ( URISyntaxException e ) {
 			throw new RuntimeException( e );
 		}
@@ -95,10 +127,33 @@ public class FtpVFolder extends AbsFtpVThing implements VFolder {
 
 	public VFile getVFile( final String nam, final String ext ) {
 		try {
-			return new FtpVFile( new URI( this.uri.toString() + /* AbsFtpVThing.vfolder_terminator + */ nam + AbsFtpVThing.vfile_separator + ext ), this.vvol );
+			final String name = FileNameCodec.FILE_NAME_CODEC.encode( this.uri.toString(), nam, ext );
+			return FtpVFile.make( new URI( name ), this.vvol, true );
 		} catch ( URISyntaxException e ) {
 			throw new RuntimeException( e );
 		}
+	}
+
+	public VFolderRef getVFolderRef( String nam, String ext ) {
+		try {
+			final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( this.uri.toString(), nam, ext );
+			return new FtpVFolderRef( new URI( name ), this.vvol );
+		} catch ( URISyntaxException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	public VFileRef getVFileRef( String nam, String ext ) {
+		try {
+			final String name = FileNameCodec.FILE_NAME_CODEC.encode( this.uri.toString(), nam, ext );
+			return new FtpVFileRef( new URI( name ), this.vvol );
+		} catch ( URISyntaxException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	public VFolderRef getVFolderRef() {
+		return new FtpVFolderRef( this.uri, this.vvol );
 	}
 
 }

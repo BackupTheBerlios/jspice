@@ -35,6 +35,9 @@ public class Main extends AbsMain {
 	}
 
 	protected void init( final boolean wantBanner ) {
+
+//		System.setProperty( "java.net.preferIPv4Stack", "true" );
+
 		this.jspice_conf = new JSpiceConf();
 		Print.current_mode = this.jspice_conf.isDebugging() ? Print.INFO | Print.LOAD | Print.CONFIG | Print.AUTOLOAD : 0;
 		if ( wantBanner ) FixedConf.printBanner();

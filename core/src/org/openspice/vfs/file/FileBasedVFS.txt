@@ -1,5 +1,7 @@
 [] Notes on the implementation of File Based VFS
 
+This is no longer correct.  Refer to the source code.  Sorry.  [Steve Leach, Aug 04]
+
 VFS = Virtual Filing System
 
 [1] File name encoding/decoding.

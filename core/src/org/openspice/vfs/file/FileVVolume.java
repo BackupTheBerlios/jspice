@@ -18,12 +18,11 @@
  */
 package org.openspice.vfs.file;
 
-import org.openspice.vfs.VVolume;
-import org.openspice.vfs.VFolder;
+import org.openspice.vfs.*;
 
 import java.io.File;
 
-public class FileVVolume implements VVolume {
+public class FileVVolume extends AbsVVolume implements VVolume {
 
 	final File root_file;
 
@@ -31,8 +30,21 @@ public class FileVVolume implements VVolume {
 		this.root_file = file;
 	}
 
+	public FileVVolume() {
+		this.root_file = new File( "./" );		//	todo: have to work out the concept of current directory
+	}
+
 	public VFolder getRootVFolder() {
-		return new FileVFolder( this.root_file );
+		return this.root_file.exists() ? new FileVFolder( this.root_file ) : null;
+
+	}
+
+	public VFolderRef getRootVFolderRef() {
+		return new FileVFolderRef( this.root_file );
+	}
+
+	public VFile getVFileFromFile( final File file ) {
+		return new FileVFile( file );
 	}
 
 }

@@ -343,17 +343,13 @@ public class ForMiniParser extends Prefix {
 				} else {
 					tmpvars.add( parser.newTmpNameExpr() );
 					readGenerator( parser, matches, iterators );
+					final Token nexttok = parser.peekToken();
+					if ( nexttok == null || !nexttok.hasName( "while" ) && !nexttok.hasName( "until" ) && !nexttok.hasName( "suchthat" ) && !nexttok.hasName( "do" ) && !nexttok.hasName( ";" ) ) {
+						new Alert( "Unexpected token following iterator" ).culprit( "token", nexttok ).mishap();
+					}
 				}
-				if ( parser.tryReadToken( ";" ) != null ) {
-					if ( parser.tryReadToken( "do" ) != null ) break;
-				} else {
-					parser.mustReadToken( "do" );
-					break;
-				}
-//				//	Yuck.  Horrible.  todo:
-//				if ( !parser.canPeekToken( "while" ) && !parser.canPeekToken( "until" ) && !parser.canPeekToken( "suchthat" )) {
-//					parser.mustReadToken( ";" );
-//				}
+				parser.tryReadToken( ";" );		//	dispose of optional semi-colon
+				if ( parser.tryReadToken( "do" ) != null ) break;
 			}
 		}
 		assert tmpvars.size() == matches.size();

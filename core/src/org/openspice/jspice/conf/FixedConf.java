@@ -49,6 +49,7 @@ public abstract class FixedConf {
 	public static final char VFILE_SEPARATOR = '.';
 	public static final char VFOLDER_SEPARATOR = '-';
 	public static final char VFOLDER_TERMINATOR = '/';
+	public static final char VITEM_ESCAPE = '%';
 
 	static final String load_file_nam = "load";
 	static final String load_folder_nam = load_file_nam;

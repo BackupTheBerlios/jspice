@@ -21,10 +21,7 @@ package org.openspice.jspice.parse.spice;
 import org.openspice.jspice.parse.miniparser.Bothfix;
 import org.openspice.jspice.parse.Parser;
 import org.openspice.jspice.expr.Expr;
-import org.openspice.jspice.expr.cases.ApplyExpr;
-import org.openspice.jspice.expr.cases.LambdaExpr;
-import org.openspice.jspice.expr.cases.SkipExpr;
-import org.openspice.jspice.expr.cases.CheckOneExpr;
+import org.openspice.jspice.expr.cases.*;
 import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.datatypes.ThunkDeferred;
@@ -43,8 +40,12 @@ public final class ParenMiniParser extends Bothfix {
 		} else {
 			final Expr lhs = parser.readStmnts();
 			if ( parser.tryReadToken( "=>" ) != null || parser.tryReadToken( "as" ) != null ) {
+				/*
+				 * Note: with the addition of structure patterns you cannot allow optional
+				 * function names - they get confused with single atrgument functions.
+				 */
 				final Expr rhs = parser.readStmntsTo( ")" );
-				final Decurrier d = new Decurrier( lhs, rhs ).canonize();
+				final Decurrier d = new Decurrier( ApplyExpr.make( new AnonExpr(), lhs ), rhs ).canonize();
 				return FunMiniParser.make( d );
 			} else {
 				parser.mustReadToken( ")" );

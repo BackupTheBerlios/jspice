@@ -16,28 +16,17 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.main;
+package org.openspice.vfs;
 
-import org.openspice.jspice.conf.JSpiceConf;
-import org.openspice.jspice.vm_and_compiler.VM;
+public interface VFolderRef extends VItemRef {
+	VFolder getVFolder();
+	VFileRef getVFileRef( final String nam,  final String ext );
+	VFolderRef getVFolderRef( final String nam,  final String ext );
 
-import java.io.StringReader;
-import java.util.List;
+	VFolderRef getVFolderRefFromPath( String path );
+	VFileRef getVFileRefFromPath( String path );
+	VFolder getVFolderFromPath( String path );
+	VFile getVFileFromPath( String path );
 
-public class StringInterpreter {
-
-	JSpiceConf jspice_conf;
-
-	public StringInterpreter() {
-		this.jspice_conf = new JSpiceConf();
-	}
-
-	public List interpret( final String s ) {
-		final SuperLoader super_loader = new SuperLoader( this.jspice_conf );
-		final Interpreter interpreter = new Interpreter( super_loader.getNameSpace( "spice.interactive_mode" ) );
-		interpreter.simple_interpret( new StringReader( s ) );
-		final VM vm = interpreter.getVM();
-		return vm.getAllResults();
-	}
-
+	VItem getVItemFromPath( String path );
 }

@@ -28,8 +28,12 @@ import org.openspice.jspice.main.manual.FileManual;
 import org.openspice.jspice.class_builder.JSpiceClassLoader;
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFile;
+import org.openspice.vfs.VVolume;
+import org.openspice.vfs.ftp.FtpVFolder;
+import org.openspice.vfs.ftp.FtpVVolume;
 import org.openspice.vfs.file.FileVFolder;
 import org.openspice.vfs.file.FileVFile;
+import org.openspice.vfs.file.FileVVolume;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -126,12 +130,13 @@ public final class JSpiceConf {
 	}
 
 	final VFolder lookupInventoryNickname( final String nickname ) {
+		final VVolume root = new FileVVolume( new File( "/" )  );
 		if ( "standard".equals( nickname ) ) {
-			return new FileVFolder( new File( "/usr/local/jspice/inventory" ) );
+			return root.getVFolderFromPath( "usr/local/jspice/inventory" );
 		} else if ( "local".equals( nickname ) ) {
-			return new FileVFolder( new File( "/etc/jspice/inventory" ) );
+			return root.getVFolderFromPath( "etc/jspice/inventory" );
 		} else if ( "personal".equals( nickname ) ) {
-			return new FileVFolder( new File( new File( "~" ), personal_inventory ) );
+			return root.getVFolderRefFromPath( System.getProperty( "user.home" ) ).getVFolderRef( personal_inventory, null ).getVFolder();
 		} else {
 			throw new Alert( "Invalid inventory nickname" ).culprit( "nickname", nickname ).mishap();
 		}
@@ -201,8 +206,10 @@ public final class JSpiceConf {
 		return null;
 	}
 
-	private static File user_home() {
-		return new File( System.getProperty( "user.home" ) );
+	private static VFolder user_home() {
+		final VFolder h = new FileVVolume( new File( System.getProperty( "user.home" ) ) ).getRootVFolder();
+		System.err.println( "user home = " + h );
+		return h;
 	}
 
 	public VFolder getHome() {
@@ -338,7 +345,8 @@ public final class JSpiceConf {
 
 
 	public JSpiceConf() {
-		this.jspice_home = new FileVFolder( home() );
+		final VVolume volume = new FtpVVolume( "ftp://heather:lucy@127.0.0.1" + home() + "/" );
+		this.jspice_home = volume.getRootVFolder();
 		if ( this.jspice_home == null ) {
 			new Alert( "Cannot locate JSpice home directory" ).warning();
 		}
@@ -352,15 +360,7 @@ public final class JSpiceConf {
 		Print.println( Print.CONFIG, "... installed" );
 
 		//	todo: move the strings constants to FixedConf
-		final File user_home_file = new File( new File( user_home(), ".jspice" ), "jspice.conf" );
-		if ( user_home_file.exists() ) {
-			if ( user_home_file.canRead() && user_home_file.isFile() ) {
-				this.parseJSpiceConf( new FileVFile( user_home_file ) );
-			} else {
-				new Alert( "Personal configuration file is unreadable" ).culprit( "filename", user_home_file ).warning();
-			}
-		}
-
+		this.parseJSpiceConf( user_home().getVFolderRef().getVFileFromPath( ".jspice/jspice.conf" ) );
 	}
 
 }

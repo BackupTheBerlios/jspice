@@ -18,26 +18,27 @@
  */
 package org.openspice.vfs.file;
 
-import org.openspice.vfs.VFolder;
-import org.openspice.vfs.VFile;
-import org.openspice.vfs.VItem;
+import org.openspice.vfs.*;
+import org.openspice.vfs.codec.FolderNameCodec;
+import org.openspice.vfs.codec.FileNameCodec;
+import org.openspice.vfs.codec.Codec;
 import org.openspice.tools.ReaderWriterTools;
 
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class FileVFolder extends AbsFileVThing implements VFolder {
+public class FileVFolder extends AbsFileVItem implements VFolder {
 
-	public FileVFolder( final File file ) {
+	protected Codec codec() {
+		return FolderNameCodec.FOLDER_NAME_CODEC;
+	}
+
+	FileVFolder( final File file ) {
 		super( file );
 		if ( !this.file.isDirectory() ) {
 			throw new RuntimeException( "directory needed: " + file );
 		}
-	}
-
-	protected char separator() {
-		return '-';
 	}
 
 	public List listVFolders() {
@@ -94,7 +95,8 @@ public class FileVFolder extends AbsFileVThing implements VFolder {
 
 
 	public VFolder newVFolder( final String nam, final String ext ) {
-		final File d = new File( this.file, this.makeName( nam, ext ) );
+		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( nam, ext );
+		final File d = new File( this.file, name );
 		if ( d.mkdir() ) {
 			return new FileVFolder( d );
 		} else {
@@ -103,7 +105,8 @@ public class FileVFolder extends AbsFileVThing implements VFolder {
 	}
 
 	public VFile newVFile( final String nam, final String ext, final Reader reader ) {
-		final File f = new File( this.file, this.makeName( nam, ext ) );
+		final String name = FileNameCodec.FILE_NAME_CODEC.encode( nam, ext );
+		final File f = new File( this.file, name );
 		if ( f.exists() ) {
 			throw new RuntimeException( "file already exists: " + f );
 		} else {
@@ -117,17 +120,33 @@ public class FileVFolder extends AbsFileVThing implements VFolder {
 	}
 
 	public VFolder getVFolder( final String nam, String ext ) {
-		final String name = this.makeName( nam, ext );
+		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( nam, ext );
 		final File file = new File( this.file, name );
 		if ( !file.isDirectory() ) return null;
 		return new FileVFolder( file );
 	}
 
 	public VFile getVFile( String nam, String ext ) {
-		final String name = FileNameTools.makeFileName( nam, AbsFileVThing.vfile_separator, ext );
+		final String name = FileNameCodec.FILE_NAME_CODEC.encode( nam, ext );
 		final File file = new File( this.file, name );
 		if ( !file.exists() ) return null;
 		return new FileVFile( file );
+	}
+
+	public VFolderRef getVFolderRef( String nam, String ext ) {
+		final String name = FolderNameCodec.FOLDER_NAME_CODEC.encode( nam, ext );
+		final File file = new File( this.file, name );
+		return new FileVFolderRef( file );
+	}
+
+	public VFileRef getVFileRef( String nam, String ext ) {
+		final String name = FileNameCodec.FILE_NAME_CODEC.encode( nam, ext );
+		final File file = new File( this.file, name );
+		return new FileVFileRef( file );
+	}
+
+	public VFolderRef getVFolderRef() {
+		return new FileVFolderRef( this.file );
 	}
 
 }

@@ -17,20 +17,25 @@
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package org.openspice.vfs.file;
+
 import org.openspice.vfs.VFile;
+import org.openspice.vfs.VFileRef;
+import org.openspice.vfs.codec.Codec;
+import org.openspice.vfs.codec.FileNameCodec;
 import org.openspice.jspice.alert.Alert;
 
 import java.io.*;
 
-public class FileVFile extends AbsFileVThing implements VFile {
+public class FileVFile extends AbsFileVItem implements VFile {
 
-	public FileVFile( final File file ) {
+	protected Codec codec() {
+		return FileNameCodec.FILE_NAME_CODEC;
+	}
+
+	FileVFile( final File file ) {
 		super( file );
 	}
 
-	protected char separator() {
-		return '.';
-	}
 
 	public Reader readContents() {
 		try {
@@ -63,4 +68,9 @@ public class FileVFile extends AbsFileVThing implements VFile {
 			throw new RuntimeException( e );
 		}
 	}
+
+	public VFileRef getVFileRef() {
+		return new FileVFileRef( this.file );
+	}
+
 }

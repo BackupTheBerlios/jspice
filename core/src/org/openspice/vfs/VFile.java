@@ -33,4 +33,6 @@ public interface VFile extends VItem {
 	InputStream inputStreamContents();
 	OutputStream outputStreamContents();
 
+	VFileRef getVFileRef();
+
 }
