@@ -37,7 +37,7 @@ public abstract class WordLikeToken extends Token implements Showable {
 	 * Tokens get shown in error dialogs.
 	 */
 	public void showTo( final Consumer cuchar ) {
-		cuchar.outString( this.word );
+		cuchar.outCharSequence( this.word );
 	}
 
 }

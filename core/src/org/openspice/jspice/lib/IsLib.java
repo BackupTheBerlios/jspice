@@ -26,13 +26,10 @@ import java.util.List;
 
 public class IsLib {
 
-	public static final boolean isMap( final Object x ) {
-		return ( x instanceof Map ) || ( x instanceof Deferred ) && ( ((Deferred)x).force() instanceof Map );
+	public static final boolean isCharSequence( final Object x ) {
+		return ( x instanceof CharSequence ) || ( x instanceof Deferred ) && ( ((Deferred)x).force() instanceof CharSequence );
 	}
 
-	public static final boolean isMapFlavour( Object x ) {
-		return ( x instanceof Map ) || ( x instanceof List ) || ( x instanceof String ) || ( x instanceof SpiceObject && ((SpiceObject)x).isMapFlavour() );
-	}
 
 	public static final boolean isList( final Object x ) {
 		return ( x instanceof List ) || ( x instanceof Deferred ) && ( ((Deferred)x).force() instanceof List );
@@ -42,6 +39,13 @@ public class IsLib {
 		return ( x instanceof Map ) || ( x instanceof List ) || ( x instanceof String ) || ( x instanceof SpiceObject && ((SpiceObject)x).isListFlavour() );
 	}
 
+	public static final boolean isMap( final Object x ) {
+		return ( x instanceof Map ) || ( x instanceof Deferred ) && ( ((Deferred)x).force() instanceof Map );
+	}
+
+	public static final boolean isMapFlavour( Object x ) {
+		return ( x instanceof Map ) || ( x instanceof List ) || ( x instanceof String ) || ( x instanceof SpiceObject && ((SpiceObject)x).isMapFlavour() );
+	}
 
 	public static final boolean isString( final Object x ) {
 		return ( x instanceof String ) || ( x instanceof Deferred ) && ( ((Deferred)x).force() instanceof String );

@@ -26,7 +26,6 @@ import org.openspice.jspice.expr.iterators.ExprIterator;
  */
 
 
-//static final class ShortCircuitExpr extends BuiltIn1BinaryExpr {
 public final class ShortCircuitExpr extends BinaryExpr {
 	public final boolean bool_oriented;
 	public final boolean and_oriented;
@@ -34,7 +33,6 @@ public final class ShortCircuitExpr extends BinaryExpr {
 	public Arity arity() { return this.defaultArity(); }
 
 	private ShortCircuitExpr( final boolean a, final boolean b, final Expr _lhs, final Expr _rhs ) {
-		//super( CheckOneExpr.make( _lhs ), CheckOneExpr.make( _rhs ) );
 		super( _lhs, _rhs );
 		this.and_oriented = a;
 		this.bool_oriented = b;
@@ -51,4 +49,9 @@ public final class ShortCircuitExpr extends BinaryExpr {
 	public Expr copy( final ExprIterator kids ) {
 		return make( this.and_oriented, this.bool_oriented, kids.next(), kids.next() );
 	}
+
+	public boolean isBooleanExpr() {
+		return this.bool_oriented;
+	}
+
 }

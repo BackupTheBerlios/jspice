@@ -23,6 +23,10 @@ import org.openspice.jspice.vm_and_compiler.VM;
 
 public abstract class Binary1InvokeProc extends FastProc {
 
+	{
+		setDescription( null, "%p( a, b ) -> r", null );
+	}
+
 	public abstract Object invoke( Object x, Object y );
 
 	public Arity inArity() {

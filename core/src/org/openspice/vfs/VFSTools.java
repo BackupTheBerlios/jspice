@@ -18,6 +18,10 @@
  */
 package org.openspice.vfs;
 
+import org.openspice.jspice.alert.Alert;
+
+import java.util.StringTokenizer;
+
 
 public class VFSTools {
 
@@ -25,8 +29,19 @@ public class VFSTools {
 		throw new RuntimeException( "tbd" ); 	//	todo: to be defined
 	}
 
-	public static final VFile newVFile( final VFolder vf, final String spec ) {
-		throw new RuntimeException( "tbd" ); 	//	todo: to be defined
+	public static final VFile newVFile( VFolder vf, final String spec ) {
+		final StringTokenizer toks  = new StringTokenizer( spec, System.getProperty( "file.separator" ) );
+		while ( toks.hasMoreTokens() ) {
+			final String tok = toks.nextToken();
+			if ( toks.hasMoreTokens() ) {
+				vf = vf.getVFolder( tok, null );
+			} else {
+				//	todo:	WRONG WRONG WRONG
+				final int n = tok.indexOf( '.' );
+				return vf.getVFile( tok.substring(  0, n ), tok.substring( n+1 ) );
+			}
+		}
+		throw Alert.unreachable();	//	todo: WRONG
 	}
 
 }

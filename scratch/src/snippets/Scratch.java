@@ -16,13 +16,17 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package snippets;
 
-import org.openspice.tools.BooleanTools;
-import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
+import java.util.LinkedList;
 
-class NotEqualProc extends Binary1InvokeProc {
-	public Object invoke( final Object x, final Object y ) {
-		return x.equals( y ) ? BooleanTools.FALSE : BooleanTools.TRUE;
+/**
+ * I use this for messing about.
+ */
+public class Scratch {
+
+	public static final void foo() {
+		LinkedList x;
 	}
+
 }

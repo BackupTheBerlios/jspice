@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 public interface ExprIntf {
 	abstract Arity arity();
+	abstract boolean isBooleanExpr();
 	abstract ExprIterator getAllKids();
 	abstract Iterator getAllData();
 	abstract Expr simplify();

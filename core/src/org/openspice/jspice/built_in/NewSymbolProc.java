@@ -21,11 +21,20 @@ package org.openspice.jspice.built_in;
 import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
 import org.openspice.jspice.datatypes.Symbol;
 import org.openspice.jspice.lib.CastLib;
+import org.openspice.jspice.lib.ConvertLib;
 
 public class NewSymbolProc extends Unary1InvokeProc {
 
+	{
+		setDescription(
+			"newSymbolProc",
+			"%p( char|string... ) -> r",
+			"constructs a new symbol"
+		);
+	}
+
 	public Object invoke( final Object x ) {
-		return Symbol.make( CastLib.toString( x ) );
+		return Symbol.make( ConvertLib.convertString( x ) );
 	}
 
 	public static final NewSymbolProc NEW_SYMBOL_PROC = new NewSymbolProc();

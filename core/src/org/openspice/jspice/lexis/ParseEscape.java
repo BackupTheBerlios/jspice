@@ -23,7 +23,7 @@ import org.openspice.jspice.conf.JSpiceConf;
 
 public abstract class ParseEscape {
 
-	final JSpiceConf jspice_conf;
+	final JSpiceConf jspice_conf;	//	Permitted to be null - but disables entity parsing.
 
 	public ParseEscape( final JSpiceConf jspice_conf ) {
 		this.jspice_conf = jspice_conf;
@@ -71,7 +71,7 @@ public abstract class ParseEscape {
 				ch = this.readCharNoEOF();
 			}
 			final String s = b.toString().intern();
-			final Character tmp = this.jspice_conf.decode( s );
+			final Character tmp = this.jspice_conf != null ? this.jspice_conf.decode( s ) : null;
 			if ( tmp == null ) {
 				new Alert(
 					"Unrecognized HTML entity in string",
@@ -113,11 +113,30 @@ public abstract class ParseEscape {
 				culprit( "sequence", "\\^" + new Character( nch ).toString() ).
 				mishap();
 			}
+		} else if ( ch == '0' ) {
+			final char nch = this.readCharNoEOF();
+			if ( nch != 'x' ) {
+				throw this.alert( "Unexpected escape sequence in string" ).
+				culprit( "sequence", "\\0" + new Character( nch ).toString() ).
+				mishap();
+			}
+			return this.parseNumber( 16, 2 );
+		} else if ( ch == 'u' ) {
+			return this.parseNumber( 16, 4 );
 		} else {
 			throw this.alert( "Unexpected escape sequence in string" ).
 			culprit( "sequence", "\\" + new Character( ch ).toString() ).
 			mishap();
 		}
+	}
+
+	final char parseNumber( final int radix, final int count ) {
+		final StringBuffer b = new StringBuffer();
+		for ( int i = 0; i < count; i++ ) {
+			b.append( this.readCharNoEOF() );
+		}
+		final int nchar = Integer.parseInt( b.toString(), radix );
+		return (char)nchar;
 	}
 
 }

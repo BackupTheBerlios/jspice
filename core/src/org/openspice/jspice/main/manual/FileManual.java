@@ -89,8 +89,10 @@ public class FileManual extends AbsFileManual {
 			if ( phrase.match( 0, nickname ) ) {
 				if ( phrase.match( 1, "." ) ) {		//	virtual package name.
 					final VFolder folder = iconf.getPathFile().getVFolder( this.getManualFolderName(), null );
-					//	null inhibits the printing of the dot.
-					this.find( phrase, folder, nickname, null, results );
+					if ( folder != null ) {
+						//	null inhibits the printing of the dot.
+						this.find( phrase, folder, nickname, null, results );
+					}
 				}
 				//	Add all the matching files from the packages.
 				this.allPackageFiles( phrase, iconf, results );

@@ -21,7 +21,7 @@ package org.openspice.jspice.tools;
 public abstract class Consumer {
 	abstract public void out( final char ch );
 	abstract public void ln();
-	abstract public void outString( final String s );
+	abstract public void outCharSequence( final CharSequence s );
 	abstract public void outObject( final Object ch );
 	abstract public Object close();
 }

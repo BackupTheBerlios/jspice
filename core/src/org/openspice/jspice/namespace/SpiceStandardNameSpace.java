@@ -26,6 +26,7 @@ import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
 import org.openspice.jspice.built_in.*;
 import org.openspice.jspice.built_in.strings.FormatProc;
 import org.openspice.jspice.built_in.strings.IsStringProc;
+import org.openspice.jspice.built_in.strings.NewStringProc;
 import org.openspice.jspice.built_in.elements.ElementNameProc;
 import org.openspice.jspice.built_in.elements.ElementAttributesProc;
 import org.openspice.jspice.built_in.maps.NewMapProc;
@@ -127,6 +128,7 @@ public class SpiceStandardNameSpace extends NameSpace {
 		this.install( "openURL", OpenURLProc.OPEN_URL_PROC );
 		this.install( "newList", NewListProc.NEW_LIST_PROC );
 		this.install( "newMap", NewMapProc.NEW_MAP_PROC );
+		this.install( "newString", NewStringProc.NEW_STRING_PROC );
 		this.install( "newSymbol", NewSymbolProc.NEW_SYMBOL_PROC );
 		this.install( "print", PrintProcs.printProc );
 		this.install( "println", PrintProcs.printlnProc );

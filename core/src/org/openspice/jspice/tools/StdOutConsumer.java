@@ -27,7 +27,7 @@ public final class StdOutConsumer extends ConsumerImpl {
 		System.out.println( "" );
 	}
 
-	public void outString( final String s ) {
+	public void outCharSequence( final CharSequence s ) {
 		System.out.print( s );
 	}
 

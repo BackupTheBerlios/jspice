@@ -47,7 +47,7 @@ public final class ParenMiniParser extends Bothfix {
 				final Decurrier d = new Decurrier( lhs, rhs ).canonize();
 				return FunMiniParser.make( d );
 			} else {
-				parser.mustReadToken( "=>" );
+				parser.mustReadToken( ")" );
 				return lhs;
 			}
 		}

@@ -41,8 +41,9 @@ public abstract class Proc extends SpiceObject.NonMap {
 		//	Skip.
 	}
 
-	public void showTo( Consumer cuchar ) {
-		cuchar.outString( this.getClass().getName() );
+	public void showTo( final Consumer cuchar ) {
+		final String name = this.getName();
+		cuchar.outCharSequence( name != null ? name : this.getClass().getName() );
 	}
 
 	/**
@@ -51,16 +52,20 @@ public abstract class Proc extends SpiceObject.NonMap {
 	 * @param cuchar
 	 */
 	public void printTo( final Consumer cuchar ) {
-		cuchar.outString( this.getClass().getName() );
+		cuchar.outCharSequence( this.getClass().getName() );
 	}
 
-	public final String summary() {
-		final String n = getName();
-		if ( n == null ) return null;
+	public final String summary( final String variable_name ) {
+		{
+			final String local_name = getName();
+			if ( local_name != null && !local_name.equals( variable_name ) ) {
+				return variable_name + " synonym for " + local_name;
+			}
+		}
 		final String s = getSignature();
 		final String c = getComment();
 		final StringBufferConsumer sbc = new StringBufferConsumer();
-		PrintTools.formatTo( sbc, ( s != null ? s : "%p" ), new Object[] { n } );
+		PrintTools.formatTo( sbc, ( s != null ? s : "%p" ), new Object[] { variable_name } );
 		return sbc.closeAsString() + ( c != null ? "  # " + c : "" );
 	}
 
@@ -68,21 +73,21 @@ public abstract class Proc extends SpiceObject.NonMap {
 	String signature = null;
 	String comment = null;
 
-	public String getName() {
+	public final String getName() {
 		return name;
 	}
 
-	public String getSignature() {
+	public final String getSignature() {
 		return signature;
 	}
 
-	public String getComment() {
+	public final String getComment() {
 		return comment;
 	}
 
 	public void setDescription( final String name, final String signature, final String comment ) {
-		this.name = name;
-		this.signature = signature;
+		if ( name !=null ) this.name = name;
+		if ( signature != null ) this.signature = signature;
 		if ( signature != null && signature.indexOf( "%p" ) < 0 ) {
 			new Alert( "Missing %p in signature string" ).culprit( "name", name ).culprit( "signature", signature ).warning();
 		}

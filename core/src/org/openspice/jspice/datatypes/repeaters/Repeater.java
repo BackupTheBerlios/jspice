@@ -38,7 +38,7 @@ public abstract class Repeater extends SpiceObject.NonMap implements Enumeration
 	}
 
 	public void showTo( final Consumer cuchar ) {
-		cuchar.outString( "-repeater-" );
+		cuchar.outCharSequence( "-repeater-" );
 	}
 
 	public void printTo( final Consumer cuchar ) {

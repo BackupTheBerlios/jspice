@@ -24,6 +24,10 @@ import org.openspice.jspice.lib.CastLib;
 
 public abstract class Binary1FloatingPointProc extends Binary1InvokeProc {
 
+	{
+		setDescription( null, "%p( float1, float2 ) -> r", null );
+	}
+
 	abstract double apply( final double x, final double y );
 
 	public Object invoke( final Object x, final Object y ) {

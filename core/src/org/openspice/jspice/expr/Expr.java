@@ -24,7 +24,10 @@ import java.util.Iterator;
  */
 
 public abstract class Expr implements ExprIntf {
+
 	public abstract Arity arity();
+
+	public abstract boolean isBooleanExpr();
 
 	public abstract ExprIterator getAllKids();
 
@@ -53,4 +56,5 @@ public abstract class Expr implements ExprIntf {
 	public abstract Object maybeConstantExpr();
 
 	public abstract boolean isConstantExpr();
+
 }

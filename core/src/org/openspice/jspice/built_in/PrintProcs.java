@@ -75,7 +75,7 @@ public final class PrintProcs {
 				list.addFirst( vm.pop() );
 			}
 			final Consumer c = this.to_flag ? CastLib.toConsumer( vm.pop() ) : StdOutConsumer.OUT;
-			final String control_string = CastLib.toString( list.removeFirst() );
+			final CharSequence control_string = CastLib.toCharSequence( list.removeFirst() );
 			PrintTools.formatTo( StdOutConsumer.OUT, control_string, list.toArray() );
 			if ( this.ln_flag ) c.ln();
 			return vm.pop();

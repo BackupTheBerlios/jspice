@@ -18,7 +18,7 @@
  */
 package org.openspice.jspice.tools;
 
-import org.openspice.jspice.datatypes.PseudoList;
+import org.openspice.jspice.datatypes.lists.PseudoList;
 import org.openspice.jspice.datatypes.SpiceObject;
 import org.openspice.jspice.alert.Alert;
 
@@ -29,8 +29,8 @@ public final class ListTools {
 	public final static List convertTo( final Object obj ) {
 		if ( obj instanceof List ) {
 			return (List)obj;
-        } else if ( obj instanceof String ) {
-			return new org.openspice.jspice.datatypes.PseudoList.StringAsList( (String)obj );
+        } else if ( obj instanceof CharSequence ) {
+			return new org.openspice.jspice.datatypes.lists.CharSequenceAsList( (CharSequence)obj );
 		} else if ( obj instanceof org.openspice.jspice.datatypes.SpiceObject ) {
 			return ((org.openspice.jspice.datatypes.SpiceObject)obj).convertToList();
 		} else if ( obj instanceof Map ) {
@@ -49,16 +49,16 @@ public final class ListTools {
 	public final static Object convertFrom( final List list, final Object example ) {
 		if ( example instanceof List ) {
 			return list;
-		} else if ( list instanceof org.openspice.jspice.datatypes.PseudoList && ((org.openspice.jspice.datatypes.PseudoList)list).compatibleWith( example ) ) {
-			return ((org.openspice.jspice.datatypes.PseudoList)list).getObject();
-		} else if ( example instanceof String ) {
+		} else if ( list instanceof PseudoList && ((PseudoList)list).compatibleWith( example ) ) {
+			return ((PseudoList)list).getObject();
+		} else if ( example instanceof CharSequence ) {
             final StringBuffer buffer = new StringBuffer();
             for ( Iterator it = list.iterator(); it.hasNext(); ) {
                 buffer.append( ( (Character)it.next()).charValue() );
             }
             return buffer.toString();
-		} else if ( example instanceof org.openspice.jspice.datatypes.SpiceObject ) {
-			return ((org.openspice.jspice.datatypes.SpiceObject)example).convertFromList( list );
+		} else if ( example instanceof SpiceObject ) {
+			return ((SpiceObject)example).convertFromList( list );
 		} else {
 			new Alert(
 				"Conversion from List failed",
@@ -74,8 +74,8 @@ public final class ListTools {
 	public final static Object get( final Object obj, final int idx ) {
 		if ( obj instanceof List ) {
 			return ((List)obj).get( idx );
-		} else if ( obj instanceof String ) {
-			return new Character( ((String)obj).charAt( idx ) );
+		} else if ( obj instanceof CharSequence ) {
+			return new Character( ((CharSequence)obj).charAt( idx ) );
 		} else if ( obj instanceof Map ) {
 			return ((Map)obj).get( new Integer( idx ) );
 		} else {

@@ -21,6 +21,7 @@ package org.openspice.jspice.conf;
 
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.Print;
+import org.openspice.jspice.main.pragmas.StylePragma;
 import org.openspice.jspice.main.jline_stuff.PrefixFilterAccumulator;
 import org.openspice.jspice.main.manual.Manual;
 import org.openspice.jspice.main.manual.FileManual;
@@ -49,10 +50,10 @@ public final class JSpiceConf {
 
 	//	---oooOOOooo---
 
-	String prompt_base = FixedConf.PROMPT_BASE;
+	String prompt_base = FixedConf.BASE_PROMPT + " ";
 
 	public String getPrompt() {
-		return this.prompt_base + " ";
+		return this.prompt_base;
 	}
 
 	//	---oooOOOooo---
@@ -160,13 +161,18 @@ public final class JSpiceConf {
 
 	//	---- getLoaderClassName ----
 
+	//	Map< String, LoaderBuilderRecord >
 	private final Map extnMap = new TreeMap();
 
 	public String getLoaderBuilderClassName( final String extn, final boolean null_allowed ) {
-		final String className = extn != null ? (String)this.extnMap.get( extn ) : null;
-		if ( className != null ) return className;
+		final LoaderBuilderRecord r = extn != null ? (LoaderBuilderRecord)this.extnMap.get( extn ) : null;
+		if ( r !=  null ) return r.getClassName();
 		if ( null_allowed )	return null;
 		throw new Alert( "No loader associated with this extension" ).culprit( "extension", extn ).mishap();
+	}
+
+	public Collection getAutoloaders() {
+		return this.extnMap.values();
 	}
 
 
@@ -255,8 +261,8 @@ public final class JSpiceConf {
 
 	//	---- Entity Tables ----
 
-	final Map entityToStringMap = new HashMap();
-	final Map charToEntityMap = new HashMap();
+	final Map entityToStringMap = new HashMap();	//	Map< String, Character >
+	final Map charToEntityMap = new HashMap();		//	Map< Character, String >
 
 	public Character decode( final String s ) {
 		return (Character)this.entityToStringMap.get( s );
@@ -264,6 +270,17 @@ public final class JSpiceConf {
 
 	public String encode( final char ch ) {
 		return (String)this.charToEntityMap.get( new Character( ch ) );
+	}
+
+	public List listEntities( final String regex ) {
+		final List answer = new ArrayList();
+		for ( Iterator it = this.charToEntityMap.values().iterator(); it.hasNext(); ) {
+			final String ent = (String)it.next();
+			if ( ent.matches( regex ) ) {
+				answer.add( ent );
+			}
+		}
+		return answer;
 	}
 
 	//	---- Constructor ----
@@ -284,12 +301,12 @@ public final class JSpiceConf {
 		final ConfTokenizer conft = new ConfTokenizer( conf_file.readContents() );
 		for ( final List list = new ArrayList(); conft.next( list ) != null; list.clear() ) {
 			final int list_size = list.size();	//	Guaranteed to be at least length 1.
-
 			final String command = (String)list.get( 0 );
-			if ( "AddLoaderBuilder".equals( command ) && list_size == 3 ) {
+			if ( "AddLoaderBuilder".equals( command ) && 3 <= list_size && list_size <= 4 ) {
 				final String extn = (String)list.get( 1 );
 				final String cname = (String)list.get( 2 );
-				this.extnMap.put( extn, cname );
+				final String comment = (String)list.get( 3 );
+				this.extnMap.put( extn, new LoaderBuilderRecord( extn, cname, comment ) );
 			} else if ( "Entity".equals( command ) && list_size == 3 ) {
 				final String name = (String)list.get( 1 );
 				final String hex_code_str = (String)list.get( 2 );
@@ -303,6 +320,9 @@ public final class JSpiceConf {
 				}
 			} else if ( "Prompt".equals( command ) && list_size == 2 ) {
 				this.prompt_base = (String)list.get( 1 );
+			} else if ( "StyleWarning".equals( command ) ) {
+				list.remove( 0 );
+				new StylePragma().enable( list );
 			} else {
 				final Object directive = list.remove( 0 );
 				new Alert( "Unrecognized directive JSpice conf file" ).culprit( "directive", directive ).culprit_list( list ).mishap();

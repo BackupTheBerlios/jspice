@@ -30,8 +30,8 @@ public class ListLib {
 		try {
 			if ( obj instanceof List ) {
 				return ((List)obj).get( n );
-			} else if ( obj instanceof String ) {
-				return new Character( ((String)obj).charAt( n ) );
+			} else if ( obj instanceof CharSequence ) {
+				return new Character( ((CharSequence)obj).charAt( n ) );
 			} else if ( obj instanceof Map ) {
 				return ((Map)obj).get( new Integer( n ) );
 			} else {
@@ -46,8 +46,8 @@ public class ListLib {
 		try {
 			if ( obj instanceof List ) {
 				return ((List)obj).size();
-			} else if ( obj instanceof String ) {
-				return ((String)obj).length();
+			} else if ( obj instanceof CharSequence ) {
+				return ((CharSequence)obj).length();
 			} else {
 				return ListTools.convertTo( obj ).size();
 			}
@@ -164,8 +164,8 @@ public class ListLib {
 	public static final Object cons( final Object x, final Object seq ) {
 		if ( seq instanceof List ) {
 			return ListTools.cons( x, (List)seq );
-		} else if ( seq instanceof String ) {
-			return CastLib.toCharacter( x ) + (String)seq;
+		} else if ( seq instanceof CharSequence ) {
+			return CastLib.toCharacter( x ) + seq.toString();
 		} else {
 			return ListTools.convertFrom( ListTools.cons( x, ListTools.convertTo( seq ) ), seq );
 		}
@@ -175,8 +175,8 @@ public class ListLib {
 	public static final Object snoc( final Object seq, final Object x ) {
 		if ( seq instanceof List ) {
 			return ListTools.snoc( (List)seq, x );
-		} else if ( seq instanceof String ) {
-			return (String)seq + CastLib.toCharacter( x );
+		} else if ( seq instanceof CharSequence ) {
+			return seq.toString() + CastLib.toCharacter( x );
 		} else {
 			return ListTools.convertFrom( ListTools.snoc( ListTools.convertTo( seq ), x ), seq );
 		}
@@ -203,16 +203,17 @@ public class ListLib {
 		}
 	}
 	
-	public final static Object putAt( final Object obj, final Object key, final Object val ) {
+	public final static void putAt( final Object obj, final Object key, final Object val ) {
 		try {
 			final int idx = CastLib.to_int( key ) - 1;
 			if ( obj instanceof List ) {
-				return ( (List)obj ).set( idx, val );
+				( (List)obj ).set( idx, val );
 			} else if ( obj instanceof Map ) {
-				return ( (Map)obj ).put( key, val );
+				( (Map)obj ).put( key, val );
+			} else if ( obj instanceof StringBuffer ) {
+				((StringBuffer)obj).setCharAt( idx, CastLib.toCharacter( val ).charValue() );
 			} else {
 				new Alert( "Cannot convert object to an assignable list" ).culprit( "object", obj ).mishap( 'E' );
-				return null;		//	sop
 			}
 		} catch ( final ClassCastException exn ) {
 			throw new Alert( "Index not an integer" ).culprit( "index", key ).culprit( "map", obj ).mishap( 'E' );
@@ -230,8 +231,8 @@ public class ListLib {
 			final ArrayList list = new ArrayList( (List)x );
 			list.addAll( (List)y );
 			return list;
-		} else if ( x instanceof String && y instanceof String ) {
-			return (String)x + (String)y;
+		} else if ( x instanceof CharSequence && y instanceof CharSequence ) {
+			return x.toString() + y.toString();
 		} else {
 			new Alert(
 				"Mismatched arguments for append"
@@ -243,8 +244,8 @@ public class ListLib {
 	public static final Object reverse( final Object x ) {
 		if ( x instanceof List ) {
 			return ListTools.reverse( (List)x );
-		} else if ( x instanceof String ) {
-			final String s = (String)x;
+		} else if ( x instanceof CharSequence ) {
+			final CharSequence s = (CharSequence)x;
 			final int len = s.length();
 			final int len1 = len - 1;
 			final char[] chars = new char[ len ];

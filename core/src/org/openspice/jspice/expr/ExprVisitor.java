@@ -95,6 +95,10 @@ public abstract class ExprVisitor { // extends ExprTransform {
 		return this.visitExpr( expr, arg );
 	}
 
+	public Object visitCheckBooleanExpr( final CheckBooleanExpr expr, final Object arg ) {
+		return this.visitExpr( expr, arg );
+	}
+
 	public Object visitCommaExpr( final CommaExpr expr, final Object arg ) {
 		return this.visitExpr( expr, arg );
 	}

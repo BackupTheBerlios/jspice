@@ -23,6 +23,10 @@ import org.openspice.jspice.lib.CastLib;
 
 public abstract class Unary1FloatingPointProc extends Unary1InvokeProc {
 
+	{
+		setDescription( null, "%p( float ) -> r", null );
+	}
+
 	abstract double apply( final double x );
 
 	public Object invoke( Object x ) {

@@ -32,11 +32,11 @@ public final class Termin extends SpiceObject.NonMap {
 	}
 
 	public void showTo( final Consumer cuchar ) {
-		cuchar.outString( "termin" );
+		cuchar.outCharSequence( "termin" );
 	}
 
 	public void printTo( final Consumer cuchar ) {
-		cuchar.outString( "termin" );
+		cuchar.outCharSequence( "termin" );
 	}
 
 	public static final Termin TERMIN = new Termin();

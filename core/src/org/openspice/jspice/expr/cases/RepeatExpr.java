@@ -3,6 +3,7 @@ package org.openspice.jspice.expr.cases;
 import org.openspice.jspice.datatypes.Arity;
 import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.expr.ExprVisitor;
+import org.openspice.jspice.expr.ExprBase;
 import org.openspice.jspice.expr.iterators.ExprIterator;
 import org.openspice.jspice.expr.iterators.IteratorExprIterator;
 import java.util.ArrayList;
@@ -109,7 +110,7 @@ public final class RepeatExpr extends ExprBase {
 		final ArrayList list = new ArrayList();
 
 		public void add( final Expr _test, final Expr _result, final Expr _body, final boolean ret_or_brk ) {
-			this.list.add( new Triple( _test, _result, _body, ret_or_brk ) );
+			this.list.add( new Triple( CheckBooleanExpr.make( _test ), _result, _body, ret_or_brk ) );
 		}
 
 		public RepeatExpr make() {

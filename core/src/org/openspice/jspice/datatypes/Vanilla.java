@@ -31,11 +31,11 @@ public class Vanilla extends SpiceObject.NonMap {
 	}
 
 	public void showTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
+		cuchar.outCharSequence( "-vanilla-" );
 	}
 
 	public void printTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
+		cuchar.outCharSequence( "-vanilla-" );
 	}
 
 }

@@ -144,4 +144,8 @@ public final class Arity {
 	public String toString() {
 		return "<" + this.count + "|" + ( this.more ? "+>" : ".>" );
 	}
+
+	public String toNiceString() {
+		return this.count + ( this.more ? "+" : "" );
+	}
 }

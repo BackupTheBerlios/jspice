@@ -27,14 +27,14 @@ public abstract class ConsumerImpl extends Consumer {
 		this.out( '\n' );
 	}
 
-	public void outString( final String s ) {
+	public void outCharSequence( final CharSequence s ) {
 		for ( int i = 0; i < s.length(); i++ ) {
 			this.out( s.charAt( i ) );
 		}
 	}
 
 	public void outObject( final Object obj ) {
-		this.outString( obj.toString() );
+		this.outCharSequence( obj.toString() );
 	}
 
 }

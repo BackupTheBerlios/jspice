@@ -23,6 +23,7 @@ import org.openspice.jspice.expr.markers.BadResults;
 import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.expr.iterators.ExprIterator;
 import org.openspice.jspice.expr.ExprVisitor;
+import org.openspice.jspice.expr.ExprBase;
 import org.openspice.jspice.datatypes.Arity;
 
 import java.util.ArrayList;

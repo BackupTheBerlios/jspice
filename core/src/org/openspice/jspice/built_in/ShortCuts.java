@@ -18,15 +18,25 @@
  */
 package org.openspice.jspice.built_in;
 
-import org.openspice.jspice.datatypes.proc.*;
+import org.openspice.jspice.built_in.lists.AppendProc;
+import org.openspice.jspice.built_in.lists.NewImmutableListProc;
+import org.openspice.jspice.built_in.lists.InvListProc;
 import org.openspice.jspice.built_in.arithmetic.*;
 import org.openspice.jspice.built_in.comparisons.*;
-import org.openspice.jspice.built_in.lists.AppendProc;
-import org.openspice.jspice.built_in.lists.InvListProc;
-import org.openspice.jspice.built_in.lists.NewImmutableListProc;
+import org.openspice.jspice.datatypes.proc.Proc;
 
 import java.util.Map;
 import java.util.HashMap;
+
+//import org.openspice.jspice.datatypes.proc.*;
+//import org.openspice.jspice.built_in.arithmetic.*;
+//import org.openspice.jspice.built_in.comparisons.*;
+//import org.openspice.jspice.built_in.lists.AppendProc;
+//import org.openspice.jspice.built_in.lists.InvListProc;
+//import org.openspice.jspice.built_in.lists.NewImmutableListProc;
+//
+//import java.util.Map;
+//import java.util.HashMap;
 
 
 public final class ShortCuts {

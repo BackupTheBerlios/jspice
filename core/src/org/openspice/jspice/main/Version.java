@@ -19,9 +19,21 @@
 package org.openspice.jspice.main;
 
 import org.openspice.jspice.conf.FixedConf;
+import org.openspice.jspice.tools.PrintTools;
+import org.openspice.jspice.tools.StdOutConsumer;
 
 public class Version {
 	public static final void main( final String[] args ) {
-		System.out.println( FixedConf.getMajorVersion() + "_" + FixedConf.getMinorVersion()+ "_" + FixedConf.getIncrementalVersion() );
+		final String control_string = args.length == 0 ? "%1p_%2p_%3p" : args[ 0 ];
+		PrintTools.formatTo(
+			StdOutConsumer.OUT,
+			control_string,
+			new Object[] {
+				FixedConf.getMajorVersion(),
+				FixedConf.getMinorVersion(),
+				FixedConf.getIncrementalVersion()
+			}
+		);
+		System.out.println( "" );
 	}
 }

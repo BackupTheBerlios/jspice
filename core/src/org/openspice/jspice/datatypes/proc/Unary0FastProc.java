@@ -22,6 +22,11 @@ import org.openspice.jspice.datatypes.Arity;
 
 public abstract class Unary0FastProc extends UnaryFastProc {
 
+
+	{
+		setDescription( null, "%p( a )", null );
+	}
+
 	public Arity outArity() {
 		return Arity.ZERO;
 	}

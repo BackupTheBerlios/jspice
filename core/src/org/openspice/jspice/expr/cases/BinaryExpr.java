@@ -20,6 +20,7 @@
 package org.openspice.jspice.expr.cases;
 
 import org.openspice.jspice.expr.Expr;
+import org.openspice.jspice.expr.ExprBase;
 import org.openspice.jspice.expr.iterators.ExprIterator;
 
 abstract class BinaryExpr extends ExprBase {

@@ -18,9 +18,10 @@
  */
 package org.openspice.jspice.tools;
 
-import org.openspice.jspice.datatypes.PseudoList;
+import org.openspice.jspice.datatypes.lists.PseudoList;
 import org.openspice.jspice.datatypes.SpiceObject;
-import org.openspice.jspice.datatypes.PseudoMap;
+import org.openspice.jspice.datatypes.maps.PseudoMap;
+import org.openspice.jspice.datatypes.maps.*;
 import org.openspice.jspice.alert.Alert;
 
 import java.util.*;
@@ -31,9 +32,9 @@ public final class MapTools {
 		if ( obj instanceof Map ) {
 			return (Map)obj;
 		} else if ( obj instanceof List ) {
-			return new PseudoMap.ListAsMap( (List)obj );
-        } else if ( obj instanceof String ) {
-			return new PseudoMap.StringAsMap( (String)obj );
+			return new ListAsMap( (List)obj );
+        } else if ( obj instanceof CharSequence ) {
+			return new CharSequenceAsMap( (String)obj );
 		} else if ( obj instanceof SpiceObject ) {
 			return ((SpiceObject)obj).convertToMap();
 		} else {
@@ -52,7 +53,7 @@ public final class MapTools {
 			return map;
 		} else if ( map instanceof PseudoMap && ((PseudoMap)map).compatibleWith( example ) ) {
 			return ((PseudoList)map).getObject();
-		} else if ( example instanceof String ) {
+		} else if ( example instanceof CharSequence ) {
 			return ListTools.convertFrom( ListTools.convertTo( map ), example );
 		} else if ( example instanceof SpiceObject ) {
 			return ((SpiceObject)example).convertFromMap( map );

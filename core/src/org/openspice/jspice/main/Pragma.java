@@ -24,8 +24,7 @@ import org.openspice.jspice.main.manual.Manual;
 import org.openspice.jspice.main.manual.ManualPragma;
 import org.openspice.jspice.main.manual.SearchPhrase;
 import org.openspice.jspice.main.jline_stuff.PrefixFilterAccumulator;
-import org.openspice.jspice.main.pragmas.LoadPragma;
-import org.openspice.jspice.main.pragmas.ListPragma;
+import org.openspice.jspice.main.pragmas.*;
 import org.openspice.jspice.namespace.NameSpaceManager;
 import org.openspice.jspice.namespace.NameSpace;
 
@@ -78,7 +77,11 @@ public class Pragma {
 	}
 
 	private String arg( final int n ) {
-		return (String)this.arg_list.get( n );
+		try {
+			return (String)this.arg_list.get( n );
+		} catch ( java.lang.IndexOutOfBoundsException e ) {
+			return null;
+		}
 	}
 
 
@@ -110,7 +113,10 @@ public class Pragma {
 
 	public void perform() {
 		final String c = this.command().intern();
-		if ( c == "conditions" || c == "warranty" ) {
+		if ( c == "autoloaders" ) {
+			new AutoloadersPragma( this.getJSpiceConf()).list();
+
+		} else if ( c == "conditions" || c == "warranty" ) {
 			final Manual manual = this.getJSpiceConf().getManualByName( "licence" );
 			final SearchPhrase t = new SearchPhrase();
 			t.add( "system" );
@@ -119,12 +125,16 @@ public class Pragma {
 			new ManualPragma().help( manual, t );
 		} else if ( c == "debug" ) {
 			this.debugPragma();
-		} else if ( c == "list" ) {
+		} else if ( c == "entities" ) {
+			new EntitiesPragma( this.getJSpiceConf() ).list( this.arg_list );
+ 		} else if ( c == "list" ) {
 			new ListPragma().list( this.getNameSpace(), this.arg_list );
 		} else if ( c == "load" ) {
 			new LoadPragma().load( this.interpreter, this.arg_list );
 		} else if ( c == "quit" || c == "exit" ) {
 			System.exit( 0 );
+		} else if ( c == "style" ) {
+			new StylePragma().enable( this.arg_list );
 		} else {
 			final Manual manual = this.getJSpiceConf().getManualByName( c );
 			if ( manual != null ) {
@@ -136,13 +146,16 @@ public class Pragma {
 	}
 
 	public void findPragmaCompletions( final PrefixFilterAccumulator acc ) {
-		acc.add( "quit" );
-		acc.add( "exit" );
-		acc.add( "debug" );
+		acc.add( "autoloaders" );
 		acc.add( "conditions" );
-		acc.add( "warranty" );
+		acc.add( "debug" );
+		acc.add( "entities" );
+		acc.add( "exit" );
 		acc.add( "load" );
 		acc.add( "list" );
+		acc.add( "quit" );
+		acc.add( "style" );
+		acc.add( "warranty" );
 		this.getJSpiceConf().findManualCompletions( acc );
 	}
 }

@@ -18,10 +18,11 @@
  */
 
 package org.openspice.jspice.lib;
-import org.openspice.jspice.*;
 import org.openspice.jspice.alert.Alert;
-import org.openspice.jspice.datatypes.PseudoMap;
+import org.openspice.jspice.datatypes.maps.PseudoMap;
 import org.openspice.jspice.datatypes.SpiceObject;
+import org.openspice.jspice.datatypes.maps.ListAsMap;
+import org.openspice.jspice.datatypes.maps.CharSequenceAsMap;
 
 import java.util.*;
 
@@ -32,8 +33,8 @@ public final class MapLib {
 			return ((Map)obj).isEmpty();
 		} else if ( obj instanceof List ) {
 			return ((List)obj).isEmpty();
-        } else if ( obj instanceof String ) {
-			return ((String)obj).length() == 0;
+        } else if ( obj instanceof CharSequence ) {
+			return ((CharSequence)obj).length() == 0;
 		} else if ( obj instanceof SpiceObject ) {
 			return ((SpiceObject)obj).isEmpty();
 		} else {
@@ -47,12 +48,12 @@ public final class MapLib {
 	public final static Map convertTo( final Object obj ) {
 		if ( obj instanceof Map ) {
 			return (Map)obj;
-        } else if ( obj instanceof String ) {
-			return new PseudoMap.StringAsMap( (String)obj );
+        } else if ( obj instanceof CharSequence ) {
+			return new CharSequenceAsMap( (CharSequence)obj );
 		} else if ( obj instanceof SpiceObject ) {
 			return ((SpiceObject)obj).convertToMap();
 		} else if ( obj instanceof List ) {
-			return new PseudoMap.ListAsMap( (List)obj );
+			return new ListAsMap( (List)obj );
 		} else {
 			new Alert(
 				"Map conversion failed",
@@ -67,7 +68,7 @@ public final class MapLib {
 			return map;
 		} else if ( map instanceof PseudoMap && ((PseudoMap)map).compatibleWith( example ) ) {
 			return ((PseudoMap)map).getObject();
-		} else if ( example instanceof String ) {
+		} else if ( example instanceof CharSequence ) {
 			final char[] chars = new char[ map.size() ];
             //final StringBuffer buffer = new StringBuffer();
             for ( Iterator it = map.entrySet().iterator(); it.hasNext(); ) {
@@ -82,7 +83,7 @@ public final class MapLib {
 				}
                 //buffer.append( ( (Character)it.next()).charValue() );
             }
-            return new String( chars );
+            return new String( chars );		//	todo: is this right???
 		} else if ( example instanceof SpiceObject ) {
 			return ((SpiceObject)example).convertFromMap( map );
 		} else if ( example instanceof List ) {
@@ -115,9 +116,9 @@ public final class MapLib {
 	public final static Object getAt( final Object obj, final Object key ) {
 		if ( obj instanceof Map ) {
 			return ((Map)obj).get( key );
-		} else if ( obj instanceof String ) {
+		} else if ( obj instanceof CharSequence ) {
 			try {
-				return new Character( ((String)obj).charAt( ((Integer)key).intValue() - 1 ) );
+				return new Character( ((CharSequence)obj).charAt( ((Integer)key).intValue() - 1 ) );
 			} catch ( final ClassCastException exn ) {
 				//	Arguable.  todo:
 				return AbsentLib.ABSENT;
@@ -129,12 +130,12 @@ public final class MapLib {
 		}
 	}
 	
-	public final static Object putAt( final Object obj, final Object key, final Object val ) {
+	public final static void putAt( final Object obj, final Object key, final Object val ) {
 		try {
 			if ( obj instanceof Map ) {
-				return ((Map)obj).put( key, val );
-			} else if ( obj instanceof List ) {
-				return ListLib.putAt( obj, key, val );
+				((Map)obj).put( key, val );
+			} else if ( obj instanceof List || obj instanceof StringBuffer ) {
+				ListLib.putAt( obj, key, val );
 			} else {
 				throw new Alert( "cannot convert object to assignable map" ).culprit( "object", obj ).mishap( 'E' );
 			}

@@ -30,7 +30,7 @@ public final class ShowProcs {
 			if ( last ) {
 				cuchar.ln();
 			} else if ( !first ) {
-				cuchar.outString( ", " );
+				cuchar.outCharSequence( ", " );
 			}
 		}
 	}
@@ -50,14 +50,14 @@ public final class ShowProcs {
 
 	static final  class ShowProc extends PrintTools.SpiceShowStdOutProc {
 		public void gap( final boolean first, final boolean last, final Consumer cuchar ) {
-			if ( !first && !last ) cuchar.outString( ", " );
+			if ( !first && !last ) cuchar.outCharSequence( ", " );
 		}
 	}
 	public static final Proc showProc = new ShowProc();
 
 	static final  class ShowToProc extends PrintTools.SpiceShowToProc {
 		public void gap( final boolean first, final boolean last, final Consumer cuchar ) {
-			if ( !first && !last ) cuchar.outString( ", " );
+			if ( !first && !last ) cuchar.outCharSequence( ", " );
 		}
 	}
 	public static final Proc showToProc = new ShowToProc();

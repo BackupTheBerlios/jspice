@@ -20,6 +20,7 @@ package org.openspice.jspice.built_in;
 
 import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
 import org.openspice.jspice.lib.CastLib;
+import org.openspice.jspice.lib.ConvertLib;
 import org.openspice.jspice.vm_and_compiler.VM;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.SuperLoader;
@@ -31,7 +32,7 @@ public class LoadValueFromFileProc extends Unary1InvokeProc {
 
 	final SuperLoader sloader;
 
-	public LoadValueFromFileProc( SuperLoader sloader ) {
+	public LoadValueFromFileProc( final SuperLoader sloader ) {
 		this.sloader = sloader;
 	}
 
@@ -40,7 +41,7 @@ public class LoadValueFromFileProc extends Unary1InvokeProc {
 	}
 	
 	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
-		return sloader.loadValueFromVItem( new FileVFile( new File( CastLib.toString( tos ) ) ) );
+		return sloader.loadValueFromVItem( new FileVFile( new File( ConvertLib.convertString( tos ) ) ) );
 	}
 
 }

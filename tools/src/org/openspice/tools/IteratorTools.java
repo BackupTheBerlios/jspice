@@ -23,12 +23,14 @@ import java.util.Iterator;
 public class IteratorTools {
 
 	static abstract class SimpleAbstractIterator implements Iterator {
+
 		public abstract boolean hasNext();
 		public abstract Object next();
 
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
+		
 	}
 
 	static class ZeroShotIterator extends SimpleAbstractIterator {
@@ -62,12 +64,77 @@ public class IteratorTools {
 		}
 	}
 
+	static class TwoShotIterator extends SimpleAbstractIterator {
+
+		private int n = 0;
+		private Object x;
+		private Object y;
+
+		public TwoShotIterator( final Object x, final Object y ) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public boolean hasNext() {
+			return n < 2;
+		}
+
+		public Object next() {
+			if ( n == 0 ) {
+				final Object z = x;
+				this.x = null;
+				n += 1;
+				return z;
+			} else if ( n == 1 ) {
+				final Object z = y;
+				this.y = null;
+				n += 1;
+				return z;
+			} else {
+				return null;	//	or throw an error? todo:
+			}
+		}
+
+	}
+
+	public static final ZeroShotIterator ZERO_SHOT_ITERATOR = new ZeroShotIterator();
+
 	public static Iterator make0() {
-		return new ZeroShotIterator();
+		return ZERO_SHOT_ITERATOR;
 	}
 
 	public static Iterator make1( final Object x ) {
 		return new OneShotIterator( x );
+	}
+
+	public static Iterator make2( final Object x, final Object y ) {
+		return new TwoShotIterator( x, y );
+	}
+
+	static class MultiIterator implements Iterator {
+
+		final Iterator itit;
+		Iterator it = ZERO_SHOT_ITERATOR;
+
+		public MultiIterator( final Iterator itit ) {
+			this.itit = itit;
+		}
+
+		public boolean hasNext() {
+			if ( this.it.hasNext() ) return true;
+			if ( !this.itit.hasNext() ) return false;
+			this.it = (Iterator)itit.next();
+			return this.hasNext();
+		}
+
+		public Object next() {
+			return this.it.next();
+		}
+
+		public void remove() {
+			this.it.remove();
+		}
+
 	}
 
 }

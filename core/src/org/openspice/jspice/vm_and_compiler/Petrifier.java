@@ -60,7 +60,7 @@ public class Petrifier extends ExprVisitor.DefaultUnimplemented {
 						tos = subproc.run( tos, vm );
 						if ( vm.length() - before != 1 ) {
 							//  Absolutely stupid error message.
-							new Alert( "Check 1 result failed" ).mishap( 'G' );
+							new Alert( "Check 1 result failed" ).mishap( 'E' );
 						}
 						return tos;
 					}
@@ -73,6 +73,28 @@ public class Petrifier extends ExprVisitor.DefaultUnimplemented {
 			).culprit( "expression", e ).mishap( 'G' );
 			return null;
 		}
+	}
+
+	
+	public Object visitCheckBooleanExpr( final CheckBooleanExpr e, final Object arg ) {
+		final Pebble pebble = this.petrify( e.getFirst() );
+		return(
+			new Pebble() {
+				Object run( Object tos, final VM vm ) {
+					final int before = vm.length();
+					tos =  pebble.run( tos, vm );
+					final int diff = vm.length() - before;
+					if ( diff != 1 ) {
+						if ( diff < 1 ) {
+							new Alert( "Missing value for conditional test" ).mishap( 'E' );
+						} else {
+							new Alert( "Too many values for conditional test" ).culprit( "number of values", diff ).mishap( 'E' );
+						}
+					}
+					return CastLib.toBoolean( tos );
+				}
+			}
+		);
 	}
 	
 	public Object visitApplyExpr( final ApplyExpr e, final Object arg  ) {
@@ -164,17 +186,6 @@ public class Petrifier extends ExprVisitor.DefaultUnimplemented {
 		);
 		
 	}
-
-	/*public Object visitExplodeExpr( final Expr.ExplodeExpr expr, final Object arg  ) {
-		return (
-			this.petrify(
-				Expr.ApplyExpr.make(
-					Expr.ConstantExpr.make( Proc.explodeProc ),
-					expr.getFirst()
-				)
-			)
-		);
-	}*/
 	
 
 	public Object visitHoleExpr( final HoleExpr expr, final Object arg  ) {

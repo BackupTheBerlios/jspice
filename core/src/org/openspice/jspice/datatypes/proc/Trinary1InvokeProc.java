@@ -23,6 +23,10 @@ import org.openspice.jspice.vm_and_compiler.VM;
 
 public abstract class Trinary1InvokeProc extends FastProc {
 
+	{
+		setDescription( null, "%p( a, b, c ) -> r", null );
+	}
+
 	public abstract Object invoke( Object x, Object y, Object z );
 
 	public Arity inArity() {
@@ -39,4 +43,5 @@ public abstract class Trinary1InvokeProc extends FastProc {
 		final Object x = vm.pop();
 		return this.invoke( x, y, z );
 	}
+
 }

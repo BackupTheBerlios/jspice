@@ -3,6 +3,7 @@ package org.openspice.jspice.expr.cases;
 import org.openspice.jspice.expr.markers.OneResult;
 import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.expr.ExprVisitor;
+import org.openspice.jspice.expr.ExprBase;
 import org.openspice.jspice.expr.iterators.ExprIterator;
 import org.openspice.jspice.datatypes.Arity;
 
@@ -80,4 +81,9 @@ public final class RelOpChainExpr extends ExprBase implements OneResult {
 		kids.addFirst( this.start );
 		return ExprIterator.makeFromIterator( kids.iterator() );
 	}
+
+	public boolean isBooleanExpr() {
+		return true;
+	}
+
 }

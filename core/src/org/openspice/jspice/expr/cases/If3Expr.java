@@ -27,8 +27,9 @@ import org.openspice.jspice.expr.ExprVisitor;
 import org.openspice.jspice.expr.iterators.ExprIterator;
 
 public final class If3Expr extends TrinaryExpr {
+	
 	private  If3Expr( final Expr _test, final Expr _ifso, final Expr _ifnot ) {
-		super( _test, _ifso, _ifnot );
+		super( CheckBooleanExpr.make(_test), _ifso, _ifnot );
 	}
 
 	public static Expr make( final Expr _test, final Expr _ifso, final Expr _ifnot ) {
@@ -46,4 +47,5 @@ public final class If3Expr extends TrinaryExpr {
 	public Expr copy( final ExprIterator kids ) {
 		return make( kids.next(), kids.next(), kids.next() );
 	}
+
 }

@@ -23,6 +23,7 @@ import org.openspice.jspice.expr.markers.OneResult;
 import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.expr.ExprTransform;
 import org.openspice.jspice.expr.ExprVisitor;
+import org.openspice.jspice.expr.ExprBase;
 import org.openspice.jspice.expr.iterators.ExprIterator;
 import org.openspice.jspice.namespace.Var;
 import org.openspice.jspice.namespace.Props;

@@ -31,7 +31,7 @@ public abstract class FixedConf {
 
 	final static private String major_version = "0";
 	final static private String minor_version = "4";
-	final static private String incremental_version = "7";
+	final static private String incremental_version = "9";
 
 	public static final String STD_LIB = "org.openspice.stdlib";
 
@@ -96,8 +96,7 @@ public abstract class FixedConf {
 
 	//	----
 
-	public static final String PROMPT_BASE = ">>>";
-//	public static final String PROMPT_THEN_SPACE = PROMPT_BASE + " ";
+	public static final String BASE_PROMPT = ">>>";
 
 	//	--- Internal names ---
 

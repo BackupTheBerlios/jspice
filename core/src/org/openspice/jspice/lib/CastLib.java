@@ -72,6 +72,19 @@ public class CastLib {
 		}
 	}
 
+	public static CharSequence toCharSequence( final Object obj ) {
+		try {
+			if ( obj != null ) return (CharSequence)obj;
+			throw oops( "CharSequence needed", obj );
+		} catch ( final ClassCastException _ ) {
+			try {
+				return toCharSequence( ((Deferred)obj).get() );
+			} catch ( final ClassCastException exn ) {
+				throw oops( exn, "CharSequence needed", obj );
+			}
+		}
+	}
+
 
 	public static Class toClass( final Object obj ) {
 		try {

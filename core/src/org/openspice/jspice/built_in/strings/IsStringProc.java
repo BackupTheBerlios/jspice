@@ -31,8 +31,8 @@ public class IsStringProc extends Unary1InvokeProc {
 		);
 	}
 
-	public Object invoke( Object x ) {
-		return Boolean.valueOf( IsLib.isString( x ) );
+	public Object invoke( final Object x ) {
+		return Boolean.valueOf( IsLib.isCharSequence( x ) );
 	}
 
 	public static final IsStringProc IS_STRING_PROC = new IsStringProc();

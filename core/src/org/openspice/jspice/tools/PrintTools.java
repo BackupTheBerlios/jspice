@@ -19,6 +19,8 @@
 package org.openspice.jspice.tools;
 
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.datatypes.proc.Proc;
+import org.openspice.jspice.datatypes.SpiceObject;
 
 import java.util.*;
 import java.io.*;
@@ -60,11 +62,11 @@ public final class PrintTools {
 
 	}
 
-	private static final void oops( final String s ) {
+	private static final void oops( final CharSequence s ) {
 		throw new Alert( "malformed control string" ).culprit( "control_string", s ).mishap();
 	}
 
-	public static final void formatTo( final Consumer consumer, final String control_string, final Object[] args ) {
+	public static final void formatTo( final Consumer consumer, final CharSequence control_string, final Object[] args ) {
 		int count = 0;
 		for ( int i = 0; i < control_string.length(); i++ ) {
 			final char ch = control_string.charAt( i );
@@ -103,8 +105,8 @@ public final class PrintTools {
 	public static void printTo( final Consumer cuchar, final Object obj ) {
 		if ( obj == null ) {
 			//	nothing
-		} else if ( obj instanceof String ) {
-			cuchar.outString( (String)obj );
+		} else if ( obj instanceof CharSequence ) {
+			cuchar.outCharSequence( (CharSequence)obj );
 		} else if ( obj instanceof List ) {
 			for ( Iterator it = ((List)obj).iterator(); it.hasNext(); ) {
 			 printTo( cuchar, it.next() );
@@ -113,8 +115,9 @@ public final class PrintTools {
 			cuchar.outObject( obj );
 		} else if ( obj instanceof Map.Entry ) {
 			printTo( cuchar, ((Map.Entry)obj).getValue() );
-		} else if ( obj instanceof org.openspice.jspice.datatypes.SpiceObject ) {
-			((org.openspice.jspice.datatypes.SpiceObject)obj).printTo( cuchar );
+		} else if ( obj instanceof SpiceObject ) {
+			((SpiceObject)obj).printTo( cuchar );
+
 		} else {
 			cuchar.outObject( obj );
 		}
@@ -132,16 +135,16 @@ public final class PrintTools {
 		if ( obj instanceof Showable ) {
 			((Showable)obj).showTo( cuchar );
 		} else if ( obj == null ) {
-			cuchar.outString( "absent" );
-		} else if ( obj instanceof String ) {
+			cuchar.outCharSequence( "absent" );
+		} else if ( obj instanceof CharSequence ) {
 			cuchar.out( '\"' );
-			cuchar.outObject( obj );
+			cuchar.outCharSequence( (CharSequence)obj );
 			cuchar.out( '\"' );			
 		} else if ( obj instanceof List ) {
 			cuchar.out( '{' );
 			String gap = "";
 			for ( Iterator it = ((List)obj).iterator(); it.hasNext(); ) {
-				cuchar.outString( gap );
+				cuchar.outCharSequence( gap );
 				showTo( cuchar, it.next() );
 				gap = ", ";
 			}
@@ -150,12 +153,12 @@ public final class PrintTools {
 			cuchar.out( '\'' );
 			cuchar.outObject( obj );
 			cuchar.out( '\'' );
-		} else if ( obj instanceof org.openspice.jspice.datatypes.SpiceObject ) {
-			((org.openspice.jspice.datatypes.SpiceObject)obj).showTo( cuchar );
+		} else if ( obj instanceof SpiceObject ) {
+			((SpiceObject)obj).showTo( cuchar );
 		} else if ( obj instanceof Map.Entry ) {
 			cuchar.out( '(' );
 			showTo( cuchar, ((Map.Entry)obj).getKey() );
-			cuchar.outString( " ==> " );
+			cuchar.outCharSequence( " ==> " );
 			showTo( cuchar, ((Map.Entry)obj).getValue() );
 			cuchar.out( ')' );
 		} else {

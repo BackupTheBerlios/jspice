@@ -62,12 +62,12 @@ public class Symbol extends SpiceObject.NonMap implements Comparable {
 
 	public void showTo( final Consumer cuchar ) {
 		cuchar.out( '`' );
-		cuchar.outString( this.symbol );
+		cuchar.outCharSequence( this.symbol );
 		cuchar.out( '`' );
 	}
 	
 	public void printTo( final Consumer cuchar ) {
-		cuchar.outString( this.symbol );
+		cuchar.outCharSequence( this.symbol );
 	}
 
 }

@@ -344,11 +344,16 @@ public class ForMiniParser extends Prefix {
 					tmpvars.add( parser.newTmpNameExpr() );
 					readGenerator( parser, matches, iterators );
 				}
-				if ( parser.tryReadToken( "do" ) != null ) break;
-				//	Yuck.  Horrible.  todo:
-				if ( !parser.canPeekToken( "while" ) && !parser.canPeekToken( "until" ) && !parser.canPeekToken( "suchthat" )) {
-					parser.mustReadToken( ";" );
+				if ( parser.tryReadToken( ";" ) != null ) {
+					if ( parser.tryReadToken( "do" ) != null ) break;
+				} else {
+					parser.mustReadToken( "do" );
+					break;
 				}
+//				//	Yuck.  Horrible.  todo:
+//				if ( !parser.canPeekToken( "while" ) && !parser.canPeekToken( "until" ) && !parser.canPeekToken( "suchthat" )) {
+//					parser.mustReadToken( ";" );
+//				}
 			}
 		}
 		assert tmpvars.size() == matches.size();

@@ -21,6 +21,11 @@ package org.openspice.jspice.datatypes.proc;
 import org.openspice.jspice.datatypes.Arity;
 
 public abstract class Vary1Proc extends Proc {
+
+	{
+		setDescription( null, "%p( args... ) -> r", null );
+	}
+
 	public Arity inArity() { return Arity.ZERO_OR_MORE; }
 	public Arity outArity() { return Arity.ONE; }
 }

@@ -20,6 +20,7 @@ package org.openspice.jspice.built_in;
 
 import org.openspice.jspice.datatypes.proc.Unary0InvokeProc;
 import org.openspice.jspice.lib.CastLib;
+import org.openspice.jspice.lib.ConvertLib;
 import org.openspice.browser_control.BrowserControl;
 
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class OpenURLProc extends Unary0InvokeProc {
 
 	public void invoke( Object x ) {
 		try {
-			this.browser_control.displayURL( CastLib.toString( x ) );
+			this.browser_control.displayURL( ConvertLib.convertString( x ) );
 		} catch ( IOException e ) {
 			throw new RuntimeException( e );
 		}

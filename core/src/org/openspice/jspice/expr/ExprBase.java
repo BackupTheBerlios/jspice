@@ -17,13 +17,14 @@
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.openspice.jspice.expr.cases;
+package org.openspice.jspice.expr;
 
 import org.openspice.jspice.tools.PrintTools;
 import org.openspice.jspice.datatypes.Arity;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.expr.markers.*;
 import org.openspice.jspice.expr.*;
+import org.openspice.jspice.expr.cases.ConstantExpr;
 import org.openspice.jspice.expr.iterators.ExprIterator;
 import org.openspice.tools.IteratorTools;
 
@@ -110,16 +111,9 @@ public abstract class ExprBase extends Expr {
 		return false;
 	}
 
-	/*static abstract class BuiltIn1UnaryExpr extends UnaryExpr implements BuiltIn1 {
-		BuiltIn1UnaryExpr( final Expr _value ) {
-			super( CheckOneExpr.make( _value ) );
-		}
-	}*/
+	public boolean isBooleanExpr() {
+		return false;
+	}
 
-	/*static abstract class BuiltIn1BinaryExpr extends BinaryExpr implements BuiltIn1 {
-		protected BuiltIn1BinaryExpr( final Expr _lhs, final Expr _rhs ) {
-			super( CheckOneExpr.make( _lhs ), CheckOneExpr.make( _rhs ) );
-		}
-	}*/
 
 }

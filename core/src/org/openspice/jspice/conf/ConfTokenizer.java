@@ -18,6 +18,9 @@
  */
 package org.openspice.jspice.conf;
 
+import org.openspice.jspice.lexis.ParseEscape;
+import org.openspice.jspice.alert.Alert;
+
 import java.io.Reader;
 import java.io.IOException;
 import java.util.List;
@@ -31,18 +34,40 @@ import java.util.ArrayList;
  * The algorithm relies heavily on the fact that Reader permits
  * repeated calls after the end of stream, returning -1.
  */
-public class ConfTokenizer {
+public class ConfTokenizer extends ParseEscape {
 
 	private final StringBuffer buffer = new StringBuffer();
 	private final Reader reader;
 
 	public ConfTokenizer( final Reader reader ) {
+		super( null );			//	disables entity parsing.
 		this.reader = reader;
 	}
 
 	private static final int MIDDLE_OF_LINE = 0;
 	private static final int END_OF_LINE = 1;
 	private static final int END_OF_FILE = 2;
+
+	public char readChar( char default_char ) {
+		try {
+			final int ich = this.reader.read();
+			return ich == -1 ? default_char : (char)ich;
+		} catch ( final IOException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	public char readCharNoEOF() {
+		try {
+			final int ich = this.reader.read();
+			if ( ich == -1 ) {
+				throw new Alert( "Unexpected end of input" ).mishap();
+			}
+			return (char)ich;
+		} catch ( IOException e ) {
+			throw new RuntimeException( e );
+		}
+	}
 
 	/**
 	 * May add a single String to the input list and returns
@@ -73,15 +98,24 @@ public class ConfTokenizer {
 			}
 		}
 
-		//	If you have got here, buffer.length >= 1.
+		//	When/if you have got here, buffer.length == 1.
+		assert buffer.length() == 1;
+
+		final char quote_char = this.buffer.charAt( 0 );
+		final boolean quoted = quote_char == '"';
+		if ( quoted ) {
+			this.buffer.setLength( 0 );
+		}
 		for (;;) {
 			final int ich = this.reader.read();
 			if ( ich == -1 ) {
 				list.add( this.buffer.toString() );
 				return END_OF_FILE;
 			}
-			final char ch = (char)ich;
-			if ( Character.isWhitespace( ch ) ) {
+			char ch = (char)ich;
+			if ( ch == '\\' ) {
+				ch = this.parseEscape();
+			} else if ( quoted && ch == quote_char || !quoted && Character.isWhitespace( ch ) ) {
 				list.add( this.buffer.toString() );
 				return ch == '\n' ? END_OF_LINE : MIDDLE_OF_LINE;
 			}

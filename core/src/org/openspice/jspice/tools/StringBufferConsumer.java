@@ -26,7 +26,7 @@ public final class StringBufferConsumer extends ConsumerImpl {
 		this.buff.append( ch );
 	}
 
-	public void outString( final String s ) {
+	public void outCharSequence( final CharSequence s ) {
 		this.buff.append( s );
 	}
 

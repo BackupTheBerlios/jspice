@@ -29,11 +29,11 @@ import org.openspice.jspice.tools.StringBufferConsumer;
 
 public class FormatProc extends FastProc {
 
-	private static final void oops( final String s ) {
+	private static final void oops( final CharSequence s ) {
 		throw new Alert( "malformed control string" ).culprit( "control_string", s ).mishap();
 	}
 
-	public static final void formatTo( final Consumer consumer, final String control_string, final Object[] args ) {
+	public static final void formatTo( final Consumer consumer, final CharSequence control_string, final Object[] args ) {
 		int count = 0;
 		for ( int i = 0; i < control_string.length(); i++ ) {
 			final char ch = control_string.charAt( i );
@@ -91,7 +91,7 @@ public class FormatProc extends FastProc {
 	public Object fastCall( final Object tos, final VM vm, final int nargs ) {
 		vm.push( tos );
 		final Object[] args = vm.popArray( nargs - 1 );
-		final String control_string = CastLib.toString( vm.pop() );
+		final CharSequence control_string = CastLib.toCharSequence( vm.pop() );
 		final StringBufferConsumer c = new StringBufferConsumer();
 		formatTo( c, control_string, args );
 		return c.closeAsString();

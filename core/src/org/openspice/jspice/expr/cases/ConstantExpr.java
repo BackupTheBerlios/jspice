@@ -76,9 +76,14 @@ public final class ConstantExpr extends NullaryExpr implements OneResult {
 		return this;
 	}
 
+	public boolean isBooleanExpr() {
+		return this.value instanceof Boolean;
+	}
+
 	public final static ConstantExpr TRUE_EXPR = new ConstantExpr( BooleanTools.TRUE );
 	public final static ConstantExpr FALSE_EXPR = new ConstantExpr( BooleanTools.FALSE );
 	public final static ConstantExpr ZERO_EXPR = new ConstantExpr( IntegerTools.ZERO );
 	public final static ConstantExpr ONE_EXPR = new ConstantExpr( IntegerTools.ONE );
 	public final static ConstantExpr ABSENT_EXPR = new ConstantExpr( AbsentLib.ABSENT );
+
 }

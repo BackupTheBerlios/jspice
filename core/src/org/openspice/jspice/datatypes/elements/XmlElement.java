@@ -2,6 +2,10 @@ package org.openspice.jspice.datatypes.elements;
 
 import org.openspice.jspice.tools.*;
 import org.openspice.jspice.datatypes.*;
+import org.openspice.jspice.datatypes.lists.PseudoList;
+import org.openspice.jspice.datatypes.lists.XmlElementAsList;
+import org.openspice.jspice.datatypes.maps.PseudoMap;
+import org.openspice.jspice.datatypes.maps.XmlElementAsMap;
 import org.openspice.jspice.built_in.inspect.FieldAdder;
 
 import javax.xml.parsers.SAXParserFactory;
@@ -71,7 +75,7 @@ public final class XmlElement extends SpiceObject {
 		for ( Iterator it = set.iterator(); it.hasNext(); ) {
 			final Map.Entry e = (Map.Entry)it.next();
 			cuchar.out( ' ' );
-			cuchar.outString( ((Symbol)e.getKey()).getInternedString() );
+			cuchar.outCharSequence( ((Symbol)e.getKey()).getInternedString() );
 			cuchar.out( '=' );
 			cuchar.out( '"' );
 			PrintTools.printTo( cuchar, e.getValue() );
@@ -79,7 +83,7 @@ public final class XmlElement extends SpiceObject {
 		}
 		
 		if ( this.children.length == 0 ) {
-			cuchar.outString( "/>" );
+			cuchar.outCharSequence( "/>" );
 		} else {
 			cuchar.out( '>' );
 			
@@ -87,33 +91,33 @@ public final class XmlElement extends SpiceObject {
 				String gap = "";
 				for ( int i = 0; i < this.children.length; i++ ) {
 					final Object x = this.children[ i ];
-					cuchar.outString( gap );
+					cuchar.outCharSequence( gap );
 					gap = ", ";
 					PrintTools.printTo( cuchar, x );
 				}
 			}
 		
-			cuchar.outString( "</" );
-			cuchar.outString( this.name.getInternedString() );
+			cuchar.outCharSequence( "</" );
+			cuchar.outCharSequence( this.name.getInternedString() );
 			cuchar.out( '>' );
 		}		
 	}
 	
 	public void showTo( final Consumer cuchar ) {
 		cuchar.out( '<' );
-		cuchar.outString( this.name.getInternedString() );
+		cuchar.outCharSequence( this.name.getInternedString() );
 		
 		final Set set = this.attributes.entrySet();
 		for ( Iterator it = set.iterator(); it.hasNext(); ) {
 			final Map.Entry e = (Map.Entry)it.next();
 			cuchar.out( ' ' );
-			cuchar.outString( ((Symbol)e.getKey()).getInternedString() );
+			cuchar.outCharSequence( ((Symbol)e.getKey()).getInternedString() );
 			cuchar.out( '=' );
 			PrintTools.show( e.getValue() );
 		}
 		
 		if ( this.children.length == 0 ) {
-			cuchar.outString( "/>" );
+			cuchar.outCharSequence( "/>" );
 		} else {
 			cuchar.out( '>' );
 			
@@ -121,14 +125,14 @@ public final class XmlElement extends SpiceObject {
 				String gap = "";
 				for ( int i = 0; i < this.children.length; i++ ) {
 					final Object x = this.children[ i ];
-					cuchar.outString( gap );
+					cuchar.outCharSequence( gap );
 					gap = ", ";
 					PrintTools.showTo( cuchar, x );
 				}
 			}
 		
-			cuchar.outString( "</" );
-			cuchar.outString( this.name.getInternedString() );
+			cuchar.outCharSequence( "</" );
+			cuchar.outCharSequence( this.name.getInternedString() );
 			cuchar.out( '>' );
 		}
 	}
@@ -165,7 +169,7 @@ public final class XmlElement extends SpiceObject {
 
 
 	public List convertToList() {
-		return new PseudoList.XmlElementAsList( this );
+		return new XmlElementAsList( this );
 	}
 	
 	public SpiceObject convertFromList( final List list ) {
@@ -173,7 +177,7 @@ public final class XmlElement extends SpiceObject {
 	}
 	
 	public Map convertToMap() {
-		return new PseudoMap.XmlElementAsMap( this );
+		return new XmlElementAsMap( this );
 	}
 	
 	public SpiceObject convertFromMap( final Map map ) {

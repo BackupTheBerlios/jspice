@@ -21,6 +21,7 @@ package org.openspice.jspice.built_in.comparisons;
 import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
 import org.openspice.jspice.datatypes.Deferred;
 import org.openspice.jspice.arithmetic.NumEqual;
+import org.openspice.jspice.tools.CharSequenceTools;
 
 public class EqualProc extends Binary1InvokeProc {
 
@@ -32,6 +33,12 @@ public class EqualProc extends Binary1InvokeProc {
 				return Boolean.valueOf( y == null );
 			} else if ( x instanceof Number ) {
 				return NumEqual.NUM_EQUAL.apply( (Number)x, (Number)y );
+			} else if ( x instanceof CharSequence ) {
+				if ( y instanceof CharSequence ) {
+					return Boolean.valueOf( CharSequenceTools.equals( (CharSequence)x, (CharSequence)y ) );
+				} else {
+					return Boolean.FALSE;
+				}
 			} else {
 				return Boolean.valueOf( x.equals( y ) );
 			}

@@ -28,6 +28,7 @@ import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.Pragma;
 import org.openspice.jspice.main.Interpreter;
 import org.openspice.jspice.namespace.NameSpace;
+import org.openspice.jspice.tools.StyleWarning;
 
 import java.io.*;
 
@@ -155,6 +156,9 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 	private Token readStringToken( final boolean hadWhite, final char ch ) {
 		this.parseString( ch );
 		final String s = this.makeString();
+		if ( ch == '\'' && s.length() != 1 ) {
+			StyleWarning.one_char_literal( s );
+		}
 		return new QuotedToken( hadWhite, s, ch );
 	}
 

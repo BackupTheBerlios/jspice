@@ -21,6 +21,7 @@ package org.openspice.jspice.boxes;
 import org.openspice.jspice.conf.JSpiceConf;
 import org.openspice.vfs.VFSTools;
 import org.openspice.vfs.VFile;
+import org.openspice.vfs.files.FileVFile;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.File;
 
 
 public class CommandLineBoxServlet extends HttpServlet {
@@ -74,7 +76,7 @@ public class CommandLineBoxServlet extends HttpServlet {
 		String message;
 		if ( activity == null ) {
 			//	Horrible, horrible hack to get the test code started.
-			final VFile game_file = VFSTools.newVFile( this.jspice_conf.getHome(), "inventory/tads2-pkg/public-auto/ccr.gam" );
+			final VFile game_file = new FileVFile( new File( "inventory/tads2-pkg/public-auto/ccr.gam" ) );
 			activity = new CuteActivity( new GameBox( game_file ) );
 			session.setAttribute( attr, activity );
 			activity.start();

@@ -25,6 +25,7 @@ import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.expr.cases.SkipExpr;
 import org.openspice.jspice.expr.cases.CommaExpr;
 import org.openspice.jspice.expr.cases.ApplyExpr;
+import org.openspice.jspice.tools.StyleWarning;
 
 public class DotMiniParser extends Postfix {
 	public Expr postfix( final String sym, final int prec, final Expr lhs, final Parser parser ) {
@@ -33,7 +34,13 @@ public class DotMiniParser extends Postfix {
 			final Expr others = parser.readOptExprTo( ")" );
 			return ApplyExpr.make( fn, CommaExpr.make( lhs, others == null ? SkipExpr.make() : others ) );
 		} else {
-			return ApplyExpr.make( fn, lhs );
+			final Expr others = parser.readOptExprPrec( prec );
+			if ( others == null ) {
+				return ApplyExpr.make( fn, lhs );
+			} else {
+				StyleWarning.dot_rhs_parentheses();
+				return ApplyExpr.make( fn, CommaExpr.make( lhs, others ) );
+			}
 		}
 	}
 }

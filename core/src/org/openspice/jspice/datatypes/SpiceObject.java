@@ -20,6 +20,7 @@ package org.openspice.jspice.datatypes;
 
 import org.openspice.jspice.tools.Consumer;
 import org.openspice.jspice.tools.StringBufferConsumer;
+import org.openspice.jspice.tools.PrintTools;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.built_in.inspect.FieldAdder;
 
@@ -39,8 +40,27 @@ public abstract class SpiceObject {
 	public abstract boolean isListFlavour();
 
 	//	Make this abstract when we are about to embark on hacking the summaries.
-	public String summary() {
+	public String summary( final String variable_name ) {
+		final String std_name = this.getName();
+		if ( std_name != null && !std_name.equals( variable_name ) ) {
+			return variable_name + " synonym for " + std_name;
+		} else {
+			return variable_name + " " + this.getComment();
+		}
+	}
+
+	public String getName() {
 		return null;
+	}
+
+	private static final int mxlen = 64;
+
+	public String getComment() {
+		String s = PrintTools.showToString( this );
+		if ( s.length() > mxlen ) {
+			s = s.substring( 0, mxlen - 4 ) + " ...";
+		}
+		return " = " + s;
 	}
 
 	public String showToString() {

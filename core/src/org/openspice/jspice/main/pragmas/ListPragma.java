@@ -34,21 +34,24 @@ import java.util.TreeMap;
 
 public class ListPragma {
 
+	//	This is all fairly yuck.  I should allow comments to be
+	//	associated with variables - not just values.  Otherwise I
+	//	cannot give a comment to a variable like environment_variable
+	//	because it is an ordinary Map - or any assignable variable.
+
 	private static final int mxlen = 64;
 
 	private void summarize( final String name, final Object x ) {
 		if ( x instanceof SpiceObject ) {
-			final String summary = ((SpiceObject)x).summary();
-			if ( summary != null ) {
-				System.out.println( summary );
-				return;
+			System.out.println( ((SpiceObject)x).summary( name ) );
+		} else {
+			//	Otherwise we have a vanilla Java value.  Do our best.
+			String s = PrintTools.showToString( x );
+			if ( s.length() > mxlen ) {
+				s = s.substring( 0, mxlen - 4 ) + " ...";
 			}
+			System.out.println( name + " = " + s );
 		}
-		String s = PrintTools.showToString( x );
-		if ( s.length() > mxlen ) {
-			s = s.substring( 0, mxlen - 4 ) + " ...";
-		}
-		System.out.println( name + " = " + s );
 	}
 
 	/**

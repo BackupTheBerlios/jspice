@@ -114,6 +114,10 @@ public final class Alert extends AlertBase {
 		return this;
 	}
 
+	public Alert culprit( final String desc, final int arg ) {
+		return this.culprit( desc, new Integer( arg ) );
+	}
+
 	private int arg_count = 1;
 	public Alert culprit_list( final List list ) {
 		for ( Iterator it = list.iterator(); it.hasNext(); ) {
