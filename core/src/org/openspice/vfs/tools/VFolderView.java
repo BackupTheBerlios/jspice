@@ -19,39 +19,37 @@
 package org.openspice.vfs.tools;
 
 import org.openspice.jspice.conf.FixedConf;
-import org.openspice.jspice.alert.Alert;
-import org.openspice.vfs.VVolume;
-import org.openspice.vfs.VFolderRef;
 import org.openspice.vfs.VFileRef;
+import org.openspice.vfs.VFolderRef;
 import org.openspice.vfs.codec.FileNameCodec;
 import org.openspice.vfs.codec.FolderNameCodec;
 import org.openspice.vfs.zip.ZipVVolume;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.zip.ZipFile;
-import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.zip.ZipFile;
 
 public class VFolderView {
+
+	public static final VFolderRef make( final String ext, final File file ) {
+		if ( FixedConf.ZIP_EXT.equals( ext ) ) {
+			try {
+				return new ZipVVolume( new ZipFile( file ) ).getRootVFolderRef();
+			} catch ( IOException e ) {
+				throw new RuntimeException( e );
+			}
+		} else {
+			return null;
+		}
+	}
 
 	public static final boolean isArchiveExt( final String ext ) {
 		return FixedConf.ZIP_EXT.equals( ext );
 	}
 
-	public static final VVolume make( final String ext, final File file ) {
-		if ( FixedConf.ZIP_EXT.equals( ext ) ) {
-			try {
-				return new ZipVVolume( new ZipFile( file ) );
-			} catch ( IOException e ) {
-				throw new RuntimeException( e );
-			}
-		} else {
-			throw new Alert( "Unrecognized archive type" ).culprit( "extension/type", ext ).culprit( "file", file ).mishap();
-		}
-	}
-
-	public static final VVolume make( final File file ) {
+	public static final VFolderRef make( final File file ) {
 		return make( FileNameCodec.FILE_NAME_CODEC.decodeExt( file.getName() ), file );
 	}
 
@@ -84,7 +82,7 @@ public class VFolderView {
 	}
 
 	private static final VFolderRef makeArchiveVFolderRef( final File found, final LinkedList track_back ) {
-		VFolderRef ref = VFolderView.make( found ).getRootVFolderRef();
+		VFolderRef ref = VFolderView.make( found );
 		for ( Iterator it = track_back.iterator(); ref != null && it.hasNext(); ) {
 			final String name = (String)it.next();
 			final String[] namext = FolderNameCodec.FOLDER_NAME_CODEC.decode( name );
@@ -94,7 +92,7 @@ public class VFolderView {
 	}
 
 	private static final VFileRef makeArchiveVFileRef( final File found, final LinkedList track_back ) {
-		VFolderRef ref = VFolderView.make( found ).getRootVFolderRef();
+		VFolderRef ref = VFolderView.make( found );
 		for ( Iterator it = track_back.iterator(); ref != null && it.hasNext(); ) {
 			final String name = (String)it.next();
 			if ( it.hasNext() ) {

@@ -18,14 +18,14 @@
  */
 package org.openspice.vfs.file;
 
-import org.openspice.vfs.*;
-import org.openspice.vfs.tools.VFolderView;
 import org.openspice.jspice.conf.FixedConf;
-import org.openspice.jspice.alert.Alert;
 import org.openspice.tools.SetOfBoolean;
+import org.openspice.vfs.AbsVFileRef;
+import org.openspice.vfs.VFile;
+import org.openspice.vfs.VFileRef;
+import org.openspice.vfs.tools.VFolderView;
 
 import java.io.File;
-import java.io.IOException;
 
 public class FileVFileRef extends AbsVFileRef implements VFileRef {
 
@@ -43,29 +43,6 @@ public class FileVFileRef extends AbsVFileRef implements VFileRef {
 		} else {
 			return null;
 		}
-//
-//		if ( !if_exists.isFull() ) {
-//			final boolean is_file = this.file.isFile();
-//			if ( ! if_exists.contains( is_file ) ) {
-//				new Alert( is_file ? "Ordinary file already exists" : "Ordinary file needed" ).culprit( "file", this.file ).mishap();
-//			}
-//		}
-//		if ( create_if_needed ) {
-//			if ( ! this.file.exists() ) {
-//				try {
-//					if( ! this.file.createNewFile() ) {
-//						new Alert( "Could not create new ordinary file" ).culprit( "file", this.file ).mishap();
-//					}
-//				} catch ( IOException e ) {
-//					throw new RuntimeException( e );
-//				}
-//			}
-//		}
-//		if ( this.file.isFile() ) {
-//			return FileVFile.uncheckedMake( this.file );
-//		} else {
-//			return null;
-//		}
 	}
 
 	public boolean exists() {

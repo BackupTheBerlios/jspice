@@ -20,29 +20,21 @@
 package org.openspice.jspice.conf;
 
 import org.openspice.jspice.alert.Alert;
-import org.openspice.jspice.main.Print;
-import org.openspice.jspice.main.pragmas.StylePragma;
-import org.openspice.jspice.main.jline_stuff.PrefixFilterAccumulator;
-import org.openspice.jspice.main.manual.Manual;
-import org.openspice.jspice.main.manual.FileManual;
 import org.openspice.jspice.class_builder.JSpiceClassLoader;
-import org.openspice.vfs.VFolder;
-import org.openspice.vfs.VFile;
-import org.openspice.vfs.VVolume;
-import org.openspice.vfs.tools.UrlVFolderRef;
-import org.openspice.vfs.zip.ZipVVolume;
-import org.openspice.vfs.ftp.FtpVFolder;
-import org.openspice.vfs.ftp.FtpVVolume;
-import org.openspice.vfs.file.FileVFolder;
-import org.openspice.vfs.file.FileVFile;
-import org.openspice.vfs.file.FileVVolume;
+import org.openspice.jspice.main.Print;
+import org.openspice.jspice.main.jline_stuff.PrefixFilterAccumulator;
+import org.openspice.jspice.main.manual.FileManual;
+import org.openspice.jspice.main.manual.Manual;
+import org.openspice.jspice.main.pragmas.StylePragma;
 import org.openspice.tools.ImmutableSetOfBoolean;
+import org.openspice.vfs.VFile;
+import org.openspice.vfs.VFolder;
+import org.openspice.vfs.VVolume;
+import org.openspice.vfs.file.FileVVolume;
 
+import java.io.File;
 import java.util.*;
-import java.util.zip.ZipFile;
 import java.util.regex.Pattern;
-import java.io.*;
-import java.net.URL;
 
 public final class JSpiceConf {
 
@@ -353,8 +345,8 @@ public final class JSpiceConf {
 
 
 	public JSpiceConf() {
-		this.jspice_home = UrlVFolderRef.make( "ftp://heather:lucy@127.0.0.1" + home() + "/" ).getVFolder( ImmutableSetOfBoolean.ONLY_TRUE,  false );
-//		final VVolume volume = new FileVVolume( home() );
+//		this.jspice_home = UrlVFolderRef.make( "ftp://heather:lucy@127.0.0.1" + home() + "/" ).getVFolder( ImmutableSetOfBoolean.ONLY_TRUE,  false );
+		this.jspice_home = new FileVVolume( home() ).getRootVFolderRef().getVFolder( ImmutableSetOfBoolean.ONLY_TRUE, false );
 		if ( this.jspice_home == null ) {
 			new Alert( "Cannot locate JSpice home directory" ).warning();
 		}

@@ -18,15 +18,17 @@
  */
 package org.openspice.vfs.file;
 
-import org.openspice.vfs.*;
-import org.openspice.vfs.codec.FolderNameCodec;
-import org.openspice.vfs.codec.FileNameCodec;
+import org.openspice.vfs.PathAbsVFolder;
+import org.openspice.vfs.VFolder;
+import org.openspice.vfs.VFolderRef;
+import org.openspice.vfs.VItem;
 import org.openspice.vfs.codec.Codec;
-import org.openspice.tools.ReaderWriterTools;
+import org.openspice.vfs.codec.FolderNameCodec;
 
-import java.io.*;
-import java.util.List;
+import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FileVFolder extends PathAbsVFolder implements VFolder {
 

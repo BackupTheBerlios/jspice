@@ -19,16 +19,13 @@
 
 package org.openspice.jspice.main;
 
-import org.openspice.jspice.conf.JSpiceConf;
-import org.openspice.jspice.conf.FixedConf;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.conf.FixedConf;
+import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.tools.ImmutableSetOfBoolean;
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFolderRef;
 import org.openspice.vfs.tools.UrlVFolderRef;
-import org.openspice.tools.ImmutableSetOfBoolean;
-
-import java.util.Observable;
-import java.io.File;
 
 public class Main extends AbsMain {
 

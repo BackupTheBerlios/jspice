@@ -18,21 +18,16 @@
  */
 package org.openspice.vfs.tools;
 
-import org.openspice.vfs.VVolume;
 import org.openspice.vfs.VFolderRef;
-import org.openspice.vfs.zip.ZipVVolume;
 import org.openspice.vfs.ftp.FtpVVolume;
 import org.openspice.vfs.file.FileVVolume;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.Print;
 import org.openspice.jspice.conf.FixedConf;
 
-import java.net.URI;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.File;
-import java.io.IOException;
-import java.util.zip.ZipFile;
 
 public class UrlVFolderRef {
 
@@ -49,8 +44,7 @@ public class UrlVFolderRef {
 		final String path = url.getPath();
 		if ( "file".equals( protocol ) ) {
 			final File file = new File( path );
-//			final boolean is_folder = file.exists() ? file.isDirectory() : ( query != null || file.getPath().matches( ".*/" ) );
-			if ( file.exists() || file.getPath().matches( ".*/" ) ) {
+			if ( file.isDirectory() || file.getPath().matches( ".*/" ) ) {
 				if ( Print.wouldPrint( Print.VFS ) ) Print.println( "File-based volume: path = " + path + " (exists = " + new File( path ).exists()  + ")");
 				return new FileVVolume( file ).getRootVFolderRef();
 			} else if ( FixedConf.TRACK_BACK_ENABLED ) {
@@ -58,7 +52,7 @@ public class UrlVFolderRef {
 				return VFolderView.makeVFolderRefWithTrackBack( file );
 			} else {
 				if ( Print.wouldPrint( Print.VFS ) ) Print.println( "Archive-based volume - query: path = " + path + "; query = " + url.getQuery() );
-				return VFolderView.make( file ).getRootVFolderRef();
+				return VFolderView.make( file );
 			}
 		} else if ( "ftp".equals( protocol ) ) {
 			return new FtpVVolume( url ).getRootVFolderRef();

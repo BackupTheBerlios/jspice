@@ -34,7 +34,7 @@ public class Print {
 		Print.INFO | Print.LOAD | Print.CONFIG | Print.AUTOLOAD
 	);
 
-	public static int current_mode = Print.VFS | Print.AUTOLOAD;
+	public static int current_mode = 0; 	//Print.VFS | Print.AUTOLOAD;
 
 	public static final void printMode( final int mode ) {
 		System.out.print( "JSPICE(" );
