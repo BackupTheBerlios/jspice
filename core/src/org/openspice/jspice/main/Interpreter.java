@@ -33,6 +33,8 @@ import org.openspice.jspice.namespace.Var;
 import org.openspice.jspice.namespace.FacetSet;
 import org.openspice.jspice.lift.Lift;
 import org.openspice.jspice.loader.Loader;
+import org.openspice.vfs.VItem;
+import org.openspice.vfs.VFile;
 
 import java.io.*;
 import java.util.List;
@@ -52,23 +54,19 @@ public final class Interpreter extends Loader {
 		this.interpret( "stdin", new InputStreamReader( System.in ), prompt );
 	}
 		
-	public void interpret( final File file ) {
-		try {
-			this.interpret( file.toString(), new FileReader( file ) );
-		} catch ( final FileNotFoundException fnfe ) {
-			new Alert( fnfe, "File could not be found" ).culprit( "file", file.toString() ).mishap( 'E' );
-		}
+	public void interpret( final VFile file ) {
+		this.interpret( file.toString(), file.readContents() );
 	}
 
-	public final void loadFile( final File file ) {
+	public final void loadVFile( final VFile file ) {
 		this.interpret( file );
 	}
 
-	public final void autoloadFile( final File file, final Var.Perm perm, final FacetSet facets ) {
+	public final void autoloadVFile( final VFile file, final Var.Perm perm, final FacetSet facets ) {
 		this.interpret( file );
 	}
 
-	public Object autoloadFileForValue( String name, File file ) {
+	public Object autoloadFileForValue( String name, VItem file ) {
 		throw Alert.unreachable();
 	}
 
@@ -134,7 +132,7 @@ public final class Interpreter extends Loader {
 
 	public void interpret( final String origin, final Reader reader, final String prompt ) {
 		final Petrifier petrifier = new Petrifier();
-		SpiceParser parser = new SpiceParser( this.getJSpiceConf(), origin, reader, prompt );
+		SpiceParser parser = new SpiceParser( this, origin, reader, prompt );
 		for (;;) {
 //		while ( parser.peekToken() != null ) {
 			boolean reset = false;
@@ -157,7 +155,7 @@ public final class Interpreter extends Loader {
 				reset = true;
 			}
 			if ( reset ) {
-				parser = new SpiceParser( this.getJSpiceConf(), origin, reader, prompt );
+				parser = new SpiceParser( this, origin, reader, prompt );
 				reset = false;
 				PrintTools.println( "JSpice ready" );
 			}
@@ -168,7 +166,7 @@ public final class Interpreter extends Loader {
 		final VM saved = this.getVM();
 		this.setVM( new VM( saved.getJSpiceConf() ) );
 		final Petrifier petrifier = new Petrifier();
-		SpiceParser parser = new SpiceParser( this.getJSpiceConf(), origin, reader, prompt );
+		SpiceParser parser = new SpiceParser( this, origin, reader, prompt );
 		while ( parser.peekToken() != null ) {
 			this.oneExpr( parser, petrifier, false );
 		}

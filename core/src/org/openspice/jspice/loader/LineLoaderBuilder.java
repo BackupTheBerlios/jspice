@@ -20,15 +20,11 @@ package org.openspice.jspice.loader;
 
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.alert.Alert;
-import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.vfs.VFile;
 
 import java.io.*;
 
 public class LineLoaderBuilder extends ValueLoaderBuilder {
-
-//	public LineLoaderBuilder( final JSpiceConf jconf ) {
-//		super( jconf );
-//	}
 
 	static final class LineLoader extends ValueLoader {
 
@@ -42,8 +38,8 @@ public class LineLoaderBuilder extends ValueLoaderBuilder {
 		return new LineLoader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( final String name, final File file ) throws IOException {
-		final BufferedReader rdr = new BufferedReader( new FileReader( file ) );
+	public Object loadValueFromVFile( final VFile file ) throws IOException {
+		final BufferedReader rdr = new BufferedReader( file.readContents() );
 		final String line = rdr.readLine();
 		if ( line == null ) {
 			new Alert( "Empty line file" ).culprit( "file", file ).mishap();

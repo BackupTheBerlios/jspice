@@ -20,8 +20,11 @@ package org.openspice.jspice.loader;
 
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.main.SuperLoader;
+import org.openspice.jspice.conf.FixedConf;
+import org.openspice.vfs.VFolder;
+import org.openspice.vfs.VItem;
 
-import java.io.File;
+import java.util.Iterator;
 
 
 public class MapLoaderBuilder extends ObjectLoaderBuilder {
@@ -32,14 +35,13 @@ public class MapLoaderBuilder extends ObjectLoaderBuilder {
 			super( current_ns );
 		}
 
-		public Object fileValue( final String name, final File file ) {
+		public Object fileValueFromVFolder( final String name, final VFolder file ) {
 			final SuperLoader sloader = this.getSuperLoader();
-			final boolean is_symtab = "symtab".equals( sloader.getExtension( file ) );
+			final boolean is_symtab = file.hasExt( FixedConf.SYMTAB_EXT );
 			final Accumulator acc = is_symtab ? (Accumulator)new Accumulator.SymMap() : (Accumulator)new Accumulator.StrMap();
-			final File[] fs = file.listFiles();
-			for ( int i = 0; i < fs.length; i++ ) {
-				final File f = fs[ i ];
-				if ( sloader.couldLoadFile( f ) ) {
+			for ( Iterator it = file.listVItems().iterator(); it.hasNext(); ) {
+				final VItem f = (VItem)it.next();
+				if ( sloader.couldLoadVItem( f ) ) {
 					sloader.autoloadFileAsNamedValue( f, this.getCurrentNameSpace(), acc );
 				}
 			}

@@ -23,12 +23,10 @@ import org.openspice.jspice.conf.InventoryConf;
 import org.openspice.jspice.conf.JSpiceConf;
 import org.openspice.jspice.main.Print;
 import org.openspice.jspice.datatypes.ImmutableList;
+import org.openspice.vfs.VFolder;
+import org.openspice.vfs.VFile;
 
 import java.util.*;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 public class FileManual extends AbsFileManual {
 
@@ -42,65 +40,39 @@ public class FileManual extends AbsFileManual {
 
 	//	----
 
-	private void find( final SearchPhrase phrase, final File folder, final String nickname, final String pkg_name, final List accumulator ) {
-		if ( folder.isDirectory() ) {
-			//	This is just an efficiency hack to reduce the need to scan entire directories.
-			final String exact = phrase.exactlyMatches( 2 );
-			if ( exact != null ) {
-				final String fname = FixedConf.topicNameToFileName( exact );
-				final File file = new File( folder, fname );
-				if ( file.exists() ) {
-					final SearchPhrase term = new SearchPhrase();
-					term.add( nickname );
-					if ( pkg_name != null ) {
-						term.add( pkg_name );
-					}
-					term.add( exact );
-					accumulator.add( new BasicSearchResult( term, new FileManualPage( file ) ) );
+	private void find( final SearchPhrase phrase, final VFolder folder, final String nickname, final String pkg_name, final List accumulator ) {
+		//	This is just an efficiency hack to reduce the need to scan entire directories.
+		for ( Iterator it = folder.listVFiles().iterator(); it.hasNext(); ) {
+			final VFile ifile = (VFile)it.next();
+			if ( Print.wouldPrint( Print.HELP ) ) {
+				Print.println( "searching " + ifile );
+			}
+			final String topic = ifile.getNam();
+			if ( phrase.match( 2, topic ) ) {
+				final SearchPhrase term = new SearchPhrase();
+				term.add( nickname );
+				if ( pkg_name != null ) {
+					term.add( pkg_name );
 				}
-			} else {
-				//	It would always be safe to arrive here.
-				final File[] ifiles = folder.listFiles();
-				for ( int i = 0; i < ifiles.length; i++  ) {
-					final File ifile = ifiles[ i ];
-					if ( true || Print.wouldPrint( Print.HELP ) ) {
-						Print.println( "searching " + ifile + " (" + ifile.exists() + ")" );
-					}
-					final String topic = FixedConf.fileNameToTopicName( ifile.getName() );
-					if ( ifile.exists() && topic != null ) {
-						if ( phrase.match( 2, topic ) ) {
-							final SearchPhrase term = new SearchPhrase();
-							term.add( nickname );
-							if ( pkg_name != null ) {
-								term.add( pkg_name );
-							}
-							term.add( topic );
-							accumulator.add( new BasicSearchResult( term, new FileManualPage( ifile ) ) );
-						}
-					}
-				}
+				term.add( topic );
+				accumulator.add( new BasicSearchResult( term, new FileManualPage( ifile ) ) );
 			}
 		}
 	}
 
 	private void allPackageFiles( final SearchPhrase phrase, final InventoryConf iconf, final List accumulator ) {
 		for ( Iterator it = iconf.getRootFolderList().iterator(); it.hasNext(); ) {
-			final File root =  (File)it.next();
-			final File[] folders = (
-				root.listFiles(
-					new FilenameFilter() {
-						public boolean accept( File dir, String name ) {
-							return name.endsWith( FixedConf.pkg_suffix );
+			final VFolder root = (VFolder)it.next();
+			if ( root.hasExt( FixedConf.PKG_EXT ) ) {
+				for ( Iterator jt = root.listVFolders().iterator(); jt.hasNext(); ) {
+					final VFolder ifolder = (VFolder)it.next();
+					final String pkg_name = ifolder.getNam();
+					if ( phrase.match( 1, pkg_name ) ) {
+						final VFolder fldr = ifolder.getVFolder( this.getManualFolderName(), null );
+						if ( fldr != null ) {
+							this.find( phrase, fldr, iconf.getNickname(), pkg_name, accumulator );
 						}
 					}
-				)
-			);
-			for ( int i = 0; i < folders.length; i++ ) {
-				final File ifolder = folders[ i ];
-				final String pkg_name = FixedConf.folderNameToPackageName( ifolder.getName() );
-				if ( phrase.match( 1, pkg_name ) ) {
-					final File fldr = new File( ifolder, this.getManualFolderName() );
-					this.find( phrase, fldr, iconf.getNickname(), pkg_name, accumulator );
 				}
 			}
 		}
@@ -116,7 +88,7 @@ public class FileManual extends AbsFileManual {
 			final String nickname = iconf.getNickname();
 			if ( phrase.match( 0, nickname ) ) {
 				if ( phrase.match( 1, "." ) ) {		//	virtual package name.
-					final File folder = new File( iconf.getPathFile(), this.getManualFolderName() );
+					final VFolder folder = iconf.getPathFile().getVFolder( this.getManualFolderName(), null );
 					//	null inhibits the printing of the dot.
 					this.find( phrase, folder, nickname, null, results );
 				}

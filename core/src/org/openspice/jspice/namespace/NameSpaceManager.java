@@ -23,6 +23,7 @@ import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.namespace.NameSpaceDirTools;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.SuperLoader;
+import org.openspice.vfs.VFolder;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -92,7 +93,7 @@ public class NameSpaceManager {
 
 	NameSpace makeNameSpace(
 		final Title				title,
-		final File 				_directory,				// 	String or null.
+		final VFolder 				_directory,				// 	String or null.
 		final FacetSet 			_default_facet,
 		final List 				_ok_facet_list,
 		final boolean 			_is_std_importer
@@ -149,14 +150,14 @@ public class NameSpaceManager {
 	}
 
 	private static final Pattern nnpatt = Pattern.compile( "^(.*)\\.[^\\.]*$" );
-	public NameSpace load_package( final String cname, final File dir ) {
+	public NameSpace load_package( final String cname, final VFolder dir ) {
 		//	The default nick name of a package is its last component.
 		final Matcher m = nnpatt.matcher( cname );
 		final String nname = m.find() ? m.group( 1 ) : cname;
 		return this.load_package( cname, nname, dir );
 	}
 
-	private NameSpace load_package( final String cname, final String nname, final File pkg_dir ) {
+	private NameSpace load_package( final String cname, final String nname, final VFolder pkg_dir ) {
 		return new NameSpace( this, cname, nname, pkg_dir ).populate();
 	}
 

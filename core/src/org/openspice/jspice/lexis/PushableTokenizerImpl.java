@@ -22,7 +22,7 @@ package org.openspice.jspice.lexis;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.tokens.Token;
 import org.openspice.jspice.tokens.NameToken;
-import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.jspice.main.Interpreter;
 
 import java.util.Stack;
 import java.io.Reader;
@@ -37,8 +37,8 @@ public class PushableTokenizerImpl implements PushableTokenizer {
 		this.stack = new Stack();
 	}
 
-    public PushableTokenizerImpl( final JSpiceConf jconf, final String _printName, final Reader _reader, final String _prompt ) {
-        this( new TokenizerImpl( jconf, _printName, _reader, _prompt ) );
+    public PushableTokenizerImpl( final Interpreter interpreter, final String _printName, final Reader _reader, final String _prompt ) {
+        this( new TokenizerImpl( interpreter, _printName, _reader, _prompt ) );
     }
 
 	public String getPrintName() {

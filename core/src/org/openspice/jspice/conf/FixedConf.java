@@ -33,6 +33,28 @@ public abstract class FixedConf {
 	final static private String minor_version = "3";
 	final static private String incremental_version = "13";
 
+
+	static final String licence_nam = "LICENSE";  	//	American spelling for licence.
+	static final String CONF_EXT = "conf";
+	static final String SPICE_EXT = "spi";
+	static final String TXT_EXT = "txt";
+	public static final String PKG_EXT = "pkg";
+	public static final String AUTO_EXT = "auto";
+	public static final String SYMTAB_EXT = "symtab";
+	static final String JSPICE_CONF_NAM = "jspice";
+	static final String INVENTORY_NAM = "inventory";
+	static final String std_inventory_name = INVENTORY_NAM;
+
+	public static final char VFILE_SEPARATOR = '.';
+	public static final char VFOLDER_SEPARATOR = '-';
+
+	static final String load_file_nam = "load";
+	static final String load_folder_nam = load_file_nam;
+	static final String load_conf_file_name = load_folder_nam + VFILE_SEPARATOR + FixedConf.CONF_EXT;
+	static final String load_spice_file_nam = load_folder_nam;
+	static final String load_spice_file_name = load_spice_file_nam + VFILE_SEPARATOR + FixedConf.SPICE_EXT;
+
+
 	public static String getIncrementalVersion() {
 		return incremental_version;
 	}
@@ -46,7 +68,7 @@ public abstract class FixedConf {
 	}
 
 	public static String version() {
-		return major_version + "." + minor_version + "." + incremental_version;
+		return major_version + '.' + minor_version + '.' + incremental_version;
 	}
 
 	public static String banner() {
@@ -91,13 +113,13 @@ public abstract class FixedConf {
 	}
 
 	public static final String getPropertyName( final String suffix ) {
-		return package_root + "." + suffix;
+		return package_root + '.' + suffix;
 	}
 
 	//	---oooOOOooo---
 
 	//	todo: This is rubbish really.  We ought to handle many extensions.
-	public static final String helpFileExtension = ".txt";
+	public static final String helpFileExtension = ( '.' + "txt" );
 
 	public static final String topicNameToFileName( final String topic ) {
 		try {
@@ -120,12 +142,11 @@ public abstract class FixedConf {
 		}
 	}
 
-
-
 	//	---oooOOOooo---
 
+	public static final char pkg_separator = '-';
 	static final char pkg_replace_dot = '-';
-	public static final String pkg_suffix = "-pkg";
+	public static final String pkg_suffix = ( pkg_separator + PKG_EXT );
 
 	public static final String packageNameToFolderName( final String pname ) {
 		return pname.replace( '.', pkg_replace_dot ) + pkg_suffix;

@@ -19,6 +19,8 @@
 package org.openspice.jspice.loader;
 
 import org.openspice.jspice.namespace.NameSpace;
+import org.openspice.vfs.VItem;
+import org.openspice.vfs.VFile;
 
 import java.io.*;
 import java.net.URI;
@@ -37,8 +39,8 @@ public class UriLoaderBuilder extends ValueLoaderBuilder {
 		return new UriLoader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( final String name, final File file ) throws IOException {
-		final BufferedReader rdr = new BufferedReader( new FileReader( file ) );
+	public Object loadValueFromVFile( final VFile file ) throws IOException {
+		final BufferedReader rdr = new BufferedReader( file.readContents() );
 		return URI.create( rdr.readLine() );
 	}
 

@@ -19,9 +19,8 @@
 package org.openspice.jspice.loader;
 
 import org.openspice.jspice.namespace.NameSpace;
-import org.openspice.tools.FileTools;
-
-import java.io.*;
+import org.openspice.tools.ReaderWriterTools;
+import org.openspice.vfs.VFile;
 
 public class TxtLoaderBuilder extends ValueLoaderBuilder {
 
@@ -37,8 +36,8 @@ public class TxtLoaderBuilder extends ValueLoaderBuilder {
 		return new TxtLoader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( final String name, final File file ) {
-		return FileTools.fileAsString( file );
+	public Object loadValueFromVFile( final VFile file ) {
+		return ReaderWriterTools.readerToString( file.readContents() );
 	}
 
 }

@@ -27,17 +27,17 @@ import org.openspice.jspice.built_in.*;
 import org.openspice.jspice.built_in.inspect.InspectProc;
 import org.openspice.jspice.built_in.arithmetic.*;
 import org.openspice.graphics2d.ShowImage;
+import org.openspice.vfs.VFolder;
 
 import java.util.*;
 import java.util.List;
-import java.io.File;
 
 public class SpiceStandardNameSpace extends NameSpace {
 
 	public SpiceStandardNameSpace(
 		final NameSpaceManager _manager,
 		final Title title,
-		final File _directory,
+		final VFolder _directory,
 		final FacetSet _default_facets,
 		final List _ok_facet_list,
 		final boolean _is_std_importer
@@ -87,7 +87,7 @@ public class SpiceStandardNameSpace extends NameSpace {
 		this.install( "isPartMatch", RegexProcs.isPartMatch );
 		this.install( "allMatches", RegexProcs.allMatches );
 		this.install( "length", ShortCuts.lengthProc );
-		this.install( "loadValueFromFile", new LoadValueFromFileProc( this.getSuperLoader() ) );
+		this.install( "loadValueFromVItem", new LoadValueFromFileProc( this.getSuperLoader() ) );
 		this.install( "log", new LogProc() );
 		this.install( "log2", new Log2Proc() );
 		this.install( "log10", new Log10Proc() );

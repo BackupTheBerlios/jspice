@@ -19,11 +19,10 @@
 package org.openspice.jspice.loader.csv;
 
 import org.openspice.jspice.namespace.NameSpace;
-import org.openspice.tools.FileTools;
+import org.openspice.tools.ReaderWriterTools;
 import org.openspice.jspice.loader.ValueLoader;
 import org.openspice.jspice.loader.ValueLoaderBuilder;
-
-import java.io.*;
+import org.openspice.vfs.VFile;
 
 public class CSVLoaderBuilder extends ValueLoaderBuilder {
 
@@ -36,7 +35,8 @@ public class CSVLoaderBuilder extends ValueLoaderBuilder {
 		return new CSVLoader( this, current_ns );
 	}
 
-	public final Object loadValueFromFile( final String name, final File file ) {
-		return FileTools.fileAsCSV( file, this.getRegexDelimiter() );
+	public final Object loadValueFromVFile( final VFile file ) {
+		return ReaderWriterTools.readerAsCSV( file.readContents(), this.getRegexDelimiter() );
 	}
+
 }

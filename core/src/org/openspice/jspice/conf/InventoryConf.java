@@ -19,6 +19,9 @@
 package org.openspice.jspice.conf;
 
 import org.openspice.jspice.alert.Alert;
+import org.openspice.vfs.VFolder;
+import org.openspice.vfs.VFile;
+import org.openspice.vfs.VFSTools;
 
 import java.io.*;
 import java.util.*;
@@ -95,102 +98,96 @@ PACKAGE STRUCTURE
 public final class InventoryConf {
 
 	private final JSpiceConf jspice_conf;
-	private final File inventory_path;
+	private final VFolder inventory_path;
 	private String nickname;
 
 	private final List root_folder_list = new ArrayList();
 
-	InventoryConf( final JSpiceConf _jspice_conf, final File _inventory_path ) {
+	InventoryConf( final JSpiceConf _jspice_conf, final VFolder _inventory_path ) {
 		assert _jspice_conf != null && _inventory_path != null;
 		this.jspice_conf = _jspice_conf;
 		this.inventory_path = _inventory_path;
-		this.nickname = _inventory_path.getName();
+		this.nickname = _inventory_path.getNam();
 	}
 
-
 	public String getNickname() {
-		return nickname;
+		return this.nickname;
 	}
 
 	//	package level visibility is deliberate.
-	void setNickname( String nickname ) {
+	void setNickname( final String nickname ) {
 		this.nickname = nickname;
 	}
 
 	public List getRootFolderList() {
-		return root_folder_list;
+		return this.root_folder_list;
 	}
 
 	final Comparable getUniqueID() {
-		return this.inventory_path;
+		return this.inventory_path.getUniqueID();
 	}
 
-	public final File getPathFile() {
+	public final VFolder getPathFile() {
 		return this.inventory_path;
 	}
 
 	final void loadInventory() {
-		final File inventory_conf = new File( this.inventory_path, this.jspice_conf.getInventoryConfFilename() );
-		try {
-			final BufferedReader b =  new BufferedReader( new FileReader( inventory_conf ) );
-			for(;;) {
-				try {
-					String line = b.readLine();
-					if ( line == null ) break;
+		final VFile inventory_conf = this.inventory_path.getVFile( this.jspice_conf.getInventoryConfNam(), FixedConf.CONF_EXT );
+//		final File inventory_conf = new File( this.inventory_path, this.jspice_conf.getInventoryConfFilename() );
+		final BufferedReader b = new BufferedReader( inventory_conf.readContents() );
+		for ( ; ; ) {
+			try {
+				String line = b.readLine();
+				if ( line == null ) break;
 
-					//	Dispose of end-of-line-comment.
-					final int hash_posn = line.indexOf( '#' );
-					if ( hash_posn >= 0 ) {
-						line = line.substring( hash_posn );
-					}
-
-					//	Now test for blank line.
-					line = line.trim();
-					if ( line.length() == 0 ) continue;
-
-					//	OK - it is obliged to be a content-line.
-					final int colon_pos = line.indexOf( ':' );
-					String name = null;
-					String value = null;
-					if ( colon_pos >= 0 ) {
-						//	Only assign to the variables if the content makes sense.
-						name = line.substring( 0, colon_pos ).trim();
-						value = line.substring( colon_pos + 1 ).trim();
-					}
-					//	If the assignment failed, all these guards will fail, too.
-					if ( "folder".equals( name ) ) {
-						this.root_folder_list.add( new File( value ) );
-					} else if ( "inventory".equals( name ) ) {
-						this.jspice_conf.installInventoryConf( new File( value ) );
-					} else if ( "namedInventory".equals( name ) ) {
-						this.jspice_conf.installInventoryConf( this.jspice_conf.lookupInventoryNickname( value ) );
-					} else if ( "nickname".equals( name ) ) {
-						this.nickname = value;
-					} else {
-//						System.err.println( "name = " + name );
-//						System.err.println( "value = " + value );
-						new Alert( "Invalid line in inventory configuration file" ).culprit( "file", inventory_conf ).culprit( "line", line ).mishap();
-					}
-				} catch ( IOException ex ) {
-					new Alert( ex, "Problem encountered while read inventory configuration file" ).culprit( "file", inventory_conf ).mishap();
+				//	Dispose of end-of-line-comment.
+				final int hash_posn = line.indexOf( '#' );
+				if ( hash_posn >= 0 ) {
+					line = line.substring( hash_posn );
 				}
+
+				//	Now test for blank line.
+				line = line.trim();
+				if ( line.length() == 0 ) continue;
+
+				//	OK - it is obliged to be a content-line.
+				final int colon_pos = line.indexOf( ':' );
+				String name = null;
+				String value = null;
+				if ( colon_pos >= 0 ) {
+					//	Only assign to the variables if the content makes sense.
+					name = line.substring( 0, colon_pos ).trim();
+					value = line.substring( colon_pos + 1 ).trim();
+				}
+				//	If the assignment failed, all these guards will fail, too.
+				if ( "folder".equals( name ) ) {
+					this.root_folder_list.add( VFSTools.newVFolder( this.inventory_path, value ) );
+				} else if ( "inventory".equals( name ) ) {
+					this.jspice_conf.installInventoryConf( VFSTools.newVFolder( this.inventory_path, value ) );
+				} else if ( "namedInventory".equals( name ) ) {
+					this.jspice_conf.installInventoryConf( this.jspice_conf.lookupInventoryNickname( value ) );
+				} else if ( "nickname".equals( name ) ) {
+					this.nickname = value;
+				} else {
+					new Alert( "Invalid line in inventory configuration file" ).culprit( "file", inventory_conf ).culprit( "line", line ).mishap();
+				}
+			} catch ( final IOException ex ) {
+				new Alert( ex, "Problem encountered while read inventory configuration file" ).culprit( "file", inventory_conf ).mishap();
 			}
-		} catch ( FileNotFoundException ex ) {
-			throw new Alert( ex.getCause(), "Cannot read inventory configuration file" ).culprit( "file", inventory_conf ).mishap();
 		}
+
 		if ( this.root_folder_list.isEmpty() ) {
 			//	If no folders are added, we'll add one.
 			this.root_folder_list.add( this.inventory_path );
 		}
 	}
 
-	File locatePackageFolder( final String pkg_name ) {
-		//	Replace every '.' and add suffix.
-		final String pkg_folder = pkg_name.replace( '.', FixedConf.pkg_replace_dot ) + FixedConf.pkg_suffix;
-		File answer = null;
+	VFolder locatePackageFolder( final String pkg_name ) {
+		VFolder answer = null;
 		for ( Iterator it = this.root_folder_list.iterator(); it.hasNext(); ) {
-			final File f = new File( (File)it.next(), pkg_folder );
-			if ( f.exists() ) {
+			final VFolder vfolder = (VFolder)it.next();
+			final VFolder f = vfolder.getVFolder( pkg_name, FixedConf.PKG_EXT );
+			if ( f != null ) {
 				if ( answer == null ) {
 					answer = f;
 				} else {
@@ -208,21 +205,15 @@ public final class InventoryConf {
 	Set allPackageFolders() {
 		final Set result = new TreeSet();
 		for ( Iterator it = this.root_folder_list.iterator(); it.hasNext(); ) {
-			final File root =  (File)it.next();
-			final File[] folders = (
-				root.listFiles(
-					new FilenameFilter() {
-						public boolean accept( final File dir, final String name ) {
-							return name.endsWith( FixedConf.pkg_suffix ) && new File( dir, name ).isDirectory();
-						}
-					}
-				)
-			);
-			result.addAll( Arrays.asList( folders ) );
+			final VFolder vfolder = (VFolder)it.next();
+			for ( Iterator jt = vfolder.listVFolders().iterator(); jt.hasNext(); ) {
+				final VFolder vf = (VFolder)jt.next();
+				if ( vf.hasExt( FixedConf.PKG_EXT ) ) {
+					result.add( vf );
+				}
+			}
 		}
 		return result;
 	}
-
-
 
 }

@@ -21,9 +21,8 @@ package org.openspice.jspice.loader;
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.datatypes.proc.Nullary0FastProc;
 import org.openspice.jspice.vm_and_compiler.VM;
-import org.openspice.tools.FileTools;
-
-import java.io.File;
+import org.openspice.tools.ReaderWriterTools;
+import org.openspice.vfs.VFile;
 import java.lang.ref.SoftReference;
 
 import BFI.BFI;
@@ -32,15 +31,15 @@ public class BFILoaderBuilder extends ValueLoaderBuilder {
 
 	static final class StringRef {
 
-		final File file;
+		final VFile file;
 		SoftReference ref = null;
 
-		public StringRef( final File _file ) {
+		public StringRef( final VFile _file ) {
 			this.file = _file;
 		}
 
 		public String fetch() {
-			final String s = FileTools.fileAsString( this.file );
+			final String s = ReaderWriterTools.readerToString( this.file.readContents() );
 			ref = new SoftReference( s );
 			return s;
 		}
@@ -72,7 +71,7 @@ public class BFILoaderBuilder extends ValueLoaderBuilder {
 		return new BFILoader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( final String name, final File file ) {
+	public Object loadValueFromVFile( final VFile file ) {
 		final BFI bfi = new BFI();
 		final StringRef ref = new StringRef( file );
 		return(

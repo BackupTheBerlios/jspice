@@ -21,19 +21,20 @@ package org.openspice.jspice.namespace;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.conf.LoadConf;
 import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.jspice.conf.FixedConf;
 import org.openspice.jspice.main.SuperLoader;
 import org.openspice.jspice.main.Print;
+import org.openspice.vfs.VFolder;
+import org.openspice.vfs.VFile;
+import org.openspice.vfs.VItem;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.io.File;
 
 public class NameSpace {
 	private NameSpaceManager	manager;
     private String 				name;
     private String 				default_nickname;
-	private File 				directory;			// 	String or null.
+	private VFolder				vfolder;			// 	String or null.
     private FacetSet			default_facets;
     private List 				ok_facet_list;
     private boolean 			is_incremental;
@@ -112,9 +113,7 @@ public class NameSpace {
 		}
 		return imp.getNameSpace().getName();
 	}
-	
-	//static final Hashtable space_table = new Hashtable();
-	
+
 	void addStandardImport( final NameSpace imp_ns ) {
 	    this.addImport(
 			imp_ns.default_nickname,
@@ -135,7 +134,7 @@ public class NameSpace {
 		final NameSpaceManager nsmsg,
 		final String cname,
 		final String nname,
-		final File pkg_dir
+		final VFolder pkg_dir
 	) {
 		this.init( nsmsg, cname, nname, pkg_dir, FacetSet.PUBLIC, FacetSet.WELL_KNOWN, true );
 	}
@@ -143,7 +142,7 @@ public class NameSpace {
 	NameSpace(
 		final NameSpaceManager	_manager,
 		final Title				title,
-		final File	 			_directory,				// 	String or null.
+		final VFolder 			_directory,				// 	String or null.
 		final FacetSet 			_default_facets,
 		final List 				_ok_facet_list,
 		final boolean 			_is_std_importer
@@ -154,7 +153,7 @@ public class NameSpace {
 	private NameSpace init(
 		final NameSpaceManager	_manager,
 		final Title				title,
-		final File	 			_directory,				// 	String or null.
+		final VFolder 			_directory,				// 	String or null.
 		final FacetSet 			_default_facets,
 		final List 				_ok_facet_list,
 		final boolean 			_is_std_importer
@@ -178,7 +177,7 @@ public class NameSpace {
 		final NameSpaceManager	_manager,
 	    final String 			_name,
 		final String 			_default_nickname,
-		final File 				_directory,				// 	String or null.
+		final VFolder			_directory,				// 	String or null.
 		final FacetSet 			_default_facets,
 		final List 				_ok_facet_list,
 		final boolean 			_is_std_importer
@@ -187,7 +186,7 @@ public class NameSpace {
 		this.manager = _manager;
 		this.name = _name;
 		this.default_nickname = _default_nickname;
-		this.directory = _directory;
+		this.vfolder = _directory;
 		this.default_facets = _default_facets;
 		this.ok_facet_list = _ok_facet_list;
 		this.is_incremental = true;
@@ -225,7 +224,7 @@ public class NameSpace {
 		return this.getSuperLoader().getJSpiceConf();
 	}
 
-	private void addAutoloadable( final File file, final String facet, final String name ) {
+	private void addAutoloadable( final VItem file, final String facet, final String name ) {
 		Print.println( Print.AUTOLOAD, "add autoloadable name = " + name + "; facet = " + facet );
 		final FacetSet fs = FacetSet.make( facet );
 		final Var.Perm perm = this.declarePerm( fs, name, Props.VAL );
@@ -234,23 +233,16 @@ public class NameSpace {
 
 	private void populateAutoloads( final boolean reload_flag ) {
 		Print.println( Print.AUTOLOAD,  "populate autoloads" );
-
-		final Pattern auto_pattern = this.getJSpiceConf().getAutoFolderPattern();
-		final File[] in_dir = this.directory.listFiles();
-		for ( int n = 0; n < in_dir.length; n++ ) {
-			final File d = in_dir[ n ];
-			final Matcher m = auto_pattern.matcher( d.getName() );
-			if ( d.isDirectory() && m.find() ) {
-				final String facet = m.group( 1 );
+		for ( Iterator it = this.vfolder.listVFolders().iterator(); it.hasNext(); ) {
+			final VFolder d = (VFolder)it.next();
+			if ( d.hasExt( FixedConf.AUTO_EXT ) ) {
+				final String facet = d.getNam();
 				//	-d- is an autoloadable folder with facet -facet-
-				final File[] files = d.listFiles();
-				for ( int i = 0; i < files.length; i++ ) {
-					final File f = files[ i ];
-					Print.println( Print.AUTOLOAD, "considering file: " + f );
-					if ( this.getSuperLoader().couldLoadFile( f ) ) {
-						Print.println( Print.AUTOLOAD, "autoloadable file: " + f.getName() );
-						final String name = this.getSuperLoader().getNameWithoutExtension( f );
-						this.addAutoloadable( f, facet, name );
+				for ( Iterator jt = d.listVItems().iterator(); jt.hasNext(); ) {
+					final VItem f = (VItem)jt.next();
+					if ( this.getSuperLoader().couldLoadVItem( f ) ) {
+						Print.println( Print.AUTOLOAD, "autoloadable file: " + f.getFullName() );
+						this.addAutoloadable( f, facet, f.getNam() );
 					}
 				}
 			}
@@ -258,10 +250,10 @@ public class NameSpace {
 	}
 
 	public final void loadCoreFiles( final SuperLoader sloader ) {
-		final LoadConf load_conf = new LoadConf( this.directory, this.manager.getSuperLoader().getJSpiceConf() );
+		final LoadConf load_conf = new LoadConf( this.vfolder, this.manager.getSuperLoader().getJSpiceConf() );
 		Print.println( Print.LOAD, "loading files ... ");
 		for(;;) {
-			final File f = load_conf.nextFile();
+			final VFile f = load_conf.nextFile();
 			if ( f == null ) break;
 			Print.println( Print.LOAD, "load file " + f );
 			sloader.loadFile( f, this );

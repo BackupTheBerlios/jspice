@@ -19,12 +19,12 @@
 
 package org.openspice.jspice.conf;
 
-import org.openspice.jspice.main.SuperLoader;
 import org.openspice.jspice.main.Print;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.vfs.VFolder;
+import org.openspice.vfs.VFile;
+import org.openspice.vfs.VFSTools;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -47,13 +47,13 @@ public final class LoadConf {
 	final JSpiceConf jspice_conf;
 	final LinkedList file_list = new LinkedList();
 
-	public File nextFile() {
+	public VFile nextFile() {
 		if ( this.file_list.isEmpty() ) {
 			return null;
 		} else {
 			final Object x = this.file_list.get( 0 );
-			if ( x instanceof File ) {
-				return (File)this.file_list.remove( 0 );
+			if ( x instanceof VFile ) {
+				return (VFile)this.file_list.remove( 0 );
 			} else {
 				assert x instanceof LoadConf;
 				final Object y = ((LoadConf)x).nextFile();
@@ -67,7 +67,7 @@ public final class LoadConf {
 		}
 	}
 
-	private void add( final File f ) {
+	private void add( final VFile f ) {
 		this.file_list.add( f );
 	}
 
@@ -76,29 +76,31 @@ public final class LoadConf {
 	}
 
 	private static final Pattern loadpatt = Pattern.compile( "^\\w*([^#\\w]+)" );
-	private void init( final File pkg_dir ) {
+
+	private void init( final VFolder pkg_dir ) {
 		Print.println( Print.CONFIG, "init START" );
-		File f;
-		if ( ( f = new File( pkg_dir, this.jspice_conf.getLoadConfFileName() ) ).exists() ) {
+		VFile f = pkg_dir.getVFile( FixedConf.load_file_nam,  FixedConf.CONF_EXT );
+		VFolder d;
+		if ( f != null ) {
 			Print.println( Print.CONFIG, "found load.conf" );
 			//	We have to parse the conf file and add the contents.
 			try {
-				final BufferedReader w = new BufferedReader( new FileReader( f ) );
+				final BufferedReader w = new BufferedReader( f.readContents() );
 				for(;;) {
 					final String line = w.readLine();
 					if ( line != null ) break;
 					final Matcher m = loadpatt.matcher( line );
 					if ( m.find() ) {
-						this.add( new File( m.group( 1 ) ) );
+						this.add( VFSTools.newVFile( pkg_dir, m.group( 1 ) ) );
 					}
 				}
 			} catch ( final IOException ex ) {
 				new Alert( "Cannot open the configuration file" ).culprit( "file", f ).mishap();
 			}
-		} else if ( ( f = new File( pkg_dir, this.jspice_conf.getLoadFolderName() ) ).exists() ) {
+		} else if ( ( d = pkg_dir.getVFolder( FixedConf.load_folder_nam, null ) ) != null ) {
 			Print.println( Print.CONFIG, "found load folder" );
-			this.add( this.newLoadConf( f ) );
-		} else if ( ( f = new File( pkg_dir, this.jspice_conf.getLoadSpiceFileName() ) ).exists() ) {
+			this.add( this.newLoadConf( d ) );
+		} else if ( ( f = pkg_dir.getVFile( FixedConf.load_spice_file_nam, FixedConf.SPICE_EXT ) ) != null ) {
 			//	We only have to add this one file.
 			Print.println( Print.CONFIG, "found load.spi name" );
 			this.add( f );
@@ -108,11 +110,11 @@ public final class LoadConf {
 		Print.println( Print.CONFIG, "init DONE" );
 	}
 
-	private LoadConf newLoadConf( final File pkg_dir ) {
+	private LoadConf newLoadConf( final VFolder pkg_dir ) {
 		return new LoadConf( pkg_dir, this.jspice_conf );
 	}
 
-	public LoadConf( final File pkg_dir, final JSpiceConf _jconf ) {
+	public LoadConf( final VFolder pkg_dir, final JSpiceConf _jconf ) {
 		this.jspice_conf = _jconf;
 		this.init( pkg_dir );
 	}

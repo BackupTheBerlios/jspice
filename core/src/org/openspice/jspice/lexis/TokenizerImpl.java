@@ -25,20 +25,27 @@ import org.openspice.jspice.tokens.QuotedToken;
 import org.openspice.jspice.tokens.NumberToken;
 
 import org.openspice.jspice.alert.Alert;
-import org.openspice.jspice.conf.JSpiceConf;
 import org.openspice.jspice.main.Pragma;
+import org.openspice.jspice.main.Interpreter;
+import org.openspice.jspice.namespace.NameSpace;
 
 import java.io.*;
 
 class TokenizerImpl extends ParseEscape implements Tokenizer {
     private final Source source;
     private final StringBuffer buff = new StringBuffer();
+	private final Interpreter interpreter;
 
-    TokenizerImpl( final JSpiceConf _jconf, final String _printName, final Reader _reader, final String _prompt ) {
-		super( _jconf );
+    TokenizerImpl( final Interpreter interpreter, final String _printName, final Reader _reader, final String _prompt ) {
+		super( interpreter.getJSpiceConf() );
+		this.interpreter = interpreter;
         this.source = new Source( _printName, _reader, _prompt );
     }
-	
+
+	public NameSpace getCurrentNameSpace() {
+		return this.interpreter.getCurrentNameSpace();
+	}
+
 	public void clear() {
 		this.buff.setLength( 0 );
 	}
@@ -195,7 +202,7 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 	}
 
 	private void readPragma( final String string ) {
-		new Pragma( this.getJSpiceConf(), string ).perform();
+		new Pragma( this.interpreter, string ).perform();
 	}
 
 	private void readComment() {

@@ -16,31 +16,17 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.loader;
+package org.openspice.vfs;
 
-import org.openspice.jspice.namespace.NameSpace;
-import org.openspice.vfs.VFile;
 
-import java.io.*;
-import java.net.URL;
+public class VFSTools {
 
-public class UrlLoaderBuilder extends ValueLoaderBuilder {
-
-	static final class UrlLoader extends ValueLoader {
-
-		private UrlLoader( final ValueLoaderBuilder vlb, final NameSpace ns ) {
-			super( vlb, ns );
-		}
-
+	public static final VFolder newVFolder( final VFolder vf, final String spec ) {
+		throw new RuntimeException( "tbd" ); 	//	todo: to be defined
 	}
 
-	public ValueLoader newValueLoader( final NameSpace current_ns ) {
-		return new UrlLoader( this, current_ns );
-	}
-
-	public Object loadValueFromVFile( final VFile file ) throws IOException {
-		final BufferedReader rdr = new BufferedReader( file.readContents() );
-		return new URL( rdr.readLine() );
+	public static final VFile newVFile( final VFolder vf, final String spec ) {
+		throw new RuntimeException( "tbd" ); 	//	todo: to be defined
 	}
 
 }

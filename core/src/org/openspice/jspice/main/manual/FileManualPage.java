@@ -19,6 +19,8 @@
 package org.openspice.jspice.main.manual;
 
 import org.openspice.tools.FileTools;
+import org.openspice.tools.ReaderWriterTools;
+import org.openspice.vfs.VFile;
 
 import java.io.*;
 import java.util.regex.Pattern;
@@ -26,9 +28,9 @@ import java.util.regex.Matcher;
 
 public class FileManualPage implements ManualPage {
 
-	final File file;
+	final VFile file;
 
-	public FileManualPage( File file ) {
+	public FileManualPage( VFile file ) {
 		this.file = file;
 	}
 
@@ -38,7 +40,7 @@ public class FileManualPage implements ManualPage {
 	public String getOneLineSummary() {
 		try {
 			String first_line = null;
-			final BufferedReader reader = new BufferedReader( new FileReader( this.file ) );
+			final BufferedReader reader = new BufferedReader( this.file.readContents() );
 			for (;;) {
 				String line = reader.readLine();
 				if ( line == null ) break;
@@ -51,13 +53,13 @@ public class FileManualPage implements ManualPage {
 			}
 			//	Desperation stakes.
 			return first_line == null ? fail : first_line;
-		} catch ( IOException e ) {
+		} catch ( final IOException e ) {
 			throw new RuntimeException( e );
 		}
 	}
 
 	public String getContentsAsString() {
-		return FileTools.fileAsString( this.file );
+		return ReaderWriterTools.readerToString( this.file.readContents() );
 	}
 
 }

@@ -24,7 +24,6 @@ import org.openspice.jspice.main.Pragma;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.TreeSet;
 
 public class PragmaCompletor implements jline.Completor {
 
@@ -33,6 +32,7 @@ public class PragmaCompletor implements jline.Completor {
 	public PragmaCompletor( JSpiceConf jspice_conf ) {
 		this.jspice_conf = jspice_conf;
 	}
+
 
 	public int complete( String buff, final int cursor, final List clist ) {
 		if ( buff.length() == 0 ) {
@@ -45,7 +45,7 @@ public class PragmaCompletor implements jline.Completor {
 
 		final List tmp = new ArrayList();
 		final PrefixFilterAccumulator acc = new PrefixFilterAccumulator( buff, tmp );
-		new Pragma( this.jspice_conf, "" ).findPragmaCompletions( acc );	//	"" is a dummy parameter.
+		new Pragma( null, "" ).findPragmaCompletions( acc );	//	null & "" are the appropriate dummy parameters.
 
 		if ( tmp.size() == 0 ) return -1;
 

@@ -33,16 +33,16 @@ import java.util.ArrayList;
  */
 public class ConfTokenizer {
 
-	final StringBuffer buffer = new StringBuffer();
-	final Reader reader;
+	private final StringBuffer buffer = new StringBuffer();
+	private final Reader reader;
 
 	public ConfTokenizer( final Reader reader ) {
 		this.reader = reader;
 	}
 
-	public static final int MIDDLE_OF_LINE = 0;
-	public static final int END_OF_LINE = 1;
-	public static final int END_OF_FILE = 2;
+	private static final int MIDDLE_OF_LINE = 0;
+	private static final int END_OF_LINE = 1;
+	private static final int END_OF_FILE = 2;
 
 	/**
 	 * May add a single String to the input list and returns
@@ -51,7 +51,7 @@ public class ConfTokenizer {
 	 * @return the exit condition
 	 * @throws IOException
 	 */
-	public int doNext( final List list ) throws IOException {
+	private int doNext( final List list ) throws IOException {
 		this.buffer.setLength( 0 );
 
 		//	Skip whitespace.

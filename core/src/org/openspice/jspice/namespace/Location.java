@@ -20,6 +20,7 @@
 package org.openspice.jspice.namespace;
 
 import org.openspice.jspice.lib.AbsentLib;
+import org.openspice.vfs.VItem;
 
 import java.io.File;
 
@@ -44,7 +45,7 @@ public final class Location {
 		this.lifeCycle = LifeCycle.SET;
 	}
  
-	public void makeAutoloadReady( final NameSpace ns, final Var.Perm perm, final FacetSet fs, final File file ) {
+	public void makeAutoloadReady( final NameSpace ns, final Var.Perm perm, final FacetSet fs, final VItem file ) {
 		this.lifeCycle = new LifeCycle.AutoloadReady( ns, perm, fs, file );
 	}
 

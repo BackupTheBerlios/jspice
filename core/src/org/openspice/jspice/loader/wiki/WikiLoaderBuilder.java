@@ -22,28 +22,23 @@ import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.loader.ValueLoader;
 import org.openspice.jspice.loader.ValueLoaderBuilder;
 import org.openspice.jspice.datatypes.XmlElement;
-import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.vfs.VFile;
 import org.xml.sax.SAXException;
 
-import java.io.File;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 
 public class WikiLoaderBuilder extends ValueLoaderBuilder {
 
-//	public WikiLoaderBuilder( final JSpiceConf jconf ) {
-//		super( jconf );
-//	}
 
 	public ValueLoader newValueLoader( final NameSpace current_ns ) {
 		return new WikiLoader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( final String name, final File file ) {
+	public Object loadValueFromVFile( final VFile file ) {
 		try {
 			final XmlElement.XmlElementHandler h = new XmlElement.XmlElementHandler();
-			new WikiParser( this.getJSpiceConf(), h ).parse( new BufferedReader( new FileReader( file ) ) );
+			new WikiParser( this.getJSpiceConf(), h ).parse( new BufferedReader( file.readContents() ) );
 			return h.giveItUp();
 		} catch ( IOException e ) {
 			throw new RuntimeException( e );

@@ -26,16 +26,15 @@ import org.openspice.jspice.namespace.FacetSet;
 import org.openspice.jspice.namespace.Var;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.alert.AlertException;
-import org.openspice.jspice.loader.Loader;
 import org.openspice.jspice.loader.LoaderBuilder;
 import org.openspice.jspice.loader.Accumulator;
 import org.openspice.jspice.loader.ValueLoaderBuilder;
+import org.openspice.vfs.VItem;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 /**
  * The purpose of this class is to generate interpreters for all
@@ -121,37 +120,37 @@ public final class SuperLoader {
 		}
 	}
 
-	private LoaderBuilder findLoaderBuilder( final File file ) {
-		final String extn = this.getExtension( file );
+	private LoaderBuilder findLoaderBuilder( final VItem file ) {
+		final String extn = file.getExt();
 		final String loader_builder_class_name = this.jspice_conf.getLoaderBuilderClassName( extn, false );
 		final LoaderBuilder loader_builder = this.newLoaderBuilder( loader_builder_class_name );
 		return loader_builder;
 	}
 
-	public void autoloadFileAsNamedValue( final File file, final NameSpace current_ns, final Accumulator accumulator ) {
+	public void autoloadFileAsNamedValue( final VItem file, final NameSpace current_ns, final Accumulator accumulator ) {
 		final LoaderBuilder loader_builder = this.findLoaderBuilder( file );
-		final String name = this.getNameWithoutExtension( file );
+		final String name = file.getNam();
 		accumulator.add(
 			name,
 			loader_builder.newLoader( current_ns ).autoloadFileForValue( name, file )
 		);
 	}
 
-	public void autoloadFile( final File file, final NameSpace current_ns, final Var.Perm perm, final FacetSet facets ) {
+	public void autoloadFile( final VItem file, final NameSpace current_ns, final Var.Perm perm, final FacetSet facets ) {
 		final LoaderBuilder loader_builder = this.findLoaderBuilder( file );
-		loader_builder.newLoader( current_ns ).autoloadFile( file, perm, facets );
+		loader_builder.newLoader( current_ns ).autoloadVItem( file, perm, facets );
 	}
 
-	public void loadFile( final File file, final NameSpace current_ns ) {
+	public void loadFile( final VItem file, final NameSpace current_ns ) {
 		final LoaderBuilder loader_builder = this.findLoaderBuilder( file );
-		loader_builder.newLoader( current_ns ).loadFile( file );
+		loader_builder.newLoader( current_ns ).loadVItem( file );
 	}
 
-	public Object loadValueFromFile( final File file ) {
+	public Object loadValueFromVItem( final VItem file ) {
 		final LoaderBuilder loader_builder = this.findLoaderBuilder( file );
 		if ( loader_builder instanceof ValueLoaderBuilder ) {
 			try {
-				return ((ValueLoaderBuilder)loader_builder).loadValueFromFile( file.getName(), file );
+				return ((ValueLoaderBuilder)loader_builder).loadValueFromVItem( file );
 			} catch ( IOException e ) {
 				throw new RuntimeException( e );
 			}
@@ -160,14 +159,10 @@ public final class SuperLoader {
 		}
 	}
 
-	public boolean couldLoadFile( final File file ) {
-		if ( ( file.isFile() || file.isDirectory() ) && !file.isHidden() ) {
-			final String extn = getExtension( file );
-			Print.println( Print.AUTOLOAD, "extension: " + extn );
-			return this.jspice_conf.getLoaderBuilderClassName( extn, true ) != null;
-		} else {
-			return false;
-		}
+	public boolean couldLoadVItem( final VItem file ) {
+		final String extn = file.getExt();
+		Print.println( Print.AUTOLOAD, "extension: " + extn );
+		return this.jspice_conf.getLoaderBuilderClassName( extn, true ) != null;
 	}
 
 }

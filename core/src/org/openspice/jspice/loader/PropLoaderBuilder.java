@@ -19,16 +19,12 @@
 package org.openspice.jspice.loader;
 
 import org.openspice.jspice.namespace.NameSpace;
-import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.vfs.VFile;
 
 import java.io.*;
 import java.util.Properties;
 
 public class PropLoaderBuilder extends ValueLoaderBuilder {
-
-//	public PropLoaderBuilder( final JSpiceConf jconf ) {
-//		super( jconf );
-//	}
 
 	static final class PropLoader extends ValueLoader {
 
@@ -42,9 +38,9 @@ public class PropLoaderBuilder extends ValueLoaderBuilder {
 		return new PropLoader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( String name, File file ) throws IOException {
+	public Object loadValueFromVItem( final VFile file ) throws IOException {
 		final Properties prop = new Properties();
-		prop.load( new FileInputStream( file ) );
+		prop.load( file.inputStreamContents() );
 		return prop;
 	}
 	

@@ -18,8 +18,7 @@
  */
 package org.openspice.jspice.parse;
 
-import org.openspice.jspice.parse.ParserImpl;
-import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.jspice.main.Interpreter;
 
 import java.io.Reader;
 
@@ -28,8 +27,8 @@ final public class SpiceParser extends ParserImpl {
 
 	private static final TokenParser spice_token_parser = new SpiceTokenParser();
 	
-	public SpiceParser( final JSpiceConf jconf, final String origin, final Reader r, final String prompt ) {
-		super( jconf, spice_token_parser, origin, r, prompt );
+	public SpiceParser( final Interpreter interpreter, final String origin, final Reader r, final String prompt ) {
+		super( interpreter, spice_token_parser, origin, r, prompt );
 	}
 
 }

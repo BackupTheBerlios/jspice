@@ -20,7 +20,7 @@ package org.openspice.jspice.loader;
 
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.datatypes.ImmutableList;
-import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.vfs.VFile;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -42,8 +42,8 @@ public class LinesLoaderBuilder extends ValueLoaderBuilder {
 		return new LinesLoader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( String name, File file ) throws IOException {
-		final BufferedReader rdr = new BufferedReader( new FileReader( file ) );
+	public Object loadValueFromVFile( final VFile file ) throws IOException {
+		final BufferedReader rdr = new BufferedReader( file.readContents() );
 		final ArrayList list = new ArrayList();
 		for(;;) {
 			final String s = rdr.readLine();

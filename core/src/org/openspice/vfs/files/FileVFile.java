@@ -16,40 +16,51 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.loader;
-
-import org.openspice.jspice.namespace.Var;
-import org.openspice.jspice.namespace.FacetSet;
-import org.openspice.jspice.namespace.NameSpace;
+package org.openspice.vfs.files;
+import org.openspice.vfs.VFile;
 import org.openspice.jspice.alert.Alert;
-import org.openspice.vfs.VItem;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
-public abstract class ValueLoader extends Loader {
+public class FileVFile extends AbsFileVThing implements VFile {
 
-	final ValueLoaderBuilder value_loader_builder;
-
-	public ValueLoader( final ValueLoaderBuilder vlb, final NameSpace current_ns ) {
-		super( current_ns );
-		this.value_loader_builder = vlb;
+	public FileVFile( final File file ) {
+		super( file );
 	}
 
-	public final void autoloadVItem( VItem file, Var.Perm perm, FacetSet facets ) {
-		this.bind( perm, this.autoloadFileForValue( perm.getName(), file ) );
+	protected char separator() {
+		return '.';
 	}
 
-	public final Object autoloadFileForValue( String name, VItem file ) {
-		return this.fileValue( name, file );
-	}
-
-	public final Object fileValue( final String name, final VItem file ) {
+	public Reader readContents() {
 		try {
-			return this.value_loader_builder.loadValueFromVItem( file );
+			return new FileReader( this.file );
+		} catch ( final FileNotFoundException e ) {
+			throw new Alert( "File not found" ).culprit(  "file", this.file ).mishap();
+		}
+	}
+
+	public Writer writeContents() {
+		try {
+			return new FileWriter( this.file );
 		} catch ( IOException e ) {
 			throw new RuntimeException( e );
 		}
 	}
 
+	public InputStream inputStreamContents() {
+		try {
+			return new FileInputStream( this.file );
+		} catch ( final FileNotFoundException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	public OutputStream outputStreamContents() {
+		try {
+			return new FileOutputStream( this.file );
+		} catch ( FileNotFoundException e ) {
+			throw new RuntimeException( e );
+		}
+	}
 }

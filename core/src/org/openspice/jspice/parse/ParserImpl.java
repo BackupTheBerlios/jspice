@@ -28,20 +28,21 @@ import org.openspice.jspice.expr.cases.NameExpr;
 import org.openspice.jspice.expr.cases.SkipExpr;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.jspice.main.Interpreter;
 
 import java.io.*;
 
 public class ParserImpl extends Parser {
 
-	final JSpiceConf jspice_conf;
+	final Interpreter interpreter;
     final TokenParser token_parser;
 	final PushableTokenizerImpl tokens;
 	final int comma_prec;
 
-	public ParserImpl( final JSpiceConf jconf, final TokenParser _token_parser, final String origin, final Reader r, final String prompt ) {
-		this.jspice_conf = jconf;
+	public ParserImpl( final Interpreter interpreter, final TokenParser _token_parser, final String origin, final Reader r, final String prompt ) {
+		this.interpreter = interpreter;
 		this.token_parser = _token_parser;
-        this.tokens = new PushableTokenizerImpl( jconf, origin, r, prompt );
+        this.tokens = new PushableTokenizerImpl( interpreter, origin, r, prompt );
 		this.comma_prec = _token_parser.getPrec( "," );
     }
 
@@ -315,7 +316,7 @@ public class ParserImpl extends Parser {
     }
 
 	public JSpiceConf getJSpiceConf() {
-		return this.jspice_conf;
+		return this.interpreter.getJSpiceConf();
 	}
 
 }

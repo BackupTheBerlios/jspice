@@ -23,30 +23,42 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public final class FileTools {
+public class ReaderWriterTools {
 
-	public static final String fileAsString( final File file ) {
+	public static void readerToWriter( final Reader reader, final Writer writer ) {
 		try {
-			final StringBuffer b = new StringBuffer();
-			final Reader rdr = new FileReader( file );
-			final char[] cbuff = new char[ 1024 ];		//	just a random guess.
+			final char[] cbuf = CharArrayTools.tmpBuffer();
 			for (;;) {
-				final int n = rdr.read( cbuff );
-				if ( n < 0 ) break;						//	defensive.
-				b.append( cbuff, 0, n );
+				final int n = reader.read( cbuf );
+				if ( n == -1 ) break;
+				writer.write( cbuf, 0, n );
 			}
-			return b.toString();
-		} catch ( final FileNotFoundException ex ) {
-			throw new RuntimeException( ex );
-		} catch ( final IOException ex ) {
-			throw new RuntimeException( ex );
+			writer.close();
+			reader.close();
+		} catch ( IOException e ) {
+			throw new RuntimeException( e );
 		}
 	}
 
-	public static final List fileAsCSV( final File file, final String regexp_delimiter ) {
+	public static final String readerToString( final Reader reader ) {
+		try {
+			final StringBuffer b = new StringBuffer();
+			final char[] cbuf = CharArrayTools.tmpBuffer();
+			for(;;) {
+				final int n = reader.read( cbuf );
+				if ( n == -1 ) break;
+				b.append( cbuf, 0, n );
+			}
+			return b.toString();
+		} catch ( final IOException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	public static final List readerAsCSV( final Reader reader, final String regexp_delimiter ) {
 		try {
 			final List list = new ArrayList();
-			final BufferedReader r = new BufferedReader( new FileReader( file ) );
+			final BufferedReader r = new BufferedReader( reader );
 			for(;;) {
 				final String s = r.readLine();
 				if ( s == null ) break;
@@ -56,8 +68,6 @@ public final class FileTools {
 		} catch ( IOException e ) {
 			throw new RuntimeException( e );
 		}
-
 	}
 
-	
 }

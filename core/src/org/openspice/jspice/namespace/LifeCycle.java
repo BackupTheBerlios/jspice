@@ -19,6 +19,7 @@
 package org.openspice.jspice.namespace;
 
 import org.openspice.jspice.alert.Alert;
+import org.openspice.vfs.VItem;
 
 import java.io.File;
 
@@ -92,10 +93,10 @@ abstract class LifeCycle {
 
 		final NameSpace 	namespace;
 		final Var.Perm 		perm;
-		final File 			file;
+		final VItem			file;
 		final FacetSet		facet;
 
-		public AutoloadReady( final NameSpace _namespace, final Var.Perm perm, final FacetSet facet, final File file ) {
+		public AutoloadReady( final NameSpace _namespace, final Var.Perm perm, final FacetSet facet, final VItem file ) {
 			this.namespace = _namespace;
 			this.perm = perm;
 			this.file = file;

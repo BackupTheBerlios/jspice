@@ -25,6 +25,9 @@ import org.openspice.jspice.main.jline_stuff.PrefixFilterAccumulator;
 import org.openspice.jspice.main.manual.Manual;
 import org.openspice.jspice.main.manual.FileManual;
 import org.openspice.jspice.class_builder.JSpiceClassLoader;
+import org.openspice.vfs.VFolder;
+import org.openspice.vfs.VFile;
+import org.openspice.vfs.files.FileVFolder;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -36,37 +39,24 @@ public final class JSpiceConf {
 	//	I suspect that almost all of the following should be relegated to
 	//	parameters in the jspice.conf file.
 
-	private static final String licence_file_name = "LICENSE.txt";  	//	American spelling for licence.
-
-	private static final String conf_extn = "conf";
-	private static final String spice_extn = "spi";
-
-	private static final String jspice_conf_file_name = "jspice." + conf_extn;
-
 	private static final String auto_folder_suffix = "-auto";
 	private static final Pattern auto_folder_pattern = Pattern.compile( "^([a-zA-Z]\\w*)" + auto_folder_suffix + "$" );
 
-	private static final String load_base_name = "load";
-	private static final String load_folder_name = load_base_name;
-	private static final String load_conf_file_name = load_folder_name + "." + conf_extn;
-	private static final String load_spice_file_name = load_folder_name + "." + spice_extn;
 
-	private static final String inventory_base_name = "inventory";
-	private static final String std_inventory_name = inventory_base_name;
-	private static final String inventory_conf_file_name = inventory_base_name + "." + conf_extn;
-	private static final String personal_inventory = "." + inventory_base_name;
+//	private static final String inventory_conf_file_name = FixedConf.INVENTORY_NAM + "." + FixedConf.CONF_EXT;
+	private static final String personal_inventory = "." + FixedConf.INVENTORY_NAM;
 
 
 	public final String getLoadConfFileName() {
-		return load_conf_file_name;
+		return FixedConf.load_conf_file_name;
 	}
 
 	public final String getLoadFolderName() {
-		return load_folder_name;
+		return FixedConf.load_folder_nam;
 	}
 
 	public static final String getLoadSpiceFileName() {
-		return load_spice_file_name;
+		return FixedConf.load_spice_file_name;
 	}
 
 	public static final Pattern getAutoFolderPattern() {
@@ -96,7 +86,7 @@ public final class JSpiceConf {
 		return inventories;
 	}
 
-	public void installInventoryConf( final File inventory_path ) {
+	public void installInventoryConf( final VFolder inventory_path ) {
 		final InventoryConf invc = new InventoryConf( this, inventory_path );
 		if ( !this.inventories.contains( invc ) ) {
 			//	Get nicknames that are in use.
@@ -118,17 +108,18 @@ public final class JSpiceConf {
 		}
 	}
 
-	final String getInventoryConfFilename() {
-		return inventory_conf_file_name;
+
+	final String getInventoryConfNam() {
+		return FixedConf.INVENTORY_NAM;
 	}
 
-	final File lookupInventoryNickname( final String nickname ) {
+	final VFolder lookupInventoryNickname( final String nickname ) {
 		if ( "standard".equals( nickname ) ) {
-			return new File( "/usr/local/jspice/inventory" );
+			return new FileVFolder( new File( "/usr/local/jspice/inventory" ) );
 		} else if ( "local".equals( nickname ) ) {
-			return new File( "/etc/jspice/inventory" );
+			return new FileVFolder( new File( "/etc/jspice/inventory" ) );
 		} else if ( "personal".equals( nickname ) ) {
-			return new File( new File( "~" ), personal_inventory );
+			return new FileVFolder( new File( new File( "~" ), personal_inventory ) );
 		} else {
 			throw new Alert( "Invalid inventory nickname" ).culprit( "nickname", nickname ).mishap();
 		}
@@ -138,11 +129,11 @@ public final class JSpiceConf {
 	//	Given a package name, locate the package folder.  The answer must be unqiue
 	//	even after searching every inventory.
 	//
-	final public File locatePackage( final String pkg_name ) {
-		File answer = null;
+	final public VFolder locatePackage( final String pkg_name ) {
+		VFolder answer = null;
 		for ( Iterator it = this.inventories.iterator(); it.hasNext(); ) {
 			final InventoryConf iconf = (InventoryConf)it.next();
-			final File f = iconf.locatePackageFolder( pkg_name );
+			final VFolder f = iconf.locatePackageFolder( pkg_name );
 			if ( answer == null ) {
 				answer = f;
 			} else {
@@ -161,7 +152,7 @@ public final class JSpiceConf {
 	private final Map extnMap = new TreeMap();
 
 	public String getLoaderBuilderClassName( final String extn, final boolean null_allowed ) {
-		final String className = (String)this.extnMap.get( extn );
+		final String className = extn != null ? (String)this.extnMap.get( extn ) : null;
 		if ( className != null ) return className;
 		if ( null_allowed )	return null;
 		throw new Alert( "No loader associated with this extension" ).culprit( "extension", extn ).mishap();
@@ -182,8 +173,8 @@ public final class JSpiceConf {
 	//	---- Self Homing ----
 
 
-	private final File jspice_home;
-	private File jspice_conf_file;
+	private final VFolder jspice_home;
+	private VFile jspice_conf_vfile;
 
 	private static File home() {
 		final String jhomef = System.getProperty( FixedConf.getPropertyName( "home" ) );
@@ -193,7 +184,7 @@ public final class JSpiceConf {
 		return null;
 	}
 
-	public File getHome() {
+	public VFolder getHome() {
 		return this.jspice_home;
 	}
 
@@ -217,8 +208,8 @@ public final class JSpiceConf {
 
 	// 	---- Licence File ----
 
-	public File getLicenceFile() {
-		return new File( this.jspice_home, licence_file_name );
+	public VFile getLicenceFile() {
+		return this.jspice_home.getVFile( FixedConf.licence_nam, FixedConf.TXT_EXT );
 	}
 
 	//	---- Environment Variables ----
@@ -271,60 +262,55 @@ public final class JSpiceConf {
 	 * 	2.	data entry lines are AddLoaderBuilder EXTN CLASSNAME
 	 * 	3.	blank lines are discarded
 	 */
-	private static final void parseJSpiceConf( final File conf_file, final Map env_map, final Map entity_to_code_map, final Map code_to_entity_map ) {
-		try {
-			final ConfTokenizer conft = new ConfTokenizer( new FileReader( conf_file ) );
-			for ( final List list = new ArrayList(); conft.next( list ) != null; list.clear() ) {
-				final int list_size = list.size();	//	Guaranteed to be at least length 1.
+	private static final void parseJSpiceConf( final VFile conf_file, final Map env_map, final Map entity_to_code_map, final Map code_to_entity_map ) {
+		final ConfTokenizer conft = new ConfTokenizer( conf_file.readContents() );
+		for ( final List list = new ArrayList(); conft.next( list ) != null; list.clear() ) {
+			final int list_size = list.size();	//	Guaranteed to be at least length 1.
 
-				final String command = (String)list.get( 0 );
-				if ( "AddLoaderBuilder".equals( command ) && list_size == 3 ) {
-					final String extn = (String)list.get( 1 );
-					final String cname = (String)list.get( 2 );
-					env_map.put( extn, cname );
-				} else if ( "Entity".equals( command ) && list_size == 3 ) {
-					final String name = (String)list.get( 1 );
-					final String hex_code_str = (String)list.get( 2 );
-					if ( hex_code_str.length() > 0 && hex_code_str.charAt( 0 ) == 'U' ) {
-						final char code = (char)Integer.parseInt( hex_code_str.substring( 1 ), 16 );
-						final Character ch = new Character( code );
-						entity_to_code_map.put( name, ch );
-						code_to_entity_map.put( ch, name );
-					} else {
-						new Alert( "Unrecognised entity code" ).culprit( "name", name ).culprit( "code", hex_code_str ).warning();
-					}
+			final String command = (String)list.get( 0 );
+			if ( "AddLoaderBuilder".equals( command ) && list_size == 3 ) {
+				final String extn = (String)list.get( 1 );
+				final String cname = (String)list.get( 2 );
+				env_map.put( extn, cname );
+			} else if ( "Entity".equals( command ) && list_size == 3 ) {
+				final String name = (String)list.get( 1 );
+				final String hex_code_str = (String)list.get( 2 );
+				if ( hex_code_str.length() > 0 && hex_code_str.charAt( 0 ) == 'U' ) {
+					final char code = (char)Integer.parseInt( hex_code_str.substring( 1 ), 16 );
+					final Character ch = new Character( code );
+					entity_to_code_map.put( name, ch );
+					code_to_entity_map.put( ch, name );
 				} else {
-					final Object directive = list.remove( 0 );
-					new Alert( "Unrecognized directive JSpice conf file" ).culprit( "directive", directive ).culprit_list( list ).mishap();
+					new Alert( "Unrecognised entity code" ).culprit( "name", name ).culprit( "code", hex_code_str ).warning();
 				}
+			} else {
+				final Object directive = list.remove( 0 );
+				new Alert( "Unrecognized directive JSpice conf file" ).culprit( "directive", directive ).culprit_list( list ).mishap();
 			}
-		} catch ( final FileNotFoundException exn ) {
-			throw new RuntimeException( exn );
-		} catch ( final IOException exn ) {
-			throw new RuntimeException( exn );
 		}
 	}
 
 	public static JSpiceClassLoader jspice_class_loader = new JSpiceClassLoader();
+
 	public JSpiceClassLoader getClassLoader() {
 		return jspice_class_loader;
 	}
 
 	public JSpiceConf() {
-		this.jspice_home = home();
+		this.jspice_home = new FileVFolder( home() );
 		if ( this.jspice_home == null ) {
 			new Alert( "Cannot locate JSpice home directory").warning();
 		}
-		this.jspice_conf_file = new File( this.jspice_home, jspice_conf_file_name );
-		if ( !this.jspice_conf_file.canRead() ) {
-			new Alert( "Cannot read JSpice configuration file").culprit( "filename", this.jspice_conf_file ).warning();
-		}
+		this.jspice_conf_vfile = this.jspice_home.getVFile( FixedConf.JSPICE_CONF_NAM, FixedConf.CONF_EXT );
+//		if ( !this.jspice_conf_vfile.canRead() ) {
+//			new Alert( "Cannot read JSpice configuration file").culprit( "filename", this.jspice_conf_vfile ).warning();
+//		}
 
 		//	Parse the JConf file.
-		parseJSpiceConf( this.jspice_conf_file, this.extnMap, this.entityToStringMap, this.charToEntityMap );
+		parseJSpiceConf( this.jspice_conf_vfile, this.extnMap, this.entityToStringMap, this.charToEntityMap );
 
 		Print.println( Print.CONFIG, "Installing std inventory ..." );
-		this.installInventoryConf( new File( this.jspice_home, std_inventory_name ) );
+		this.installInventoryConf( this.jspice_home.getVFolder( FixedConf.std_inventory_name, null ) );
 		Print.println( Print.CONFIG, "... installed" );
 	}
 

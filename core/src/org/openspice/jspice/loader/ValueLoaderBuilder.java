@@ -20,15 +20,15 @@ package org.openspice.jspice.loader;
 
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.jspice.alert.Alert;
+import org.openspice.vfs.VItem;
+import org.openspice.vfs.VFile;
+import org.openspice.vfs.VFolder;
 
 import java.io.File;
 import java.io.IOException;
 
 public abstract class ValueLoaderBuilder extends LoaderBuilder {
-
-//	protected ValueLoaderBuilder( final JSpiceConf jconf ) {
-//		super( jconf );
-//	}
 
 	public final Loader newLoader( final NameSpace current_ns ) {
 		return this.newValueLoader( current_ns );
@@ -36,6 +36,20 @@ public abstract class ValueLoaderBuilder extends LoaderBuilder {
 
 	public abstract ValueLoader newValueLoader( final NameSpace current_ns );
 
-	public abstract Object loadValueFromFile( final String name, final File file ) throws IOException;
+	public Object loadValueFromVItem( final VItem file ) throws IOException {
+		if ( file instanceof VFile ) {
+			return this.loadValueFromVFile( (VFile)file );
+		} else {
+			return this.loadValueFromVFolder( (VFolder)file );
+		}
+	}
+
+	public Object loadValueFromVFile( final VFile file ) throws IOException {
+		throw Alert.unreachable();
+	}
+
+	public Object loadValueFromVFolder( final VFolder file ) throws IOException {
+		throw Alert.unreachable();
+	}
 
 }

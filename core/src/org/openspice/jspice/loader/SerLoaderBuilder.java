@@ -20,15 +20,11 @@ package org.openspice.jspice.loader;
 
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.alert.Alert;
-import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.vfs.VFile;
 
 import java.io.*;
 
 public class SerLoaderBuilder extends ValueLoaderBuilder {
-
-//	public SerLoaderBuilder( final JSpiceConf jconf ) {
-//		super( jconf );
-//	}
 
 	static final class SerLoader extends ValueLoader {
 
@@ -42,9 +38,9 @@ public class SerLoaderBuilder extends ValueLoaderBuilder {
 		return new SerLoader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( final String name, final File file ) throws IOException {
+	public Object loadValueFromVItem( final VFile file ) throws IOException {
 		try {
-			return new ObjectInputStream( new FileInputStream( file  ) ).readObject();
+			return new ObjectInputStream( file.inputStreamContents() ).readObject();
 		} catch ( final ClassNotFoundException exn ) {
 			throw new Alert( exn, "Cannot resolve class while deserializing Java object file" ).culprit( "file", file ).mishap();
 		}

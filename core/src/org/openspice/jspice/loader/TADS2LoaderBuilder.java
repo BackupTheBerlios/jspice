@@ -22,6 +22,8 @@ import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.datatypes.proc.Nullary0FastProc;
 import org.openspice.jspice.vm_and_compiler.VM;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.vfs.VItem;
+import org.openspice.vfs.VFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,7 +46,7 @@ public class TADS2LoaderBuilder extends ValueLoaderBuilder {
 		return new TADS2Loader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( final String name, final File file ) {
+	public Object loadValueFromVFile( final VFile file ) {
 		return(
 //				new Nullary0FastProc() {
 //					public Object fastCall( final Object tos, final VM vm, 	final int nargs ) {
@@ -55,15 +57,11 @@ public class TADS2LoaderBuilder extends ValueLoaderBuilder {
 			new Nullary0FastProc() {
 				public Object fastCall( final Object tos, final VM vm, 	final int nargs ) {
 					final GameTerminal term = new GameTerminal();
-					try {
-						final Jetty j = new Jetty( term, new FileInputStream( file ) );
-						if ( j.load() ) {
-							j.run();
-						}
-						return tos;
-					} catch ( final FileNotFoundException ex ) {
-						throw new Alert( ex, "Cannot find file" ).culprit( "file", file ).mishap();
+					final Jetty j = new Jetty( term, file.inputStreamContents() );
+					if ( j.load() ) {
+						j.run();
 					}
+					return tos;
 				}
 			}
 		);

@@ -32,41 +32,44 @@ import java.util.Iterator;
 
 public class Pragma {
 
-	final JSpiceConf jspice_conf;
+	final Interpreter interpreter;
 	final String input_string;
-	final List command_list;
+	String command;
+	final List arg_list;
 
-	public Pragma( JSpiceConf jspice_conf, final String input_string ) {
-		this.jspice_conf = jspice_conf;
+	public Pragma( final Interpreter interpreter, final String input_string ) {
+		this.interpreter = interpreter;
 		this.input_string = input_string;
-		this.command_list = new ArrayList();
+		this.command = null;
+		this.arg_list = new ArrayList();
 		{
 			final StringTokenizer tok = new StringTokenizer( input_string );
 			while ( tok.hasMoreTokens() ) {
-				this.command_list.add( tok.nextToken() );
+				if ( this.command == null ) {
+					this.command = tok.nextToken();
+				} else {
+					this.arg_list.add( tok.nextToken() );
+				}
 			}
 		}
 	}
 
 	public JSpiceConf getJSpiceConf() {
-		return jspice_conf;
+		return this.interpreter.getJSpiceConf();
 	}
 
 	private String command() {
-		return this.command_list.isEmpty() ? null : (String)this.command_list.get( 0 );
+		return this.command;
 	}
 
 	private String arg( final int n ) {
-		return n < this.command_list.size() ? (String)this.command_list.get( n ) : null;
+		return (String)this.arg_list.get( n );
 	}
 
-	private int nargs() {
-		return this.command_list.size();
-	}
 
 	//	#debug [on|off]
 	private void debugPragma() {
-		final String t2 = this.arg( 1 );
+		final String t2 = this.arg( 0 );
 		boolean is_debugging = this.getJSpiceConf().isDebugging();
 		if ( t2 != null ) {
 			if ( "on".equals( t2 ) ) {
@@ -84,8 +87,8 @@ public class Pragma {
 	//	#hXXXXX WHITESPACE [TOPIC]
 	private void manualPragma( final Manual manual ) {
 		final SearchPhrase t = new SearchPhrase();
-		for ( int i = 1; i < this.nargs(); i++ ) {
-			t.add( this.arg( i ) );
+		for ( Iterator it = arg_list.iterator(); it.hasNext(); ) {
+			t.add( (String)it.next() );
 		}
 		new ManualPragma().help( manual, t );
 	}
@@ -103,6 +106,8 @@ public class Pragma {
 			t.add( "." );					//	virtual package for inventory.
 			t.add( "jspice_" + c );
 			new ManualPragma().help( manual, t );
+		} else if ( c == "load" ) {
+			new LoadPragma().load( this.interpreter, this.arg_list );
 		} else {
 			final Manual manual = this.getJSpiceConf().getManualByName( c );
 			if ( manual != null ) {
@@ -119,6 +124,7 @@ public class Pragma {
 		acc.add( "debug" );
 		acc.add( "conditions" );
 		acc.add( "warranty" );
-		this.jspice_conf.findManualCompletions( acc );
+		acc.add( "load" );
+		this.getJSpiceConf().findManualCompletions( acc );
 	}
 }

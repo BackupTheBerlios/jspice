@@ -21,8 +21,8 @@ package org.openspice.jspice.loader;
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.Interpreter;
+import org.openspice.vfs.VFile;
 
-import java.io.*;
 import java.util.ArrayList;
 
 public class ExprLoaderBuilder extends ObjectLoaderBuilder {
@@ -34,14 +34,10 @@ public class ExprLoaderBuilder extends ObjectLoaderBuilder {
 			super( ns );
 		}
 
-		public Object fileValue( final String name, final File file ) {
+		public Object fileValueFromVFile( final String name, final VFile file ) {
 			final Interpreter intr = new Interpreter( this.getCurrentNameSpace() );
 			final ArrayList answer = new ArrayList();
-			try {
-				intr.evaluate( answer, file.getPath(), new FileReader( file ), null );
-			} catch ( FileNotFoundException e ) {
-				throw new RuntimeException( e );
-			}
+			intr.evaluate( answer, file.getUniqueID().toString(), file.readContents(), null );
 			if ( answer.isEmpty() ) {
 				new Alert( "No results from expression file" ).culprit( "file", file ).mishap();
 			} else if ( answer.size() > 1 ) {

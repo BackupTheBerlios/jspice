@@ -20,6 +20,8 @@ package org.openspice.jspice.loader;
 
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.datatypes.XmlElement;
+import org.openspice.vfs.VItem;
+import org.openspice.vfs.VFile;
 
 import java.io.*;
 
@@ -38,8 +40,8 @@ public class XmlLoaderBuilder extends ValueLoaderBuilder {
 	}
 
 
-	public Object loadValueFromFile( String name, File file ) throws IOException {
-		return XmlElement.readXmlElement( new FileInputStream( file ) );
+	public Object loadValueFromVFile( final VFile file ) throws IOException {
+		return XmlElement.readXmlElement( file.inputStreamContents() );
 	}
 
 }

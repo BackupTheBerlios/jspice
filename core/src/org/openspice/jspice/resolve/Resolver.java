@@ -27,8 +27,8 @@ import org.openspice.jspice.expr.cases.*;
 import org.openspice.jspice.namespace.*;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.main.SuperLoader;
+import org.openspice.vfs.VFolder;
 
-import java.io.File;
 
 /**
  * The entry point is Resolver.resolve.  This works by modifying the
@@ -137,7 +137,7 @@ public final class Resolver extends ExprVisitor {
 		NameSpace ipkg = ns.getNameSpaceManager().get( ipkg_name );
 		if ( ipkg == null ) {
 			//	Attempt to autoload.
-			final File ipkg_folder = this.locatePackage( ipkg_name );
+			final VFolder ipkg_folder = this.locatePackage( ipkg_name );
 			if ( ipkg_folder == null ) {
 				new Alert( "Unknown package" ).culprit( "package", ipkg_name ).mishap();
 			} else {
@@ -151,11 +151,11 @@ public final class Resolver extends ExprVisitor {
 		return null;
 	}
 
-	private final File locatePackage( final String ipkg_name ) {
+	private final VFolder locatePackage( final String ipkg_name ) {
 		return this.super_loader.getJSpiceConf().locatePackage( ipkg_name );
 	}
 
-	private final NameSpace loadPackage( final String ipkg_name, final File ipkg_folder ) {
+	private final NameSpace loadPackage( final String ipkg_name, final VFolder ipkg_folder ) {
 		return this.super_loader.getNameSpaceManager().load_package( ipkg_name, ipkg_folder );
 	}
 

@@ -21,6 +21,7 @@ package org.openspice.jspice.loader;
 import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.datatypes.Deferred;
+import org.openspice.vfs.VFile;
 
 import javax.imageio.ImageIO;
 import java.io.*;
@@ -41,12 +42,12 @@ public class ImageLoaderBuilder extends ValueLoaderBuilder {
 		return new ImageLoader( this, current_ns );
 	}
 
-	public Object loadValueFromFile( final String name, final File file ) throws IOException {
+	public Object loadValueFromVFile( final VFile file ) throws IOException {
 		return (
 			new Deferred() {
 				public Object calculate() {
 					try {
-						final BufferedImage image = ImageIO.read( file );
+						final BufferedImage image = ImageIO.read( file.inputStreamContents() );
 						return image;
 					} catch ( final IOException exn ) {
 						throw new Alert( exn, "Cannot load image" ).culprit( "file", file ).mishap();

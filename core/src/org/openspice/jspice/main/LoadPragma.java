@@ -16,31 +16,29 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.loader;
+package org.openspice.jspice.main;
 
-import org.openspice.jspice.namespace.NameSpace;
+import org.openspice.vfs.files.FileVFile;
 import org.openspice.vfs.VFile;
+import org.openspice.jspice.alert.Alert;
 
-import java.io.*;
-import java.net.URL;
+import java.util.List;
+import java.util.Iterator;
+import java.io.File;
 
-public class UrlLoaderBuilder extends ValueLoaderBuilder {
+public final class LoadPragma {
 
-	static final class UrlLoader extends ValueLoader {
-
-		private UrlLoader( final ValueLoaderBuilder vlb, final NameSpace ns ) {
-			super( vlb, ns );
+	public void load( final Interpreter interpreter, final List files ) {
+		for ( Iterator it = files.iterator(); it.hasNext(); ) {
+			final String fname = (String)it.next();
+			final File f = new File( fname );
+			if ( f.exists() ) {
+				final VFile vfile = new FileVFile( new File( fname ) );
+				new Interpreter( interpreter.getCurrentNameSpace() ).loadVFile( vfile );
+			} else {
+				new Alert( "Cannot find file" ).culprit( "file", f ).warning();
+			}
 		}
-
-	}
-
-	public ValueLoader newValueLoader( final NameSpace current_ns ) {
-		return new UrlLoader( this, current_ns );
-	}
-
-	public Object loadValueFromVFile( final VFile file ) throws IOException {
-		final BufferedReader rdr = new BufferedReader( file.readContents() );
-		return new URL( rdr.readLine() );
 	}
 
 }

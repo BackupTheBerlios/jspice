@@ -25,24 +25,21 @@ import tads2.jetty.Jetty;
 import java.io.*;
 
 import org.openspice.jspice.alert.Alert;
+import org.openspice.vfs.VFile;
 
 public class GameBox extends CmdBox implements PlatformIO {
 
-	final File game_file;
+	final VFile game_file;
 
-	public GameBox( File game_file ) {
+	public GameBox( final VFile game_file ) {
 		this.game_file = game_file;
 	}
 
 	public void goBuddyGo() {
-		final File file = this.game_file;
-		try {
-			final Jetty j = new Jetty( this, new FileInputStream( file ) );
-			if ( j.load() ) {
-				j.run();
-			}
-		} catch ( final FileNotFoundException ex ) {
-			throw new Alert( ex, "Cannot find file" ).culprit( "file", file ).mishap();
+		final VFile file = this.game_file;
+		final Jetty j = new Jetty( this, file.inputStreamContents() );
+		if ( j.load() ) {
+			j.run();
 		}
 	}
 

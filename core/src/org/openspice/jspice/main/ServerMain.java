@@ -24,6 +24,7 @@ import org.mortbay.http.handler.*;
 import org.mortbay.util.MultiException;
 import org.openspice.jspice.boxes.CommandLineBoxServlet;
 import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.vfs.files.FileVFolder;
 
 import java.io.File;
 import java.util.Observer;
@@ -73,7 +74,7 @@ public class ServerMain implements Observer {
 
 
 		// Serve static content from the context.
-		context.setResourceBase( new File( jconf.getHome(), "tut" ).getPath() + "/" );
+		context.setResourceBase( new File( ((FileVFolder)jconf.getHome()).getFile(), "tut" ).getPath() + "/" );
 		context.addHandler( new ResourceHandler() );
 
 		// Start the http server.
