@@ -113,15 +113,16 @@ public final class MapLib {
 	}
 	
 	public final static Object putAt( final Object obj, final Object key, final Object val ) {
-		if ( obj instanceof Map ) {
-			return ((Map)obj).put( key, val );
-		} else if ( obj instanceof List ) {
-			return ListLib.putAt( obj, key, val );
-		} else {
-			new Alert(
-				"cannot convert object to assignable map"
-			).culprit( "object", obj ).mishap( 'E' );
-			return null;	//	sop
+		try {
+			if ( obj instanceof Map ) {
+				return ((Map)obj).put( key, val );
+			} else if ( obj instanceof List ) {
+				return ListLib.putAt( obj, key, val );
+			} else {
+				throw new Alert( "cannot convert object to assignable map" ).culprit( "object", obj ).mishap( 'E' );
+			}
+		} catch ( final UnsupportedOperationException e ) {
+			throw new Alert( "Trying to update the index of an immutable object" ).culprit( "object", obj ).culprit( "index/key", key ).culprit( "value", val ).mishap( 'E' );
 		}
 	}
 	
