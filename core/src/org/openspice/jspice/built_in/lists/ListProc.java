@@ -16,16 +16,16 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.lists;
 
 import org.openspice.jspice.vm_and_compiler.VM;
 import org.openspice.jspice.datatypes.ImmutableList;
 import org.openspice.jspice.datatypes.proc.Vary1Proc;
 import org.openspice.jspice.datatypes.proc.Proc;
-import org.openspice.jspice.built_in.InvListProc;
+import org.openspice.jspice.built_in.lists.InvListProc;
 
-class ListProc extends Vary1Proc {
-	final static public org.openspice.jspice.built_in.ListProc LIST_PROC = new org.openspice.jspice.built_in.ListProc();
+public class ListProc extends Vary1Proc {
+	final static public org.openspice.jspice.built_in.lists.ListProc LIST_PROC = new org.openspice.jspice.built_in.lists.ListProc();
 
 	public Proc inverse() {
 		return InvListProc.INV_LIST_PROC;

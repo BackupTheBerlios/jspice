@@ -16,7 +16,7 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.lists;
 
 import org.openspice.jspice.vm_and_compiler.VM;
 import org.openspice.jspice.tools.ListTools;
@@ -28,9 +28,9 @@ import org.openspice.jspice.datatypes.proc.Unary1PlusFastProc;
 import java.util.Iterator;
 import java.util.List;
 
-class InvListProc extends Unary1PlusFastProc {
+public class InvListProc extends Unary1PlusFastProc {
 
-	final static public org.openspice.jspice.built_in.InvListProc INV_LIST_PROC = new org.openspice.jspice.built_in.InvListProc();
+	final static public org.openspice.jspice.built_in.lists.InvListProc INV_LIST_PROC = new org.openspice.jspice.built_in.lists.InvListProc();
 
 	public Proc inverse() {
 		return ListProc.LIST_PROC;

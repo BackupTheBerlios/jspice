@@ -94,18 +94,26 @@ public final class ListTools {
 	}
 
 	public static final List allbutfirst( final int n, final List list ) {
-		final ArrayList L = new ArrayList( list );
-		for ( int i = 0; i < n; i++ ) {
-			L.remove( 0 );
-		}
-		return L;
+		return new ArrayList( list.subList( n, list.size() ) );
+	}
+
+	public static final List justfirst( final int n, final List list ) {
+		return new ArrayList( list.subList( 0, n ) );
 	}
 
 	public static final List allbutlast( final int n, final List list ) {
-		final ArrayList L = new ArrayList( list );
-		for ( int i = 0; i < n; i++ ) {
-			L.remove( L.size() - 1 );
-		}
+		return new ArrayList( list.subList( 0, list.size() - n ) );
+	}
+
+	public static final List justlast( final int n, final List list ) {
+		final int len = list.size();
+		return new ArrayList( list.subList( len - n, len ) );
+	}
+
+	public static final List cons( final Object x, final List list ) {
+		final ArrayList L = new ArrayList( list.size() + 1 );
+		L.add( x );
+		L.addAll( list );
 		return L;
 	}
 
@@ -113,6 +121,18 @@ public final class ListTools {
 		final ArrayList L = new ArrayList( list );
 		L.add( x );
 		return L;
+	}
+
+	public static final List reverse( final List list ) {
+		final Stack stack = new Stack();									//	todo: inefficient.
+		for ( Iterator it = list.iterator(); it.hasNext(); ) {
+			stack.push( it.next() );
+		}
+		final List answer = new ArrayList();
+		while ( !stack.isEmpty() ) {
+			answer.add( stack.pop() );
+		}
+		return answer;
 	}
 
 }

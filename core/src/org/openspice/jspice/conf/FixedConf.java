@@ -30,11 +30,11 @@ public abstract class FixedConf {
 	//	---- Versioning ----
 
 	final static private String major_version = "0";
-	final static private String minor_version = "3";
-	final static private String incremental_version = "13";
+	final static private String minor_version = "4";
+	final static private String incremental_version = "1";
 
 
-	static final String licence_nam = "LICENSE";  	//	American spelling for licence.
+	static final String licence_nam = "LICENSE";  			//	U.S. spelling for licence, not a spelling mistake.
 	static final String CONF_EXT = "conf";
 	static final String SPICE_EXT = "spi";
 	static final String TXT_EXT = "txt";

@@ -57,6 +57,19 @@ public class CastLib {
 		}
 	}
 
+	public static Character toCharacter( final Object obj ) {
+		try {
+			if ( obj != null ) return (Character)obj;
+			throw oops( "Character needed", obj );
+		} catch ( final ClassCastException _ ) {
+			try {
+				return toCharacter( ((Deferred)obj).get() );
+			} catch ( final ClassCastException exn ) {
+				throw oops( exn, "Character needed", obj );
+			}
+		}
+	}
+
 
 	public static Class toClass( final Object obj ) {
 		try {
@@ -82,6 +95,10 @@ public class CastLib {
 				throw oops( exn, "Integer needed", obj );
 			}
 		}
+	}
+
+	public static final int to_int( final Object obj ) {
+		return toInteger( obj ).intValue();
 	}
 
 	public static List toList( final Object obj ) {

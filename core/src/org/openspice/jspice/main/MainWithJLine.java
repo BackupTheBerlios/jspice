@@ -22,8 +22,6 @@ import jline.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.openspice.jspice.conf.FixedConf;
 import org.openspice.jspice.main.jline_stuff.PragmaCompletor;
@@ -31,8 +29,8 @@ import org.openspice.jspice.main.jline_stuff.SmartCompletor;
 
 public class MainWithJLine extends Main {
 
-	protected void perform( final String[] args ) {
-		this.init();
+	protected void perform( final boolean wantsBanner, final String prompt ) {
+		this.init( wantsBanner );
 		try {
 			// Setup the input stream.
 			final ConsoleReader reader = new ConsoleReader();
@@ -45,7 +43,7 @@ public class MainWithJLine extends Main {
 					}
 				)
 			);
-			ConsoleReaderInputStream.setIn( reader, FixedConf.PROMPT );
+			ConsoleReaderInputStream.setIn( reader, prompt );
 
 			this.interpreter.interpret( "" );
 			this.shutdown();
@@ -55,7 +53,7 @@ public class MainWithJLine extends Main {
 	}
 
 	public static void main( final String[] args ) {
-		new MainWithJLine().perform( args );
+		new MainWithJLine().perform( true, FixedConf.PROMPT );
 	}
 
 }

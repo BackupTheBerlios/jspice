@@ -25,10 +25,119 @@ import org.openspice.jspice.alert.Alert;
 import java.util.*;
 
 public class ListLib {
-	
+
+	private static final Object get( final Object obj, final int n ) {
+		try {
+			if ( obj instanceof List ) {
+				return ((List)obj).get( n );
+			} else if ( obj instanceof String ) {
+				return new Character( ((String)obj).charAt( n ) );
+			} else if ( obj instanceof Map ) {
+				return ((Map)obj).get( new Integer( n ) );
+			} else {
+				return ListTools.convertTo( obj ).get( n );
+			}
+		} catch ( java.lang.ArrayIndexOutOfBoundsException e ) {
+			throw new Alert( "Index out of bounds" ).culprit(  "item", obj ).culprit( "index", new Integer( n ) ).mishap();
+		}
+	}
+
+	private static final int size( final Object obj ) {
+		try {
+			if ( obj instanceof List ) {
+				return ((List)obj).size();
+			} else if ( obj instanceof String ) {
+				return ((String)obj).length();
+			} else {
+				return ListTools.convertTo( obj ).size();
+			}
+		} catch ( final ClassCastException exn ) {
+			throw new Alert(
+				"Object cannot be converted to a list"
+			).culprit( "object", obj ).mishap( 'E' );
+		}
+	}
+
+	public static final Object first( final Object obj ) {
+		return get( obj, 0 );
+	}
+
+
+	public static final Object last( final Object obj ) {
+		return get( obj, size( obj ) - 1 );
+	}
+
+	public static final Object allbutfirst( final Object n, final Object obj ) {
+		final int k = CastLib.to_int( n );
+		if ( obj instanceof List ) {
+			return ListTools.allbutfirst( k, (List)obj );
+		} else if ( obj instanceof String ) {
+			return ((String)obj).substring( k );
+		} else {
+			return ListTools.convertFrom( ListTools.allbutfirst( k, ListTools.convertTo( obj ) ), obj );
+		}
+	}
+
+	public static final Object justfirst( final Object n, final Object seq ) {
+		final int k = CastLib.to_int( n );
+		if ( seq instanceof List ) {
+			return ListTools.justfirst( k, (List)seq );
+		} else if ( seq instanceof String ) {
+			return ((String)seq).substring( 0, k );
+		} else {
+			return ListTools.convertFrom( ListTools.justfirst( k, ListTools.convertTo( seq ) ), seq );
+		}
+	}
+
+	public static final Object allbutlast( final Object n, final Object seq ) {
+		final int k = CastLib.to_int( n );
+		if ( seq instanceof List ) {
+			return ListTools.allbutlast( k, (List)seq );
+		} else if ( seq instanceof String ) {
+			final String s = (String)seq;
+			return ((String)seq).substring( 0, s.length() - k );
+		} else {
+			return ListTools.convertFrom( ListTools.allbutlast( k, ListTools.convertTo( seq ) ), seq );
+		}
+	}
+
+	public static final Object justlast( final Object n, final Object seq ) {
+		final int k = CastLib.to_int( n );
+		if ( seq instanceof List ) {
+			return ListTools.justlast( k, (List)seq );
+		} else if ( seq instanceof String ) {
+			final String s = (String)seq;
+			return s.substring( s.length() - k );
+		} else {
+			return ListTools.convertFrom( ListTools.justlast( k, ListTools.convertTo( seq ) ), seq );
+		}
+	}
+
+	public static final Object cons( final Object x, final Object seq ) {
+		if ( seq instanceof List ) {
+			return ListTools.cons( x, (List)seq );
+		} else if ( seq instanceof String ) {
+			return CastLib.toCharacter( x ) + (String)seq;
+		} else {
+			return ListTools.convertFrom( ListTools.cons( x, ListTools.convertTo( seq ) ), seq );
+		}
+
+	}
+
+	public static final Object snoc( final Object seq, final Object x ) {
+		if ( seq instanceof List ) {
+			return ListTools.snoc( (List)seq, x );
+		} else if ( seq instanceof String ) {
+			return (String)seq + CastLib.toCharacter( x );
+		} else {
+			return ListTools.convertFrom( ListTools.snoc( ListTools.convertTo( seq ), x ), seq );
+		}
+
+	}
+
 	public final static Object getAt( final Object obj, final Object key ) {
 		try {
-			final int idx = ( (Integer)key ).intValue() - 1;
+			final int idx = CastLib.to_int( key ) - 1;
 			if ( obj instanceof List ) {
 				return ((List)obj).get( idx );
 			} else if ( obj instanceof String ) {
@@ -48,7 +157,7 @@ public class ListLib {
 	
 	public final static Object putAt( final Object obj, final Object key, final Object val ) {
 		try {
-			final int idx = ( (Integer)key ).intValue() - 1;
+			final int idx = CastLib.to_int( key ) - 1;
 			if ( obj instanceof List ) {
 				return ((List)obj).set( idx, val );
 			} else if ( obj instanceof Map ) {
@@ -68,20 +177,7 @@ public class ListLib {
 	}
 	
 	public final static Object length( final Object obj ) {
-		try {
-			if ( obj instanceof List ) {
-				return new Integer( ((List)obj).size() );
-			} else if ( obj instanceof String ) {
-				return new Integer(((String)obj).length() );
-			} else {
-				return new Integer( ListTools.convertTo( obj ).size() );
-			}
-		} catch ( final ClassCastException exn ) {
-			new Alert(
-				"Object cannot be converted to a list"
-			).culprit( "object", obj ).mishap( 'E' );
-			return null;
-		}
+		return new Integer( size( obj ) );
 	}
 
 	public static Object append( final Object x, final Object y ) {
@@ -96,6 +192,24 @@ public class ListLib {
 				"Mismatched arguments for append"
 			).culprit( "first", x ).culprit( "second", y ).mishap( 'E' );
 			return null;	//	sop.
+		}
+	}
+
+	public static final Object reverse( final Object x ) {
+		if ( x instanceof List ) {
+			return ListTools.reverse( (List)x );
+		} else if ( x instanceof String ) {
+			final String s = (String)x;
+			final int len = s.length();
+			final int len1 = len - 1;
+			final char[] chars = new char[ len ];
+			for ( int i = 0; i < len; i++ ) {
+				final char ch = s.charAt( i );
+				chars[ len1 - i ] = ch;
+			}
+			return new String( chars );
+		} else {
+			return ListTools.convertFrom( ListTools.reverse( ListTools.convertTo( x ) ), x );
 		}
 	}
 

@@ -16,13 +16,21 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in;
+package org.openspice.jspice.built_in.lists;
 
-import org.openspice.jspice.lib.ListLib;
 import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
+import org.openspice.jspice.lib.ListLib;
 
-class AppendProc extends Binary1InvokeProc {
-	public Object invoke( final Object x, final Object y ) {
-		return ListLib.append( x, y );
+public class AllButFirstProc extends Binary1InvokeProc {
+
+	public String summary() {
+		return "allButLast( num, seq ) -> seq'  # returns a truncated sequence";
 	}
+
+	public Object invoke( final Object x, final Object y ) {
+		return ListLib.allbutfirst( x, y );
+	}
+
+	public static final AllButFirstProc ALL_BUT_FIRST_PROC =  new AllButFirstProc();
+
 }

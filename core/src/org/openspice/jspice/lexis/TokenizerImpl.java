@@ -91,6 +91,12 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 		return this.readChar( default_char );
 	}
 
+	private char peekChar( final char default_char ) {
+		final int ch = this.source.readInt();
+		this.source.pushInt( ch );
+		return ch == -1 ? default_char : (char)ch;
+	}
+
 	private char okCharNoEOF( final int ich ) {
 		this.addChar( ich );
 		return this.readCharNoEOF();
@@ -266,22 +272,17 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 			}
 			this.source.pushInt( ch );
 			return this.makeNameToken( hadWhiteAtStart );
-		} else if ( Character.isDigit( (char)ch ) || ch == '-' ) {
+		} else if ( Character.isDigit( (char)ch ) || ch == '-' && Character.isDigit( this.peekChar( ' ' ) ) ) {
 			ch = this.okChar( ch, ' ' );
 			while ( Character.isDigit( (char)ch ) ) {
 				ch = this.okChar( ch, ' ' );
 			}
-			if ( ch == '.' ) {
+			if ( ch == '.' && Character.isDigit( this.peekChar( ' ' ) ) ) {
 				ch = this.okChar( ch, ' ' );
-				if ( !Character.isDigit( (char)ch ) ) {
-					this.pushInt( ch );
-					this.pushInt( '.' );
-				} else {
-					while ( Character.isDigit( (char)ch ) ) {
-						ch = this.okChar( ch, ' ' );
-					}
-					this.pushInt( ch );
+				while ( Character.isDigit( (char)ch ) ) {
+					ch = this.okChar( ch, ' ' );
 				}
+				this.pushInt( ch );
 			} else {
 				this.pushInt( ch );
 			}

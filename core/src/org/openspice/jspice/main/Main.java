@@ -43,22 +43,22 @@ public class Main {
 		SHUTDOWN.ping();
 	}
 
-	protected void init() {
+	protected void init( final boolean wantBanner ) {
 		this.jspice_conf = new JSpiceConf();
 		Print.current_mode = this.jspice_conf.isDebugging() ? Print.INFO | Print.LOAD | Print.CONFIG | Print.AUTOLOAD : 0;
-		FixedConf.printBanner();
+		if ( wantBanner ) FixedConf.printBanner();
 		this.super_loader = new SuperLoader( this.jspice_conf );
 		this.interpreter = new Interpreter( this.super_loader.getNameSpace( "spice.interactive_mode" ) );
 	}
 
-	protected void perform( final String[] args ) {
-		this.init();
-		this.interpreter.interpret( FixedConf.PROMPT );
+	protected void perform( final boolean wantBanner, final String prompt ) {
+		this.init( wantBanner );
+		this.interpreter.interpret( prompt );
 		this.shutdown();
 	}
 
 	public static void main( final String[] args ) {
-		new Main().perform( args );
+		new Main().perform( true, FixedConf.PROMPT );
 	}
 
 }
