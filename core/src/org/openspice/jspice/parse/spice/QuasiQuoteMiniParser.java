@@ -45,8 +45,13 @@ public class QuasiQuoteMiniParser extends Prefix {
 	public Expr readQQ( final Parser parser, final String terminator ) {
 		Expr sofar = SkipExpr.make();
 		while ( parser.tryReadToken( terminator ) == null ) {
-			if ( parser.tryReadToken( ">>" ) != null ) {
-				new Alert( "Unmatched close bracket" ).culprit( "bracket", ">>" ).mishap();
+			Token u = parser.tryReadToken( ">>" );
+			if ( u == null ) u = parser.tryReadToken( "}" );
+			if ( u == null ) u = parser.tryReadToken( ")" );
+			if ( u != null ) {
+				new Alert( "Unmatched close bracket" ).culprit( "bracket", u ).mishap();
+			} else if ( parser.tryReadToken( "(" ) != null ) {
+				sofar = CommaExpr.make( sofar, parser.readStmntsTo( ")" ) );
 			} else if ( parser.tryReadToken( "{" ) != null ) {
 				sofar = CommaExpr.make( sofar, ApplyExpr.make( NewListProc.NEW_LIST_PROC, this.readQQ( parser, "}" ) ) );
 			} else if ( parser.tryReadToken( "^" ) != null ) {
