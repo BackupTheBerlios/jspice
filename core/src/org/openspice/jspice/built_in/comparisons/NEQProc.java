@@ -27,4 +27,6 @@ public class NEQProc extends Binary1InvokeProc {
 		return x == y ? BooleanTools.FALSE : BooleanTools.TRUE;
 	}
 
+	public static final NEQProc NEQ_PROC = new NEQProc();
+
 }

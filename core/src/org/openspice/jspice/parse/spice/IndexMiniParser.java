@@ -26,13 +26,14 @@ import org.openspice.jspice.expr.cases.ApplyExpr;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.built_in.ShortCuts;
+import org.openspice.jspice.built_in.maps.IndexProc;
 
 public class IndexMiniParser extends Postfix {
 	public Expr postfix( final String sym, final int prec, final Expr lhs, final Parser parser ) {
 		final Expr rhs = parser.readExprTo( "]" );
 		return(
 			ApplyExpr.make1(
-				ShortCuts.indexProc,
+				IndexProc.INDEX_PROC,
 				rhs,
 				lhs
 			)

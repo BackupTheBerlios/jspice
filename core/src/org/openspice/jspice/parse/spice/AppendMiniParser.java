@@ -22,9 +22,10 @@ import org.openspice.jspice.parse.miniparser.Infix;
 import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.expr.cases.ApplyExpr;
 import org.openspice.jspice.built_in.ShortCuts;
+import org.openspice.jspice.built_in.lists.AppendProc;
 
 public class AppendMiniParser extends Infix {
 	public Expr infix( final Expr lhs, final Expr rhs ) {
-		return ApplyExpr.make1( ShortCuts.appendProc, lhs, rhs );
+		return ApplyExpr.make1( AppendProc.APPEND_PROC, lhs, rhs );
 	}
 }

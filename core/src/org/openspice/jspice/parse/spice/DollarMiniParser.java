@@ -25,6 +25,7 @@ import org.openspice.jspice.parse.Parser;
 import org.openspice.jspice.parse.miniparser.Prefix;
 import org.openspice.jspice.tokens.Token;
 import org.openspice.jspice.built_in.ShortCuts;
+import org.openspice.jspice.built_in.maps.IndexProc;
 
 public class DollarMiniParser extends Prefix {
 
@@ -36,7 +37,7 @@ public class DollarMiniParser extends Prefix {
 
 		return(
 			ApplyExpr.make1(
-				ShortCuts.indexProc,
+				IndexProc.INDEX_PROC,
 				ConstantExpr.make( s ),
 				ConstantExpr.make( parser.getJSpiceConf().getEnvMap() )
 			)

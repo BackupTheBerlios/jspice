@@ -34,7 +34,7 @@ import java.io.*;
 
 public class ParserImpl extends Parser {
 
-	final Interpreter interpreter;
+	private final Interpreter interpreter;
     final TokenParser token_parser;
 	final PushableTokenizerImpl tokens;
 	final int comma_prec;

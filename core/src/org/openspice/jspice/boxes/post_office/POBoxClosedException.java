@@ -18,20 +18,20 @@
  */
 package org.openspice.jspice.boxes.post_office;
 
-public abstract class LetterBoxException extends RuntimeException {
+public class POBoxClosedException extends POBoxException {
 
-	public LetterBoxException() {
+	public POBoxClosedException() {
 	}
 
-	public LetterBoxException( String message ) {
+	public POBoxClosedException( String message ) {
 		super( message );
 	}
 
-	public LetterBoxException( String message, Throwable cause ) {
+	public POBoxClosedException( String message, Throwable cause ) {
 		super( message, cause );
 	}
 
-	public LetterBoxException( Throwable cause ) {
+	public POBoxClosedException( Throwable cause ) {
 		super( cause );
 	}
 

@@ -31,11 +31,14 @@ import org.openspice.jspice.namespace.NameSpace;
 import org.openspice.jspice.tools.StyleWarning;
 
 import java.io.*;
+import java.util.Map;
+import java.util.HashMap;
 
 class TokenizerImpl extends ParseEscape implements Tokenizer {
     private final Source source;
     private final StringBuffer buff = new StringBuffer();
 	private final Interpreter interpreter;
+	private Map interpolation_map = new HashMap();
 
     TokenizerImpl( final Interpreter interpreter, final String _printName, final Reader _reader, final String _prompt ) {
 		super( interpreter.getJSpiceConf() );
@@ -43,14 +46,20 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
         this.source = new Source( _printName, _reader, _prompt );
     }
 
-	public NameSpace getCurrentNameSpace() {
-		return this.interpreter.getCurrentNameSpace();
-	}
-
 	public void clear() {
 		this.buff.setLength( 0 );
+		this.interpolation_map.clear();
 	}
-	
+
+	private void addInterpolation( final CharSequence cs ) {
+		this.interpolation_map.put( new Integer( this.buff.length() ), cs );
+	}
+
+	private Map optInterpolationMap() {
+		if ( interpolation_map.isEmpty() ) return null;
+		return this.interpolation_map;
+	}
+
 	public char readChar( final char default_char ) {
 		return this.source.readChar( default_char );
 	}
@@ -103,6 +112,11 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 		return this.readCharNoEOF();
 	}
 
+	private char okString( final String string ) {
+		this.buff.append( string );
+		return this.readCharNoEOF();
+	}
+
     private static boolean isSign( final char ch ) {
         return "<>!$%^&*-+=|:?/~".indexOf( ch ) >= 0;
     }
@@ -138,7 +152,13 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 					culprit( "partial string", getErrorString() ).
 					mishap( 'T' );
 			} else if ( ch == '\\' ) {
-				ch = this.okCharNoEOF( this.parseEscape() );
+				try {
+					ch = this.okCharNoEOF( this.parseEscape() );
+				} catch ( ParseEscapeException e ) {
+					final CharSequence cs = e.getValue();
+					this.addInterpolation( cs );
+					ch = this.readCharNoEOF();
+				}
 			} else {
 				ch = this.okCharNoEOF( ch );
 			}
@@ -159,7 +179,7 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 		if ( ch == '\'' && s.length() != 1 ) {
 			StyleWarning.one_char_literal( s );
 		}
-		return new QuotedToken( hadWhite, s, ch );
+		return new QuotedToken( hadWhite, s, ch, this.optInterpolationMap() );
 	}
 
 	private Token makeIntToken( final boolean hadWhite ) {
@@ -256,7 +276,7 @@ class TokenizerImpl extends ParseEscape implements Tokenizer {
 	}
 
 	private Token readToken( boolean hadWhiteAtStart ) {
-		this.buff.setLength( 0 );
+		this.clear();
 		int ch = this.readInt();
 		while ( Character.isWhitespace( (char)ch ) ) {
 			hadWhiteAtStart = true;

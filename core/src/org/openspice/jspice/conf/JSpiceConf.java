@@ -332,7 +332,7 @@ public final class JSpiceConf {
 				new StylePragma().enable( list );
 			} else {
 				final Object directive = list.remove( 0 );
-				new Alert( "Unrecognized directive JSpice conf file" ).culprit( "directive", directive ).culprit_list( list ).mishap();
+				new Alert( "Unrecognized directive in JSpice conf file" ).culprit( "directive", directive ).culprit_list( list ).mishap();
 			}
 		}
 	}
@@ -355,6 +355,9 @@ public final class JSpiceConf {
 			new Alert( "Cannot locate JSpice home directory" ).warning();
 		}
 		this.jspice_conf_vfile = this.jspice_home.getVFile( FixedConf.JSPICE_CONF_NAM, FixedConf.CONF_EXT );
+		if ( this.jspice_home == null ) {
+			new Alert( "Cannot locate JSpice startup file (jspice.conf)" ).mishap();
+		}
 
 		//	Parse the JConf file.
 		this.parseJSpiceConf( this.jspice_conf_vfile );
@@ -363,8 +366,11 @@ public final class JSpiceConf {
 		this.installInventoryConf( this.jspice_home.getVFolder( FixedConf.std_inventory_name, null ) );
 		Print.println( Print.CONFIG, "... installed" );
 
-		//	todo: move the strings constants to FixedConf
-		this.parseJSpiceConf( this.getUserHome().getVFolderRef().getVFileFromPath( ".jspice/jspice.conf" ) );
+		{
+			//	todo: move the strings constants to FixedConf
+			final VFile vfile = this.getUserHome().getVFolderRef().getVFileFromPath( ".jspice/jspice.conf" );
+			if ( vfile != null ) this.parseJSpiceConf( vfile );
+		}
 //		try {
 //			this.parseJSpiceConf( new ZipVVolume( new ZipFile( new File( "/tmp/foo.zip" ) ) ).getVFileFromPath( ".jspice/jspice.conf" ) );
 //		} catch ( IOException e ) {

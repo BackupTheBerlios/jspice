@@ -23,11 +23,12 @@ import org.openspice.jspice.parse.Parser;
 import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.expr.cases.ApplyExpr;
 import org.openspice.jspice.built_in.ShortCuts;
+import org.openspice.jspice.built_in.lists.InvListProc;
 
 public class ExplodeMiniParser extends Postfix {
 
 	public Expr postfix( final String sym, final int prec, final Expr lhs, final Parser parser ) {
-		return ApplyExpr.make( ShortCuts.explodeProc, lhs );
+		return ApplyExpr.make( InvListProc.INV_LIST_PROC, lhs );
 	}
 
 }

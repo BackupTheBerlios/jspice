@@ -25,6 +25,7 @@ import org.openspice.jspice.tokens.Token;
 import org.openspice.jspice.tokens.NameToken;
 import org.openspice.jspice.tokens.QuotedToken;
 import org.openspice.jspice.tokens.NumberToken;
+import org.openspice.jspice.main.Interpreter;
 
 public abstract class TokenParser {
 

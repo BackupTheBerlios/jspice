@@ -24,7 +24,9 @@ import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
 public class NotEqualProc extends Binary1InvokeProc {
 
 	public Object invoke( final Object x, final Object y ) {
-		return BooleanTools.not( EqualProc.equalProc.invoke( x, y ) );
+		return BooleanTools.not( EqualProc.EQUAL_PROC.invoke( x, y ) );
 	}
-	
+
+	public static final NotEqualProc NOT_EQUAL_PROC = new NotEqualProc();
+
 }

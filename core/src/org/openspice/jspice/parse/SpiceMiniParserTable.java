@@ -95,7 +95,8 @@ public final class SpiceMiniParserTable extends Standard {
 		install( "@", new DotMiniParser().modPrec( Prec.at ) );
 
 		install( "+ - +: -:", new ArithMiniParser().modPrec( Prec.arith1 ) );
-		install( "* / MOD DIV", new ArithMiniParser().modPrec( Prec.arith2 ) );
+		install( "* / mod div", new ArithMiniParser().modPrec( Prec.arith2 ) );
+		install( "**", new ArithMiniParser().modPrec( Prec.arith3 ) );
 
 		install( "==>", new MapletMiniParser().modPrec( Prec.maplet ) );
 		install( ".", new DotMiniParser().modPrec( Prec.dot ) );

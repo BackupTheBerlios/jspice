@@ -18,21 +18,14 @@
  */
 package org.openspice.jspice.boxes.post_office;
 
-public class LetterBoxClosedException extends LetterBoxException {
+public interface POBoxIntf extends LetterBox {
 
-	public LetterBoxClosedException() {
-	}
+	Letter receive();
 
-	public LetterBoxClosedException( String message ) {
-		super( message );
-	}
+	PostOffice getPostOffice();
+	void setPostOffice( final PostOffice post_office );
 
-	public LetterBoxClosedException( String message, Throwable cause ) {
-		super( message, cause );
-	}
-
-	public LetterBoxClosedException( Throwable cause ) {
-		super( cause );
-	}
+	void close();
+	boolean isOpen();
 
 }

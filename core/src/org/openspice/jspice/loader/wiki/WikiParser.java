@@ -22,6 +22,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.SAXException;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.conf.JSpiceConf;
+import org.openspice.jspice.lexis.ParseEscapeException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -153,7 +154,11 @@ final class WikiParser {
 		while ( pinline.canReadChar() ) {
 			final char ch = pinline.readCharNoEOF();
 			if ( ch == '\\' ) {
-				this.output_engine.accept( pinline.parseEscape() );
+				try {
+					this.output_engine.accept( pinline.parseEscape() );
+				} catch ( ParseEscapeException e ) {
+					throw new Alert( "Trying to use forbidden escape sequence in Wiki '\\('" ).mishap();
+				}
 			} else if ( ch == '_' || ch == '*' ) {
 				this.processStyleModifier( pinline, ch, ch == '_' ? "i" : "b" );
 			} else if ( ch == '[' ) {

@@ -28,4 +28,6 @@ public final class ModProc extends Binary1InvokeProc {
 		return Mod.MOD.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
 	}
 
+	public static final ModProc MOD_PROC = new ModProc();
+
 }

@@ -28,4 +28,6 @@ public class GTEProc extends Binary1InvokeProc {
 		return GreaterThanOrEqual.GREATER_THAN_OR_EQUAL.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
 	}
 
+	public static final GTEProc GTE_PROC = new GTEProc();
+
 }

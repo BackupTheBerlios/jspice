@@ -140,5 +140,9 @@ public class OutputEngine {
 		this.buffer.append( b );
 	}
 
+	public void accept( final String s ) {
+		this.buffer.append( s );
+	}
+
 
 }

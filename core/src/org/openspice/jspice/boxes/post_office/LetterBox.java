@@ -18,212 +18,73 @@
  */
 package org.openspice.jspice.boxes.post_office;
 
-import javax.swing.*;
-import java.util.*;
+import java.util.Collection;
 
-/**
- * This class is suitable for use as a pick-up point by client threads.  It can also
- * be used for one client to sendOne directly to another.
- */
-public class LetterBox extends AbsCirculationList implements LetterBoxIntf {
-
-	private int maxsize = Integer.MAX_VALUE;		//	Block when the queue gets this big.  0 = don't block.
-	private long timeout = 0;						//	0 = don't timeout.
-	private boolean throw_on_timeout = false;
-	private Letter timeout_default = null;
-	private boolean is_interruptible = false;
-
-	private PostOffice post_office;
-	private AutoReply auto_reply = null;
-	private boolean is_closed = false;
-	private boolean is_retaining_locally = true;
-
-	private LinkedList queue = new LinkedList();	//	Should really be a priority queue - but that's too much like hard work.
-//	private boolean available = false;				//	queue is available.
+public interface LetterBox {
 
 	/**
-	 * Constructs a LetterBox.
-	 * @param post_office may be null
+	 * puts a letter thru the letter box.
+	 * @param x a letter
 	 */
-	public LetterBox( final PostOffice post_office ) {
-		this.post_office = post_office;
-	}
+	void sendOne( final Letter x );
 
-	//	---- RECEIVING
+	/**
+	 * Puts lots of letters thru the letter box.  There is no guarantee
+	 * over order of delivery.
+	 * @param x a collection of letters
+	 */
+	void sendMany( final Collection x );
 
-	private boolean isAvailable() {
-		return !this.queue.isEmpty();
-	}
+	/**
+	 * Adds this letter-box onto a circulation list.  This creates a
+	 * hard link from the circulation list to this.  There is no reverse
+	 * link.
+	 *
+	 * @param circ a circulation list
+	 */
+	void subscribeTo( final CirculationList circ );
 
-	private boolean isUnavailable() {
-		return this.queue.isEmpty();
-	}
+	/**
+	 * Removes this letter box from a circulation list.  It doesn't
+	 * matter if the letter box is not on the list - the operation is
+	 * ignored in that case.
+	 *
+	 * @param circ a circulation list
+	 */
+	void unsubscribeFrom( final CirculationList circ );
 
-	private Letter doReceive() {
-		final Letter result = (Letter)queue.remove( 0 );
-		// notify Producer that value has been retrieved
-		this.notifyAll();
-		return result;
-	}
+	/**
+	 * Returns a flag indicating whether or not the letter box is open
+	 * for receiving mail.  Note that in a multi-threaded environment you
+	 * cannot rely on a letter box remaining open after this query unless
+	 * you synchronize on the letter box object.
+	 * @return the letter box is open
+	 */
+	boolean isOpen();
 
-	public synchronized Letter receive() {
-		while ( this.isUnavailable() ) {
-			try {
-				// wait for Producer to putOne value
-				this.wait( this.timeout );
-				if ( this.isUnavailable() ) {
-					if ( this.throw_on_timeout ) throw new LetterBoxTimeOutException();
-					return this.timeout_default;
-				}
-			} catch ( InterruptedException e ) {
-				if ( this.is_interruptible ) throw new LetterBoxInterruptedException( e );
-			}
-		}
-		return this.doReceive();
-	}
-
-
-	//	---- SENDING
-
-	private boolean hasNoRoom() {
-		return queue.size() >= this.maxsize;
-	}
-
-	private void doNotifyAll() {
-		if ( this.isAvailable() ) {
-			this.notifyAll();
-			final AutoReply auto_reply = this.getAutoReply();
-			final PostOffice post_office = this.getPostOffice();
-			if ( auto_reply != null ) {
-				if ( auto_reply.inThisThread() ) {
-					auto_reply.autoReply( this );
-				} else if ( post_office != null && auto_reply.usePostOffice() ) {
-						post_office.addAutoReplyEvent( auto_reply, this );
-				} else {
-					//	We have to synthesize our own Thread.
-					final Runnable r = (
-						new Runnable() {
-							public void run() {
-
-							}
-						}
-					);
-					new Thread( r ).start();
-				}
-			}
-		}
-	}
-
-	private void waitForRoom() {
-		while ( this.hasNoRoom() ) {
-			try {
-				// wait for Consumer to get value
-				this.wait();
-				if ( this.hasNoRoom() ) throw new LetterBoxTimeOutException();
-			} catch ( InterruptedException e ) {
-				if ( this.is_interruptible ) throw new LetterBoxInterruptedException( e );
-			}
-		}
-	}
-
-	private void doPut( final Letter value ) {
-		queue.add( value );
-		this.doNotifyAll();
-	}
-
-	private void putOne( final Letter value ) {
-		if ( this.is_retaining_locally ) {
-			if ( this.is_closed ) throw new LetterBoxClosedException();
-			this.waitForRoom();
-			this.doPut( value );
-		}
-	}
-
-	private void doPutMany( final Collection value ) {
-		queue.addAll( value );
-		this.doNotifyAll();
-	}
-
-	private void putMany( final Collection value ) {
-		if ( this.is_retaining_locally ) {
-			if ( this.is_closed ) throw new LetterBoxClosedException();
-			this.waitForRoom();
-			this.doPutMany( value );
-		}
-	}
-
-	//	---oooOOOooo---
+	/**
+	 * The negation of isOpen - a convenience method.
+	 * @return the letter box is closed.
+	 */
+	boolean isClosed();
 
 
-	public void close() {
-		this.is_closed = true;
-	}
+	/**
+	 * This method causes the letter box to close and silently refuse
+	 * any further actions (that last bit is probably a mistake).  Once
+	 * a letter box is closed it cannot be reopened - and it will
+	 * promptly free all pointers for garbage collection.  A closed
+	 * letter box will be silently removed from any circulation lists
+	 * it appears on.
+	 */
+	void close();
 
-	public boolean isOpen() {
-		return ! this.is_closed;
-	}
+	Letter newLetter( final String subject );
 
-	public boolean isRetainingLocally() {
-		return this.is_retaining_locally;
-	}
+	Letter newLetterTo( final LetterBox dst, final String subject );
 
-	public void setRetainingLocally( boolean retaining_locally ) {
-		this.is_retaining_locally = retaining_locally;
-	}
+	Letter newReplyTo( final Letter letter, final String subject );
 
-	//	---oooOOOooo---
-
-	public PostOffice getPostOffice() {
-		return post_office;
-	}
-
-	public void setPostOffice( PostOffice post_office ) {
-		this.post_office = post_office;
-	}
-
-	public AutoReply getAutoReply() {
-		return auto_reply;
-	}
-
-	public void setAutoReply( AutoReply auto_reply ) {
-		this.auto_reply = auto_reply;
-	}
-
-	//	---oooOOOooo---
-	//
-	//	Implements missing methods of CirculationList
-	//
-
-	public synchronized void sendOne( final Letter letter ) {
-		this.putOne( letter );
-		this.forwardOne( letter );
-	}
-
-	//	Collection< Letter >
-	public synchronized void sendMany( final Collection letters ) {
-		this.putMany( letters );
-		this.forwardMany( letters );
-	}
-
-	//	---oooOOOooo---
-	//
-	//	Swing plumbing.
-	//
-
-	public void invokeLaterOnLetterArrival( final Runnable runnable ) {
-		this.setAutoReply(
-			new AutoReply() {
-
-				public boolean inThisThread() {
-					return true;
-				}
-
-				public void autoReply( final LetterBox _letter_box ) {
-					SwingUtilities.invokeLater( runnable );
-				}
-
-			}
-		);
-	}
+	PostOffice getPostOffice();
 
 }

@@ -21,6 +21,8 @@ package org.openspice.jspice.lexis;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.conf.JSpiceConf;
 
+import java.util.List;
+
 public abstract class ParseEscape {
 
 	final JSpiceConf jspice_conf;	//	Permitted to be null - but disables entity parsing.
@@ -92,10 +94,19 @@ public abstract class ParseEscape {
 		return answer;
 	}
 
+	final char parseNumber( final int radix, final int count ) {
+		final StringBuffer b = new StringBuffer();
+		for ( int i = 0; i < count; i++ ) {
+			b.append( this.readCharNoEOF() );
+		}
+		final int nchar = Integer.parseInt( b.toString(), radix );
+		return (char)nchar;
+	}
+
 	static private final String esc_in = "[]{}|*%?'\"`\\abnrstv";
 	static private final String esc_ou = "[]{}|*%?'\"`\\\u0007\b\n\r \t\u000B";
 
-	public final char parseEscape() {
+	public final char parseEscape() throws ParseEscapeException {
 		final char ch = this.readCharNoEOF();
 		final int offset = esc_in.indexOf( ch );
 		if ( offset >= 0 ) {
@@ -123,6 +134,9 @@ public abstract class ParseEscape {
 			return this.parseNumber( 16, 2 );
 		} else if ( ch == 'u' ) {
 			return this.parseNumber( 16, 4 );
+		} else if ( ch == '(' ) {
+			final CharSequence cs = this.parseExpr();
+			throw new ParseEscapeException( cs );
 		} else {
 			throw this.alert( "Unexpected escape sequence in string" ).
 			culprit( "sequence", "\\" + new Character( ch ).toString() ).
@@ -130,13 +144,18 @@ public abstract class ParseEscape {
 		}
 	}
 
-	final char parseNumber( final int radix, final int count ) {
-		final StringBuffer b = new StringBuffer();
-		for ( int i = 0; i < count; i++ ) {
-			b.append( this.readCharNoEOF() );
+	/**
+	 * todo: this is far too simple-minded.  We need a straightforward FSM here.
+	 */
+	private final CharSequence parseExpr() {
+		final StringBuffer buff = new StringBuffer();
+		for(;;) {
+			final char ch = this.readCharNoEOF();
+			if ( ch == ')' ) break;
+			if ( ch == '(' ) throw new RuntimeException( "unimplemented" );
+			buff.append( ch );
 		}
-		final int nchar = Integer.parseInt( b.toString(), radix );
-		return (char)nchar;
+		return buff;
 	}
 
 }

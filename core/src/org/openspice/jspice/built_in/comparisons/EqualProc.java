@@ -47,6 +47,6 @@ public class EqualProc extends Binary1InvokeProc {
 		}
 	}
 
-	public static final EqualProc equalProc = new EqualProc();
+	public static final EqualProc EQUAL_PROC = new EqualProc();
 
 }

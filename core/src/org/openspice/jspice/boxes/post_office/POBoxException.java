@@ -18,29 +18,21 @@
  */
 package org.openspice.jspice.boxes.post_office;
 
-import java.util.Collection;
+public abstract class POBoxException extends RuntimeException {
 
-public interface LetterBoxIntf {
+	public POBoxException() {
+	}
 
-	Letter receive();
-	
+	public POBoxException( String message ) {
+		super( message );
+	}
 
-	void sendOne( Letter letter );
-	void sendMany( Collection letters );
+	public POBoxException( String message, Throwable cause ) {
+		super( message, cause );
+	}
 
-	PostOffice getPostOffice();
-	void setPostOffice( final PostOffice post_office );
-
-	AutoReply getAutoReply();
-	void setAutoReply( final AutoReply auto_reply );
-
-	void addSubscriber( CirculationList circ_list );
-	void removeSubscriber( CirculationList circ_list );
-
-	boolean isRetainingLocally();
-	void setRetainingLocally( final boolean retaining_locally );
-
-	void close();
-	boolean isOpen();
+	public POBoxException( Throwable cause ) {
+		super( cause );
+	}
 
 }

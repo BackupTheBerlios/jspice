@@ -25,9 +25,10 @@ import org.openspice.jspice.expr.cases.ApplyExpr;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.built_in.ShortCuts;
+import org.openspice.jspice.built_in.maplets.NewMapletProc;
 
 public final class MapletMiniParser extends Infix {
 	public Expr infix( final Expr lhs, final Expr rhs ) {
-		return ApplyExpr.make1( ShortCuts.mapletProc, lhs, rhs );
+		return ApplyExpr.make1( NewMapletProc.NEW_MAPLET_PROC, lhs, rhs );
 	}
 }

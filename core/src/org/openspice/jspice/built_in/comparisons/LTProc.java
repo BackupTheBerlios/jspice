@@ -29,4 +29,6 @@ public class LTProc extends Binary1InvokeProc {
 		return LessThan.LESS_THAN.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
 	}
 
+	public static final LTProc LT_PROC = new LTProc();
+
 }

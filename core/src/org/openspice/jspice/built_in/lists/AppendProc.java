@@ -25,4 +25,6 @@ public class AppendProc extends Binary1InvokeProc {
 	public Object invoke( final Object x, final Object y ) {
 		return ListLib.append( x, y );
 	}
+
+	public static final AppendProc APPEND_PROC = new AppendProc();
 }

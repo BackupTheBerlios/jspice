@@ -18,37 +18,16 @@
  */
 package org.openspice.jspice.boxes.post_office;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Collection;
-
-abstract class AbsCirculationList extends CirculationList {
-
-	//	Set< CirculationList >
-	final Set subscribers = new HashSet();
-
-	public synchronized void addSubscriber( final CirculationList abs ) {
-		this.subscribers.add( abs );
+class POBoxInterruptedException extends POBoxException {
+	public POBoxInterruptedException() {
 	}
-
-	public synchronized void removeSubscriber( final CirculationList abs ) {
-		this.subscribers.remove( abs );
+	public POBoxInterruptedException( String message ) {
+		super( message );
 	}
-
-	final synchronized void forwardOne( final Letter x ) {
-		for ( Iterator it = subscribers.iterator(); it.hasNext(); ) {
-			final CirculationList abs = (CirculationList)it.next();
-			abs.sendOne( x );
-		}
+	public POBoxInterruptedException( String message, Throwable cause ) {
+		super( message, cause );
 	}
-
-	//	Collection< Letter >
-	final synchronized void forwardMany( final Collection x ) {
-		for ( Iterator it = subscribers.iterator(); it.hasNext(); ) {
-			final CirculationList abs = (CirculationList)it.next();
-			abs.sendMany( x );
-		}
+	public POBoxInterruptedException( Throwable cause ) {
+		super( cause );
 	}
-
 }

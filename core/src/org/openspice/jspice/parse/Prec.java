@@ -47,6 +47,7 @@ public final class Prec {
 	public final static int append = arith + 1 * step;
 	public final static int arith1 = arith + 2 * step;
 	public final static int arith2 = arith + 3 * step;
+	public final static int arith3 = arith + 4 * step;
 
 	public final static int maplet = tight + 1 * step;
 	public final static int explode = tight + 2 * step;

@@ -24,4 +24,6 @@ public final class PowProc extends Binary1FloatingPointProc {
 		return Math.pow( x, y );
 	}
 
+	public static final PowProc POW_PROC = new PowProc();
+
 }

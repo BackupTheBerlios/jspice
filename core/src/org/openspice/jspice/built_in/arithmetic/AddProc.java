@@ -28,4 +28,6 @@ public final class AddProc extends Binary1InvokeProc {
 		return Add.ADD.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
 	}
 
+	public static final AddProc ADD_PROC = new AddProc();
+
 }

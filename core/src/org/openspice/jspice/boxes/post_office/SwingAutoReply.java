@@ -18,25 +18,40 @@
  */
 package org.openspice.jspice.boxes.post_office;
 
-public interface AutoReply extends LetterBox {
+import javax.swing.*;
 
-	/**
-	 * The auto-reply action.
-	 * @param letter The letter to reply to.
-	 */
-	void replyTo( Letter letter );
+public abstract class SwingAutoReply extends AbsAutoReply {
 
-	/**
-	 * Returns true if it is both cheap enough and, more importantly,
-	 * safe enough to run the reply in the thread of the poster.  In
-	 * general the answer is _no_ it is not safe because of the risk of
-	 * infinite loops.  However, if you think you are superman you may
-	 * decide to override this.
-	 *
-	 * @return flag indicating it is safe to reply in the originating thread
-	 */
-	boolean inThisThread();
+	protected SwingAutoReply( final PostOffice postOffice ) {
+		super( postOffice );
+	}
 
-	boolean usePostOffice();
+	public abstract void invoke( final Letter letter );
+
+	public final boolean inThisThread() {
+		return true;
+	}
+
+	public final void replyTo( final Letter letter ) {
+		SwingUtilities.invokeLater( new SwingAutoReplyThunk( this, letter ) );
+	}
+
+	public final boolean usePostOffice() {
+		return false;
+	}
+
+	static final class SwingAutoReplyThunk implements Runnable {
+		final SwingAutoReply swingAutoReply;
+		final Letter letter;
+
+		public SwingAutoReplyThunk( SwingAutoReply swingAutoReply, Letter letter ) {
+			this.swingAutoReply = swingAutoReply;
+			this.letter = letter;
+		}
+
+		public void run() {
+			this.swingAutoReply.invoke( this.letter );
+		}
+	}
 
 }

@@ -29,4 +29,6 @@ public class LTEProc extends Binary1InvokeProc {
 		return LessThanOrEqual.LESS_THAN_OR_EQUAL.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
 	}
 
+	public static final LTEProc LTE_PROC = new LTEProc();
+
 }

@@ -18,6 +18,64 @@
  */
 package org.openspice.jspice.boxes.post_office;
 
-public interface Letter {
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * A marker interface at present.
+ */
+public class Letter {
+
+	LetterBox from;
+	LetterBox to;
+	String subject;
+
+	List classes = new ArrayList();
+	List objects = new ArrayList();
+
+	public Letter( final LetterBox from, final LetterBox to, final String subject ) {
+		this.from = from;
+		this.to = to;
+		this.subject = subject;
+	}
+
+	public String getSubject() {
+		return this.subject;
+	}
+
+	public Class[] signature() {
+		final Class[] cs = new Class[ this.classes.size() ];
+		this.classes.toArray( cs );
+		return cs;
+	}
+
+	public Object[] arguments() {
+		return this.objects.toArray();
+	}
+
+	public LetterBox getFrom() {
+		return this.from;
+	}
+
+	public LetterBox getTo() {
+		return this.to;
+	}
+
+	public void addArg( Class key, Object val ) {
+		this.classes.add( key );
+		this.objects.add( val );
+	}
+
+	public void addObject( Object val ) {
+		this.addArg( Object.class, val );
+	}
+
+	public void addInt( int n ) {
+		this.addArg( int.class, new Integer( n ) );
+	}
+
+	public void send() {
+		this.getTo().sendOne( this );
+	}
 
 }

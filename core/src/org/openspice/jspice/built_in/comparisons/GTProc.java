@@ -28,4 +28,6 @@ public class GTProc extends Binary1InvokeProc {
 		return GreaterThan.GREATER_THAN.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
 	}
 
+	public static final GTProc GT_PROC = new GTProc();
+
 }

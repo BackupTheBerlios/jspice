@@ -28,4 +28,6 @@ public final class MulProc extends Binary1InvokeProc {
 		return Mul.MUL.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
 	}
 
+	public static final MulProc MUL_PROC = new MulProc();
+
 }

@@ -16,19 +16,18 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.built_in.arithmetic;
+package org.openspice.jspice.boxes.post_office;
 
-import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
-import org.openspice.jspice.datatypes.proc.Binary1InvokeProc;
-import org.openspice.jspice.arithmetic.Sub;
-import org.openspice.jspice.lib.CastLib;
-
-public final class SubProc extends Binary1InvokeProc {
-
-	public Object invoke( final Object x, final Object y ) {
-		return Sub.SUB.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
+class POBoxTimeOutException extends POBoxException {
+	public POBoxTimeOutException() {
 	}
-
-	public static final SubProc SUB_PROC = new SubProc();
-
+	public POBoxTimeOutException( String message ) {
+		super( message );
+	}
+	public POBoxTimeOutException( String message, Throwable cause ) {
+		super( message, cause );
+	}
+	public POBoxTimeOutException( Throwable cause ) {
+		super( cause );
+	}
 }

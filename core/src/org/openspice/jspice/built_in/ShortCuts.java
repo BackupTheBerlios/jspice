@@ -66,64 +66,36 @@ public final class ShortCuts {
 		table.put( s, p );
 	}
 
-	public final static Proc addProc = new AddProc();
-	public final static Proc subProc = new SubProc();
-	public final static Proc addImagProc = AddImagProc.ADD_IMAG_PROC;
-	public static final Proc subImagProc = SubImagProc.SUB_IMAG_PROC;
-	public final static Proc unaryAddProc = PositeProc.POSITE_PROC;
-	public final static Proc unarySubProc = NegateProc.NEGATE_PROC;
-	public final static Proc mulProc = new MulProc();
-	public final static Proc divProc = new DivProc();
-	public static final Proc divideProc = new DivideProc();
-	public final static Proc modProc = new ModProc();
-	public final static Proc mapletProc = NewMapletProc.NEW_MAPLET_PROC;
-	public final static Proc newImmutableListProc = NewImmutableListProc.NEW_IMMUTABLE_LIST_PROC;
-	public final static Proc appendProc = new AppendProc();
-
-	public final static Proc lteProc = new LTEProc();
-	public final static Proc ltProc = new LTProc();
-	public final static Proc gteProc = new GTEProc();
-	public final static Proc gtProc = new GTProc();
-	public final static Proc eqProc = new EQProc();
-	public final static Proc neqProc = new NEQProc();
-	public final static Proc equalProc = new EqualProc();
-	public final static Proc notEqualProc = new NotEqualProc();
-
-	public final static Proc explodeProc = InvListProc.INV_LIST_PROC;
-	public final static Proc noneProc = NoneProc.NONE_PROC;
-
-	public final static Proc indexProc = IndexProc.INDEX_PROC;
-	public final static Proc lengthProc = LengthProc.LENGTH_PROC;
-
 	//	Initialization.
 	static {
 		//System.out.println( "Running initialization" );
-		put( "+", addProc );
-		put( "unary_+", unaryAddProc );
-		put( "+:", addImagProc );
-		put( "-", subProc );
-		put( "unary_-", unarySubProc );
-		put( "-:", subImagProc );
-		put( "*", mulProc );
-		put( "DIV", divProc );
-		put( "MOD", modProc );
-		put( "/", divideProc );
+		put( "+", AddProc.ADD_PROC );
+		put( "unary_+", PositeProc.POSITE_PROC );
+		put( "+:", AddImagProc.ADD_IMAG_PROC );
+		put( "-", SubProc.SUB_PROC );
+		put( "unary_-", NegateProc.NEGATE_PROC );
+		put( "-:", SubImagProc.SUB_IMAG_PROC );
+		put( "*", MulProc.MUL_PROC );
+		put( "div", DivProc.DIV_PROC );
+		put( "mod", ModProc.MOD_PROC );
+		put( "/", DivideProc.DIVIDE_PROC );
+		put( "**", PowProc.POW_PROC );
 		//putOne( "//", DivRatProc.proc );
-		put( "==>", mapletProc );
-		put( "{", newImmutableListProc );
-		put( "++", appendProc );
+		put( "==>", NewMapletProc.NEW_MAPLET_PROC );
+		put( "{", NewImmutableListProc.NEW_IMMUTABLE_LIST_PROC );
+		put( "++", AppendProc.APPEND_PROC );
 
-		put( "<=", lteProc );
-		put( "<", ltProc );
-		put( ">=", gteProc );
-		put( ">", gtProc );
-		put( "==", eqProc );
-		put( "/==", neqProc );
-		put( "=", equalProc );
-		put( "/=", notEqualProc );
+		put( "<=", LTEProc.LTE_PROC );
+		put( "<", LTProc.LT_PROC );
+		put( ">=", GTEProc.GTE_PROC );
+		put( ">", GTProc.GT_PROC );
+		put( "==", EQProc.EQ_PROC );
+		put( "/==", NEQProc.NEQ_PROC );
+		put( "=", EqualProc.EQUAL_PROC );
+		put( "/=", NotEqualProc.NOT_EQUAL_PROC );
 
-		put( "explode", explodeProc );		//	maybe I should call this "..."?  Or both?
-		put( "none", noneProc );
+		put( "explode", InvListProc.INV_LIST_PROC );		//	maybe I should call this "..."?  Or both?
+		put( "none", NoneProc.NONE_PROC );
 	}
 
 }

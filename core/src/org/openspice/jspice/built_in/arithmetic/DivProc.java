@@ -29,4 +29,6 @@ public final class DivProc extends Binary1InvokeProc {
 		return Div.DIV.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
 	}
 
+	public static final DivProc DIV_PROC = new DivProc();
+
 }

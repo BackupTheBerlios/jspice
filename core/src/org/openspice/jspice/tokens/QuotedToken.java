@@ -21,12 +21,18 @@ package org.openspice.jspice.tokens;
 import org.openspice.jspice.expr.Expr;
 import org.openspice.jspice.parse.TokenParser;
 
-public final class QuotedToken extends WordLikeToken {
-	private final char flavour;
+import java.util.Map;
+import java.util.TreeMap;
 
-	public QuotedToken( final boolean _hadWhiteSpaceStart, final String _word, final char _flavour ) {
+public final class QuotedToken extends WordLikeToken {
+
+	private final char flavour;
+	private final Map opt_interpolation_map;
+
+	public QuotedToken( final boolean _hadWhiteSpaceStart, final String _word, final char _flavour, final Map interpolation_map ) {
 		super( _hadWhiteSpaceStart, _word );
 		this.flavour = _flavour;
+		this.opt_interpolation_map = interpolation_map != null ? new TreeMap( interpolation_map ) : null;
 	}
 
 	public String kind() {
@@ -43,6 +49,10 @@ public final class QuotedToken extends WordLikeToken {
 
 	public Expr parse( final org.openspice.jspice.parse.Parser parser, final int prec, final Expr lhs, final TokenParser token_parser ) {
 		return token_parser.parseQuoted( this, prec, lhs, parser );
+	}
+
+	public Map getOptInterpolationMap() {
+		return this.opt_interpolation_map;
 	}
 
 }

@@ -27,4 +27,6 @@ public class EQProc extends Binary1InvokeProc {
 		return x == y ? BooleanTools.TRUE : BooleanTools.FALSE;
 	}
 
+	public static final EQProc EQ_PROC = new EQProc();
+
 }

@@ -19,6 +19,7 @@
 package org.openspice.jspice.conf;
 
 import org.openspice.jspice.lexis.ParseEscape;
+import org.openspice.jspice.lexis.ParseEscapeException;
 import org.openspice.jspice.alert.Alert;
 
 import java.io.Reader;
@@ -114,12 +115,17 @@ public class ConfTokenizer extends ParseEscape {
 			}
 			char ch = (char)ich;
 			if ( ch == '\\' ) {
-				ch = this.parseEscape();
+				try {
+					this.buffer.append( this.parseEscape() );
+				} catch ( ParseEscapeException e ) {
+					throw new Alert( "Attempting to use forbidden escape sequence '\\('" ).mishap();
+				}
 			} else if ( quoted && ch == quote_char || !quoted && Character.isWhitespace( ch ) ) {
 				list.add( this.buffer.toString() );
 				return ch == '\n' ? END_OF_LINE : MIDDLE_OF_LINE;
+			} else {
+				this.buffer.append( ch );
 			}
-			this.buffer.append( ch );
 		}
 	}
 

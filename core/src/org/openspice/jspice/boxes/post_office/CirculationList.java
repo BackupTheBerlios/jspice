@@ -18,23 +18,19 @@
  */
 package org.openspice.jspice.boxes.post_office;
 
-import java.util.Collection;
-import java.util.Observable;
+public interface CirculationList extends LetterBox {
 
+	PostOffice getPostOffice();
 
-abstract class CirculationList {
+	void addSubscriber( final LetterBox circ );
 
-	abstract void sendOne( final Letter x );
-	abstract void sendMany( final Collection x );
-	abstract void addSubscriber( final CirculationList circ );
-	abstract void removeSubscriber( final CirculationList circ );
+	void removeSubscriber( final LetterBox circ );
 
-	void subscribeTo( final CirculationList circ ) {
-		circ.addSubscriber( this );
-	}
+	AutoReply newAutoReplySubscriber( final Robot robot );
+	AutoReply newSwingAutoReplySubscriber( final Robot robot );
 
-	void unsubscribeFrom( final CirculationList circ ) {
-		circ.removeSubscriber( this );
-	}
+	CirculationList newCirculationListSubscriber();
+
+	POBox newPOBoxSubscriber();
 
 }

@@ -28,4 +28,6 @@ public class DivideProc extends Binary1InvokeProc {
 		return Divide.DIVIDE.apply( CastLib.toNumber( x ), CastLib.toNumber( y ) );
 	}
 
+	public static final DivideProc DIVIDE_PROC = new DivideProc();
+
 }

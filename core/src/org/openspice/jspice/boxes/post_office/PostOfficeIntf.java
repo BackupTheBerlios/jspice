@@ -18,16 +18,30 @@
  */
 package org.openspice.jspice.boxes.post_office;
 
-class LetterBoxTimeOutException extends LetterBoxException {
-	public LetterBoxTimeOutException() {
-	}
-	public LetterBoxTimeOutException( String message ) {
-		super( message );
-	}
-	public LetterBoxTimeOutException( String message, Throwable cause ) {
-		super( message, cause );
-	}
-	public LetterBoxTimeOutException( Throwable cause ) {
-		super( cause );
-	}
+/**
+ * The functions of the post office are to provide:-
+ * 		1.	logical names for mail-lists and mail-boxes
+ * 		2.	a binding point for external processes
+ * 		3.	a central point for connecting Runnables/Threads
+ *
+ * QUESTION: 	Can a Post Office be the integrating concept of a Box?
+ * ANSWER:		No - it is just a fairly general kind of Box.
+ *
+ */
+public interface PostOfficeIntf {
+
+	void addRunnable( final Runnable runnable );
+
+	public POBox newPOBox();
+
+	public CirculationList newCirculationList() ;
+
+	public AutoReply newAutoReply( final Robot robot );
+
+	public AutoReply newSwingAutoReply( final Robot robot );
+
+	public void put( final String name, final LetterBox lbox );
+
+	public LetterBox get( final String name );
+
 }

@@ -16,18 +16,19 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.boxes.post_office;
+package org.openspice.jspice.lexis;
 
-class LetterBoxInterruptedException extends LetterBoxException {
-	public LetterBoxInterruptedException() {
+public class ParseEscapeException extends Exception {
+
+	final CharSequence value;
+
+	ParseEscapeException( final CharSequence value ) {
+		super();
+		this.value = value;
 	}
-	public LetterBoxInterruptedException( String message ) {
-		super( message );
+
+	public CharSequence getValue() {
+		return value;
 	}
-	public LetterBoxInterruptedException( String message, Throwable cause ) {
-		super( message, cause );
-	}
-	public LetterBoxInterruptedException( Throwable cause ) {
-		super( cause );
-	}
+
 }
