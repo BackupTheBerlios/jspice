@@ -1,0 +1,22 @@
+This is the source code for Jetty, my TADS 2 interpreter. For more
+information, you should take a look at my webpage, which as of this
+writing is at http://www.drizzle.com/~dans/if/jetty/. 
+
+Jetty is released with the understanding that people should feel free
+to modify it, fix bugs, add features, whatever. If you find a bug or
+make an improvement I would appreciate if you let me know so I can
+update the main source, but it's not required. The specific license
+under which this code is distributed is in the file 'license.txt' in
+this distribution. 
+
+If you're just interested in running this and not messing around with the 
+source, you probably want the compiled jar version, available both on the 
+if archive, probably http://www.ifarchive.org/if-archive/interpreters-tads/,
+and on my webpage mentioned above.
+
+Note that this does not include the source for the regexp package, which is
+by the Jakarta project, not by me. If you want that source (and you'll
+need it or the jarfile to compile Jetty), you can get it at
+http://jakarta.apache.org/regexp/index.html.
+
+      -- Dan Shiovitz (dbs@cs.wisc.edu)
