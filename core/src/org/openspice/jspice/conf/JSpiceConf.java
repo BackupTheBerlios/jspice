@@ -29,7 +29,7 @@ import org.openspice.jspice.class_builder.JSpiceClassLoader;
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFile;
 import org.openspice.vfs.VVolume;
-import org.openspice.vfs.url.UrlVVolume;
+import org.openspice.vfs.tools.UrlVFolderRef;
 import org.openspice.vfs.zip.ZipVVolume;
 import org.openspice.vfs.ftp.FtpVFolder;
 import org.openspice.vfs.ftp.FtpVVolume;
@@ -108,6 +108,9 @@ public final class JSpiceConf {
 	}
 
 	public void installInventoryConf( final VFolder inventory_path ) {
+		if ( !inventory_path.getVFileRef( FixedConf.std_inventory_name, FixedConf.CONF_EXT ).exists() ) {
+			new Alert( "Missing inventory configuration file" ).culprit( "path", inventory_path ).warning();
+		}
 		final InventoryConf invc = new InventoryConf( this, inventory_path );
 		if ( !this.inventories.contains( invc ) ) {
 			//	Get nicknames that are in use.
@@ -158,7 +161,7 @@ public final class JSpiceConf {
 			final VFolder f = iconf.locatePackageFolder( pkg_name );
 			if ( answer == null ) {
 				answer = f;
-			} else {
+			} else if ( f != null ) {
 				new Alert( "Duplicate package folders" ).
 				culprit( "pkg_name", pkg_name ).
 				culprit( "folder", answer ).
@@ -211,13 +214,15 @@ public final class JSpiceConf {
 		return null;
 	}
 
-	private static VFolder user_home() {
+	public VFolder getUserHome() {
 		return new FileVVolume( new File( System.getProperty( "user.home" ) ) ).getRootVFolder();
 	}
 
 	public VFolder getHome() {
 		return this.jspice_home;
 	}
+
+
 
 
 	//	---- Find help file ----
@@ -348,9 +353,8 @@ public final class JSpiceConf {
 
 
 	public JSpiceConf() {
-		final VVolume volume = UrlVVolume.make( "ftp://heather:lucy@127.0.0.1" + home() + "/" );
+		this.jspice_home = UrlVFolderRef.make( "ftp://heather:lucy@127.0.0.1" + home() + "/" ).getVFolder( ImmutableSetOfBoolean.ONLY_TRUE,  false );
 //		final VVolume volume = new FileVVolume( home() );
-		this.jspice_home = volume.getRootVFolder();
 		if ( this.jspice_home == null ) {
 			new Alert( "Cannot locate JSpice home directory" ).warning();
 		}
@@ -364,7 +368,7 @@ public final class JSpiceConf {
 		Print.println( Print.CONFIG, "... installed" );
 
 		//	todo: move the strings constants to FixedConf
-		this.parseJSpiceConf( user_home().getVFolderRef().getVFileFromPath( ".jspice/jspice.conf" ) );
+		this.parseJSpiceConf( this.getUserHome().getVFolderRef().getVFileFromPath( ".jspice/jspice.conf" ) );
 //		try {
 //			this.parseJSpiceConf( new ZipVVolume( new ZipFile( new File( "/tmp/foo.zip" ) ) ).getVFileFromPath( ".jspice/jspice.conf" ) );
 //		} catch ( IOException e ) {

@@ -19,6 +19,7 @@
 package org.openspice.jspice.conf;
 
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.main.Print;
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFile;
 import org.openspice.vfs.VFSTools;
@@ -182,7 +183,8 @@ public final class InventoryConf {
 		}
 	}
 
-	VFolder locatePackageFolder( final String pkg_name ) {
+	VFolder locatePackageFolder( final String external_pkg_name ) {
+		final String pkg_name = FixedConf.packageNameToNam( external_pkg_name );
 		VFolder answer = null;
 		for ( Iterator it = this.root_folder_list.iterator(); it.hasNext(); ) {
 			final VFolder vfolder = (VFolder)it.next();
@@ -191,8 +193,9 @@ public final class InventoryConf {
 				if ( answer == null ) {
 					answer = f;
 				} else {
+//					System.err.println( "f = " + f + " ; " + ( f != null ? f.getClass().getName() : "(null!)" ) );
 					new Alert( "Duplicate package folders" ).
-					culprit( "pkg_name", pkg_name ).
+					culprit( "pkg_name", external_pkg_name ).
 					culprit( "folder", answer ).
 					culprit( "folder", f ).
 					mishap();
@@ -206,9 +209,12 @@ public final class InventoryConf {
 		final Set result = new TreeSet();
 		for ( Iterator it = this.root_folder_list.iterator(); it.hasNext(); ) {
 			final VFolder vfolder = (VFolder)it.next();
+			if ( Print.wouldPrint( Print.VFS ) ) Print.println( "scannning vfolder for packages: " + vfolder );
 			for ( Iterator jt = vfolder.listVFolders().iterator(); jt.hasNext(); ) {
 				final VFolder vf = (VFolder)jt.next();
+				if ( Print.wouldPrint( Print.VFS ) ) Print.println( " ... found: " + vf );
 				if ( vf.hasExt( FixedConf.PKG_EXT ) ) {
+					if ( Print.wouldPrint( Print.VFS ) ) Print.println( " ... added: " + vf );
 					result.add( vf );
 				}
 			}

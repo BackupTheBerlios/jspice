@@ -37,13 +37,13 @@ import com.apple.mrj.MRJFileUtils;
 import java.io.*;
 
 class Open {
-String url = "http://www.yourpage.com/";
+String tools = "http://www.yourpage.com/";
 
 public static void main(String[] args) { new Open(); }
 
 Open() {
     try {
-        MRJFileUtils.openURL(url);
+        MRJFileUtils.openURL(tools);
     } catch (IOException ex) {}
     }
 }
@@ -107,7 +107,7 @@ List of typical os.name values:
  * BrowserContorl.displayURL("file:///user/joe/index.html");
  * <p/>
  * <p/>
- * Note - you must include the url type -- either "http://" or
+ * Note - you must include the tools type -- either "http://" or
  * "file://".
  */
 public abstract class BrowserControl {
@@ -117,7 +117,7 @@ public abstract class BrowserControl {
 	 * file, you must include the absolute path name.
 	 *     
 	 *
-	 * @param url the file's url (the url must start with either "http://" or * "file://").    
+	 * @param url the file's tools (the tools must start with either "http://" or * "file://").    
 	 */
 	public abstract void displayURL( String url ) throws IOException;
 
@@ -165,7 +165,7 @@ public abstract class BrowserControl {
 
 		// The default browser under unix.
 		String unix_path = "netscape";
-		// The flag to display a url.
+		// The flag to display a tools.
 		final String unix_flag = "-remote";
 		//	Part of the argument needed.
 		final String unix_arg = "openURL";
@@ -199,11 +199,11 @@ public abstract class BrowserControl {
 		private static final String WIN_ID = "Windows";
 		// The default system browser under windows.
 		private static final String WIN_PATH = "rundll32";
-		// The flag to display a url.
-		private static final String WIN_FLAG = "url.dll,FileProtocolHandler";
+		// The flag to display a tools.
+		private static final String WIN_FLAG = "tools.dll,FileProtocolHandler";
 
 		public void displayURL( final String url ) throws IOException {
-			// cmd = 'rundll32 url.dll,FileProtocolHandler http://...'
+			// cmd = 'rundll32 tools.dll,FileProtocolHandler http://...'
 			final String cmd = WIN_PATH + " " + WIN_FLAG + " " + url;
 			Process p = Runtime.getRuntime().exec( cmd );
 		}

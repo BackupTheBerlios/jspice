@@ -89,7 +89,7 @@ public class JettyApplet extends Applet implements Runnable {
 
 			_jetty = new Jetty( _display, str );
 		} catch ( MalformedURLException mue ) {
-			System.err.println( "Error: bad url (" + getDocumentBase() + "): " + mue );
+			System.err.println( "Error: bad tools (" + getDocumentBase() + "): " + mue );
 		} catch ( IOException ioe ) {
 			System.err.println( "Error: i/o (" + getDocumentBase() + "): " + ioe );
 		}

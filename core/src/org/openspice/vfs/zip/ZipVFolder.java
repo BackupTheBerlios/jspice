@@ -23,6 +23,7 @@ import org.openspice.vfs.codec.Codec;
 import org.openspice.vfs.codec.FolderNameCodec;
 import org.openspice.jspice.conf.FixedConf;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.main.Print;
 
 import java.util.List;
 import java.util.Iterator;
@@ -73,18 +74,25 @@ public class ZipVFolder extends PathAbsVFolder implements VFolder {
 		for ( Iterator it = this.zvol.zip_entries.iterator(); it.hasNext(); ) {
 			final ZipEntry ze = (ZipEntry)it.next();
 			final String ze_path = ze.getName();
-			System.err.println( "Name of zip entry = " + ze_path );
-			if ( ze_path.startsWith( this.path ) ) {
+			if ( Print.wouldPrint( Print.VFS ) ) Print.println( "Name of zip entry = " + ze_path );
+			if ( ze_path.length() > this.path.length() && ze_path.startsWith( this.path ) ) {
 				final String p = ze_path.substring( this.path.length() );
 				final int n = p.indexOf( FixedConf.VFOLDER_TERMINATOR );
-				if ( n == -1 ) {
-					System.err.println( "ordinary file: " + ze_path );
-					if ( vfiles ) list.add( ZipVFile.make( this.zvol, ze_path ) );
-				} else if ( n == ze_path.length() - 1 ) {
-					System.err.println( "folder: " + ze_path );
-					if ( vfolders ) list.add( new ZipVFolder( this.zvol, ze_path ) );
+//				System.err.println( "p = " + p );
+//				System.err.println( "path = " + this.path );
+//				System.err.println( "n = " + n );
+//				System.err.println( "is_folder " + ze.isDirectory() );
+				if ( n == -1 || n == p.length() - 1 ) {
+					//	Got a member of the directory.
+					if ( ze.isDirectory() ) {
+						if ( Print.wouldPrint( Print.VFS ) ) Print.println( "folder: " + ze_path );
+						if ( vfolders ) list.add( new ZipVFolder( this.zvol, ze_path ) );
+					} else {
+						if ( Print.wouldPrint( Print.VFS ) ) Print.println( "ordinary file: " + ze_path );
+						if ( vfiles ) list.add( ZipVFile.make( this.zvol, ze_path ) );
+					}
 				} else {
-					System.err.println( "other: " + ze_path );
+					if ( Print.wouldPrint( Print.VFS ) ) Print.println( "other: " + ze_path );
 				}
 			}
 		}

@@ -18,5 +18,9 @@
  */
 package org.openspice.vfs;
 
+import org.openspice.jspice.alert.Alert;
+
+import java.io.File;
+
 public abstract class AbsVFile extends AbsVItem implements VFile {
 }

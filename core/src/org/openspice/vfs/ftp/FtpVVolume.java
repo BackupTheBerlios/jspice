@@ -52,7 +52,7 @@ public class FtpVVolume extends AbsVVolume implements VVolume {
 			this.root_url = url;
 		} else {
 			this.root_url = null;
-			throw new Alert( "Not an FTP URL" ).culprit(  "url", url ).mishap();
+			throw new Alert( "Not an FTP URL" ).culprit(  "tools", url ).mishap();
 		}
 	}
 
@@ -66,12 +66,12 @@ public class FtpVVolume extends AbsVVolume implements VVolume {
 	}
 
 	private void reconnect( final FTPClient ftpc ) throws IOException {
-		Print.println( Print.FTP, "Reconnecting ..." );
+		Print.println( Print.VFS, "Reconnecting ..." );
 		final String user_info = this.root_url.getUserInfo();
 		final int n = user_info.indexOf( ':' );
 		final String user = n >= 0 ? user_info.substring( 0, n ) : user_info;
 		final String pw = n >= 0 ? user_info.substring( n + 1 ) : "";
-		if ( Print.wouldPrint( Print.FTP ) ) {
+		if ( Print.wouldPrint( Print.VFS ) ) {
 			Print.println( "User ID : " + user );
 			Print.println( "Password: " + pw );
 			Print.println( "Host    : " + root_url.getHost() );
@@ -88,11 +88,11 @@ public class FtpVVolume extends AbsVVolume implements VVolume {
 	}
 
 	public FTPClient getConnectedFTPClient() {
-		Print.println( Print.FTP, "Trying to connect to FTP server ...." );
+		Print.println( Print.VFS, "Trying to connect to FTP server ...." );
 		final FTPClient ftpc = this.getFTPClient();
 		try {
 			if ( !ftpc.isConnected() ) {
-				Print.println( Print.FTP, "Not connected - trying to reconnect" );
+				Print.println( Print.VFS, "Not connected - trying to reconnect" );
 				this.reconnect( ftpc );
 			}
 			ftpc.noop();

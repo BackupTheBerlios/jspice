@@ -29,8 +29,8 @@ import org.openspice.jspice.main.jline_stuff.SmartCompletor;
 
 public class MainWithJLine extends Main {
 
-	public void perform( final CmdLineOptions cmd ) {
-		this.init( cmd.banner );
+	protected void startUp( final CmdLineOptions cmd ) {
+		this.init( cmd );
 		try {
 			// Setup the input stream.
 			final ConsoleReader reader = new ConsoleReader();

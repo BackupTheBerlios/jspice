@@ -78,25 +78,25 @@ public class FtpVFile extends PathAbsVFile implements VFile {
 	}
 
 	public InputStream inputStreamContents() {
-		if ( Print.wouldPrint( Print.FTP ) ) {
+		if ( Print.wouldPrint( Print.VFS ) ) {
 			Print.println( "Trying to read contents of file " + this.path );
 			Print.println( "path = " + this.path );
 		}
 		final FTPClient ftpc = this.fvol.getConnectedFTPClient();
-		Print.println( Print.FTP,  "Connected .... " );
+		Print.println( Print.VFS,  "Connected .... " );
 		try {
 			final ByteArrayOutputStream output = new ByteArrayOutputStream();
 			if ( ftpc.retrieveFile( this.path, output ) ) {
 				final String s  = new String( output.toByteArray() );
-				if ( Print.wouldPrint( Print.FTP ) ) {
+				if ( Print.wouldPrint( Print.VFS ) ) {
 					Print.println( "Got file: " + s.length() );
 				}
 				if ( s.length() < 100 ) {
-					if ( Print.wouldPrint( Print.FTP ) ) Print.println( "s = " + s );
+					if ( Print.wouldPrint( Print.VFS ) ) Print.println( "s = " + s );
 				}
 				return new ByteArrayInputStream( output.toByteArray() );
 			} else {
-				if ( Print.wouldPrint( Print.FTP ) ) Print.println( "reply code = " + ftpc.getReplyCode() );
+				if ( Print.wouldPrint( Print.VFS ) ) Print.println( "reply code = " + ftpc.getReplyCode() );
 				throw new Alert( "Cannot retrieve file from FTP server" ).culprit( "file", this.path ).mishap();
 			}
 		} catch ( IOException e ) {

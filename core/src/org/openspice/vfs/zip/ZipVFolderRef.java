@@ -28,6 +28,7 @@ import org.openspice.vfs.codec.FileNameCodec;
 import org.openspice.vfs.codec.FolderNameCodec;
 import org.openspice.tools.SetOfBoolean;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.main.Print;
 
 import java.util.zip.ZipEntry;
 
@@ -50,17 +51,23 @@ public class ZipVFolderRef extends AbsVFolderRef {
 	}
 
 	public VFolder getVFolder( final SetOfBoolean if_exists, final boolean create_if_needed ) {
-		final ZipEntry ze = this.zvol.zip_file.getEntry( this.path );
-		final boolean folder_exists = ze != null && ze.isDirectory();
-		if ( !if_exists.contains( folder_exists ) ) {
-			throw new Alert( folder_exists ? "Folder already exists" : "Folder does not exist (may be non-directory)" ).culprit( "folder", path ).mishap();
-		} else if ( folder_exists ) {
+		if ( Print.wouldPrint( Print.VFS ) ) Print.println( "Trying to create ZipVFolder: path = " + path );
+		if ( this.path.length() == 0 ) {
 			return ZipVFolder.uncheckedMake( this.zvol, this.path );
 		} else {
-			if ( create_if_needed ) {
-				throw new UnsupportedOperationException();
+			final ZipEntry ze = this.zvol.zip_file.getEntry( this.path );
+			if ( Print.wouldPrint( Print.VFS ) ) Print.println( ze == null ? " ... failed" : " ... ok" );
+			final boolean folder_exists = ze != null && ze.isDirectory();
+			if ( !if_exists.contains( folder_exists ) ) {
+				throw new Alert( folder_exists ? "Folder already exists" : "Folder does not exist (may be non-directory)" ).culprit( "folder", path ).mishap();
+			} else if ( folder_exists ) {
+				return ZipVFolder.uncheckedMake( this.zvol, this.path );
 			} else {
-				return null;
+				if ( create_if_needed ) {
+					throw new UnsupportedOperationException();
+				} else {
+					return null;
+				}
 			}
 		}
 	}

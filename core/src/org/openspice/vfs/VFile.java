@@ -18,10 +18,7 @@
  */
 package org.openspice.vfs;
 
-import java.io.Reader;
-import java.io.Writer;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public interface VFile extends VItem {
 

@@ -40,9 +40,11 @@ public abstract class ZipTools {
 	}
 
 	public static final String getName( final String path ) {
-		final int n = path.indexOf( FixedConf.VFOLDER_TERMINATOR );
+		final int n = path.lastIndexOf( FixedConf.VFOLDER_TERMINATOR );
 		if ( n < 0 ) {
 			return path;
+		} else if ( n == path.length() -1 ) {
+			return getName( path.substring( 0, n ) );
 		} else {
 			return path.substring( n + 1 );
 		}

@@ -20,11 +20,14 @@ package org.openspice.vfs;
 
 import org.openspice.jspice.conf.FixedConf;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.main.Print;
 import org.openspice.vfs.codec.Codec;
+import org.openspice.vfs.tools.VFolderView;
 import org.openspice.tools.ImmutableSetOfBoolean;
 import org.openspice.tools.SetOfBoolean;
 
 import java.util.StringTokenizer;
+import java.io.File;
 
 public abstract class AbsVFolderRef implements VFolderRef {
 
@@ -32,15 +35,22 @@ public abstract class AbsVFolderRef implements VFolderRef {
 	protected abstract Codec folderCodec();
 
 	public VFolderRef getVFolderRefFromPath( final String path ) {
+		if ( Print.wouldPrint( Print.VFS ) ) Print.println(  "Extending " + this + " with path " + path );
 		VFolderRef vfr = this;
-		final StringTokenizer tokens = new StringTokenizer( path, "" + FixedConf.VFOLDER_SEPARATOR );
+		final String delim = "" + FixedConf.VFOLDER_TERMINATOR;
+		final StringTokenizer tokens = new StringTokenizer( path, delim, true );
 		while ( tokens.hasMoreTokens() ) {
 			final String token = tokens.nextToken();
-			if ( token.length() > 0 ) {
+			if ( delim.equals( token ) ) continue;		//	re-sync.
+			if ( tokens.hasMoreTokens() ) {
+				if ( !delim.equals( tokens.nextToken() ) ) throw new RuntimeException();
 				final String[] namext = folderCodec().decode( token );
 				vfr = vfr.getVFolderRef( namext[0], namext[1] );
 			} else {
-				//	GO BACK TO ROOT OF VOLUME!
+				//	Ooooh.  An archive.
+				final String[] namext = fileCodec().decode( token );
+				final VFile vfile = vfr.getVFileRef( namext[0], namext[1] ).getVFile( ImmutableSetOfBoolean.ONLY_TRUE, false );
+				//VFolderView.make( namext[0], vfile.toFile() );
 				throw new RuntimeException( "tbd" ); 	//	todo: to be defined
 			}
 		}

@@ -21,8 +21,14 @@ package org.openspice.jspice.main;
 
 import org.openspice.jspice.conf.JSpiceConf;
 import org.openspice.jspice.conf.FixedConf;
+import org.openspice.jspice.alert.Alert;
+import org.openspice.vfs.VFolder;
+import org.openspice.vfs.VFolderRef;
+import org.openspice.vfs.tools.UrlVFolderRef;
+import org.openspice.tools.ImmutableSetOfBoolean;
 
 import java.util.Observable;
+import java.io.File;
 
 public class Main extends AbsMain {
 
@@ -34,19 +40,32 @@ public class Main extends AbsMain {
 		Hooks.SHUTDOWN.ping();
 	}
 
-	protected void init( final boolean wantBanner ) {
-
-//		System.setProperty( "java.net.preferIPv4Stack", "true" );
-
+	protected void init( final CmdLineOptions cmd ) {
 		this.jspice_conf = new JSpiceConf();
-		Print.current_mode = this.jspice_conf.isDebugging() ? Print.INFO | Print.LOAD | Print.CONFIG | Print.AUTOLOAD : 0;
-		if ( wantBanner ) FixedConf.printBanner();
+		if ( cmd.personal ) {
+			//todo: substitute standard strings.
+			final VFolderRef personal_inv = this.jspice_conf.getUserHome().getVFolderRef().getVFolderRefFromPath( ".jspice/inventory/" );
+			if ( personal_inv.exists() ) {
+				this.jspice_conf.installInventoryConf( personal_inv.getVFolder( ImmutableSetOfBoolean.ONLY_TRUE, false ) );
+			}
+		}
+		if ( cmd.inventory != null ) {
+			final VFolder vfolder = UrlVFolderRef.make( cmd.inventory ).getVFolder( ImmutableSetOfBoolean.EITHER, false );
+			if ( vfolder != null ) {
+				this.jspice_conf.installInventoryConf( vfolder );
+			} else {
+				if ( Print.wouldPrint( Print.VFS ) ) Print.println( "Installing inventory: path = " + cmd.inventory.getPath() + "; query = " + cmd.inventory.getQuery() );
+				new Alert( "Cannot find inventory specified on command-line" ).culprit( "inventory path", cmd.inventory ).warning();
+			}
+		}
+		Print.current_mode |= this.jspice_conf.isDebugging() ? Print.DEBUGGING : 0;
+		if ( cmd.banner ) FixedConf.printBanner();
 		this.super_loader = new SuperLoader( this.jspice_conf );
 		this.interpreter = new Interpreter( this.super_loader.getNameSpace( "spice.interactive_mode" ) );
 	}
 
-	public void perform( final CmdLineOptions cmd ) {
-		this.init( cmd.banner );
+	protected void startUp( final CmdLineOptions cmd ) {
+		this.init( cmd );
 		this.interpreter.interpret( cmd.prompt != null ? cmd.prompt : this.jspice_conf.getPrompt() );
 		this.shutdown();
 	}

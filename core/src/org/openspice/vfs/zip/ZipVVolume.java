@@ -36,7 +36,7 @@ public class ZipVVolume extends AbsVVolume {
 		this.zip_file = zip_file;
 		for ( Enumeration enum = this.zip_file.entries(); enum.hasMoreElements(); ) {
 			final ZipEntry e = (ZipEntry)enum.nextElement();
-			zip_entries.add( e.getName() );
+			zip_entries.add( e );
 		}
 	}
 

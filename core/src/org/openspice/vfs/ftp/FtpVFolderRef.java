@@ -28,6 +28,8 @@ import org.openspice.vfs.codec.Codec;
 import org.openspice.tools.SetOfBoolean;
 import org.openspice.tools.ImmutableSetOfBoolean;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.main.Print;
+import org.openspice.jspice.conf.FixedConf;
 
 
 public class FtpVFolderRef extends AbsVFolderRef implements VFolderRef {
@@ -46,8 +48,10 @@ public class FtpVFolderRef extends AbsVFolderRef implements VFolderRef {
 	public FtpVFolderRef( final FtpVVolume vvol, final String path ) {
 		this.path = path;
 		this.fvol = vvol;
-//		System.err.println( "new FTPVFolderRef: path = " + path );
-//		if ( path.charAt( path.length() - 1) != '/' ) throw new RuntimeException( "bah" );
+		if ( Print.wouldPrint( Print.VFS ) ) {
+			Print.println( "new FTPVFolderRef: path = " + path );
+			if ( path.charAt( path.length() - 1 ) != '/' ) throw new RuntimeException( "bah" );
+		}
 	}
 
 	public VFileRef getVFileRef( String nam, String ext ) {

@@ -22,6 +22,7 @@ import org.openspice.vfs.*;
 import org.openspice.vfs.codec.FolderNameCodec;
 import org.openspice.vfs.codec.Codec;
 import org.openspice.jspice.alert.Alert;
+import org.openspice.jspice.main.Print;
 import org.openspice.tools.ImmutableSetOfBoolean;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -68,8 +69,10 @@ public class FtpVFolder extends PathAbsVFolder implements VFolder {
 	private FtpVFolder( final FtpVVolume vvol, final String path ) {
 		this.fvol = vvol;
 		this.path = path;
-//		System.err.println( "new FTPVFolder: path = " + path );
-//		if ( path.charAt( path.length() - 1) != '/' ) throw new RuntimeException( "bah" );
+		if ( Print.wouldPrint( Print.VFS ) ) {
+			Print.println( "new FTPVFolder: path = " + path );
+			if ( path.charAt( path.length() - 1) != '/' ) throw new RuntimeException( "bah" );
+		}
 	}
 
 	public VFolder newVFolder( String nam, String ext ) {

@@ -21,14 +21,9 @@ package org.openspice.jspice.main;
 public class StartWithJLine {
 
 	public static void main( final String[] args ) {
-		boolean jline = false;
-		for ( int i = 0; i < args.length; i++ ) {
-			final String option = args[ i ];
-			if ( option.startsWith( "--jline" ) ) {
-				jline = option.equals( "--jline" ) || option.equals( "--jline=on" );
-			}
-		}
-		final AbsMain main = jline ? new MainWithJLine() : new Main();
+		final CmdLineOptions cmd = new CmdLineOptions();
+		cmd.process( args );
+		final AbsMain main = cmd.jline ? new MainWithJLine() : new Main();
 		main.perform( args );
 	}
 

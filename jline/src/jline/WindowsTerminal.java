@@ -34,10 +34,10 @@ import java.util.*;
  *	directoy (determined by the setting of the <em>java.io.tmpdir</em>
  *	System property), loading the library, and then calling the Win32 APIs
  *  <a href="http://msdn.microsoft.com/library/default.asp?
- *  url=/library/en-us/dllproc/base/setconsolemode.asp">SetConsoleMode</a>
+ *  tools=/library/en-us/dllproc/base/setconsolemode.asp">SetConsoleMode</a>
  *  and
  *  <a href="http://msdn.microsoft.com/library/default.asp?
- *  url=/library/en-us/dllproc/base/getconsolemode.asp">GetConsoleMode</a>
+ *  tools=/library/en-us/dllproc/base/getconsolemode.asp">GetConsoleMode</a>
  *  to disable character echoing.
  *  </p>
  *

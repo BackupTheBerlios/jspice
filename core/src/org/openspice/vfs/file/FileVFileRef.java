@@ -19,6 +19,7 @@
 package org.openspice.vfs.file;
 
 import org.openspice.vfs.*;
+import org.openspice.vfs.tools.VFolderView;
 import org.openspice.jspice.conf.FixedConf;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.tools.SetOfBoolean;
@@ -35,28 +36,36 @@ public class FileVFileRef extends AbsVFileRef implements VFileRef {
 	}
 
 	public VFile getVFile( final SetOfBoolean if_exists, final boolean create_if_needed ) {
-		if ( !if_exists.isFull() ) {
-			final boolean is_file = this.file.isFile();
-			if ( ! if_exists.contains( is_file ) ) {
-				new Alert( is_file ? "Ordinary file already exists" : "Ordinary file needed" ).culprit( "file", this.file ).mishap();
-			}
-		}
-		if ( create_if_needed ) {
-			if ( ! this.file.exists() ) {
-				try {
-					if( ! this.file.createNewFile() ) {
-						new Alert( "Could not create new ordinary file" ).culprit( "file", this.file ).mishap();
-					}
-				} catch ( IOException e ) {
-					throw new RuntimeException( e );
-				}
-			}
-		}
 		if ( this.file.isFile() ) {
-			return FileVFile.uncheckedMake( this.file );
+			return FileVFile.make( this.file );
+		} else if ( FixedConf.TRACK_BACK_ENABLED ) {
+			return VFolderView.makeVFileRefWithTrackBack( this.file ).getVFile( if_exists, create_if_needed );
 		} else {
 			return null;
 		}
+//
+//		if ( !if_exists.isFull() ) {
+//			final boolean is_file = this.file.isFile();
+//			if ( ! if_exists.contains( is_file ) ) {
+//				new Alert( is_file ? "Ordinary file already exists" : "Ordinary file needed" ).culprit( "file", this.file ).mishap();
+//			}
+//		}
+//		if ( create_if_needed ) {
+//			if ( ! this.file.exists() ) {
+//				try {
+//					if( ! this.file.createNewFile() ) {
+//						new Alert( "Could not create new ordinary file" ).culprit( "file", this.file ).mishap();
+//					}
+//				} catch ( IOException e ) {
+//					throw new RuntimeException( e );
+//				}
+//			}
+//		}
+//		if ( this.file.isFile() ) {
+//			return FileVFile.uncheckedMake( this.file );
+//		} else {
+//			return null;
+//		}
 	}
 
 	public boolean exists() {

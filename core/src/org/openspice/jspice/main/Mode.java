@@ -16,21 +16,33 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.vfs.codec;
+package org.openspice.jspice.main;
 
-import org.openspice.jspice.conf.FixedConf;
+abstract class Mode {
 
-public class FolderNameCodec extends AbsCodec {
-
-	public FolderNameCodec() {
-		super( FixedConf.VFOLDER_LOGICAL_SEPARATOR );
+	boolean isInteractive() {
+		return false;
 	}
 
-	public static final FolderNameCodec FOLDER_NAME_CODEC = new FolderNameCodec();
+	static class App extends Mode {}
+	static class CGI extends Mode {}
+	static class Filter extends Mode {}
+	static class Server extends Mode {}
+
+	static class Dev extends Mode {
+		boolean isInteractive() {
+			return true;
+		}
+	}
 
 
-//	public String encodePath( String previous, String nam, String ext ) {
-//		return previous + encode( nam, ext ) + forbidden_char;
-//	}
+	public static final Mode tryNewMode( final String mode_option ) {
+		if ( mode_option.equals( "--app" ) ) return new App();
+		if ( mode_option.equals( "--cgi" ) ) return new CGI();
+		if ( mode_option.equals( "--filter" ) ) return new Filter();
+		if ( mode_option.equals( "--server" ) ) return new Server();
+		if ( mode_option.equals( "--dev" ) ) return new Dev();
+		return null;
+	}
 
 }

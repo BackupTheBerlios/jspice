@@ -36,20 +36,26 @@ public abstract class FixedConf {
 	public static final String STD_LIB = "org.openspice.stdlib";
 
 	static final String licence_nam = "LICENSE";  			//	U.S. spelling for licence, not a spelling mistake.
+
 	static final String CONF_EXT = "conf";
 	static final String SPICE_EXT = "spi";
+	public static final String ZIP_EXT = "zip";
 	static final String TXT_EXT = "txt";
-	public static final String PKG_EXT = "pkg";
+	public static final String PKG_EXT = "jpkg";
 	public static final String AUTO_EXT = "auto";
 	public static final String SYMTAB_EXT = "symtab";
+
 	static final String JSPICE_CONF_NAM = "jspice";
 	static final String INVENTORY_NAM = "inventory";
 	static final String std_inventory_name = INVENTORY_NAM;
 
 	public static final char VFILE_SEPARATOR = '.';
-	public static final char VFOLDER_SEPARATOR = '-';
+	public static final char VFOLDER_LOGICAL_SEPARATOR = '.';
 	public static final char VFOLDER_TERMINATOR = '/';
 	public static final char VITEM_ESCAPE = '%';
+
+	public static final char QUERY_CHAR = '?';
+	public static final boolean TRACK_BACK_ENABLED = false;
 
 	static final String load_file_nam = "load";
 	static final String load_folder_nam = load_file_nam;
@@ -103,7 +109,6 @@ public abstract class FixedConf {
 	//	--- Internal names ---
 
 	private static final String package_root = "org.openspice.jspice";
-//	private static final String env_pname = package_root + ".env";
 	private static final String dynld_pname = package_root + ".dynld";
 
 	public static final String getPackageRoot() {
@@ -121,7 +126,7 @@ public abstract class FixedConf {
 	//	---oooOOOooo---
 
 	//	todo: This is rubbish really.  We ought to handle many extensions.
-	public static final String helpFileExtension = ( '.' + "txt" );
+	public static final String helpFileExtension = ( '.' + TXT_EXT );
 
 	public static final String topicNameToFileName( final String topic ) {
 		try {
@@ -146,16 +151,17 @@ public abstract class FixedConf {
 
 	//	---oooOOOooo---
 
-	public static final char pkg_separator = '-';
-	static final char pkg_replace_dot = '-';
-	public static final String pkg_suffix = ( pkg_separator + PKG_EXT );
+	public static final char PKG_SEPARATOR = '.';
+	static final char PKG_REPLACE_DOT = '_';
+	public static final String PKG_SUFFIX = ( PKG_SEPARATOR + PKG_EXT );
 
-	public static final String packageNameToFolderName( final String pname ) {
-		return pname.replace( '.', pkg_replace_dot ) + pkg_suffix;
+	public static final String packageNameToNam( final String pname ) {
+		if ( PKG_REPLACE_DOT != '.' ) {
+			return pname.replace( '.', PKG_REPLACE_DOT );
+		} else {
+			return pname;
+		}
 	}
 
-	public static final String folderNameToPackageName( final String fname ) {
-		return fname.substring( 0, fname.length() - pkg_suffix.length() ).replace( pkg_replace_dot, '.' );
-	}
 
 }

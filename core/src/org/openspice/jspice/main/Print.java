@@ -28,9 +28,13 @@ public class Print {
 	public static final int IMPORT = 1 << 4;
 	public static final int HELP = 1 << 5;
 	public static final int PARSE = 1 << 6;
-	public static final int FTP = 1 << 7;
+	public static final int VFS = 1 << 7;
 
-	public static int current_mode = 0;
+	public static final int DEBUGGING = (
+		Print.INFO | Print.LOAD | Print.CONFIG | Print.AUTOLOAD
+	);
+
+	public static int current_mode = Print.VFS | Print.AUTOLOAD;
 
 	public static final void printMode( final int mode ) {
 		System.out.print( "JSPICE(" );
@@ -41,7 +45,7 @@ public class Print {
 		System.out.print( ( ( mode & IMPORT ) != 0 ) ? "i" : "" );
 		System.out.print( ( ( mode & HELP ) != 0 ) ? "h" : "" );
 		System.out.print( ( ( mode & PARSE ) != 0 ) ? "p" : "" );
-		System.out.print( ( ( mode & FTP ) != 0 ) ? "f" : "" );
+		System.out.print( ( ( mode & VFS ) != 0 ) ? "v" : "" );
 		System.out.print( "): " );
 	}
 
