@@ -22,10 +22,12 @@ import org.openspice.vfs.AbsVFolderRef;
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFileRef;
 import org.openspice.vfs.VFolderRef;
+import org.openspice.vfs.ftp.FtpVFolder;
 import org.openspice.vfs.codec.Codec;
 import org.openspice.vfs.codec.FileNameCodec;
 import org.openspice.vfs.codec.FolderNameCodec;
 import org.openspice.tools.SetOfBoolean;
+import org.openspice.jspice.alert.Alert;
 
 import java.util.zip.ZipEntry;
 
@@ -48,7 +50,19 @@ public class ZipVFolderRef extends AbsVFolderRef {
 	}
 
 	public VFolder getVFolder( final SetOfBoolean if_exists, final boolean create_if_needed ) {
-		throw new RuntimeException( "tbd" );	//	todo:
+		final ZipEntry ze = this.zvol.zip_file.getEntry( this.path );
+		final boolean folder_exists = ze != null && ze.isDirectory();
+		if ( !if_exists.contains( folder_exists ) ) {
+			throw new Alert( folder_exists ? "Folder already exists" : "Folder does not exist (may be non-directory)" ).culprit( "folder", path ).mishap();
+		} else if ( folder_exists ) {
+			return ZipVFolder.uncheckedMake( this.zvol, this.path );
+		} else {
+			if ( create_if_needed ) {
+				throw new UnsupportedOperationException();
+			} else {
+				return null;
+			}
+		}
 	}
 
 	public VFileRef getVFileRef( final String nam, final String ext ) {

@@ -53,35 +53,7 @@ public class FtpVFile extends PathAbsVFile implements VFile {
 		return FtpTools.getParentPath( this.path );
 	}
 
-
-//	public static final FtpVFile make( final FtpVVolume vvol, final String path, final SetOfBoolean if_exists, final boolean create_if_needed ) {
-//		final FTPClient ftpc = vvol.getConnectedFTPClient();
-//		boolean exists = false;
-//		try {
-//			final FTPFile[] files = ftpc.listFiles( path );
-//			if ( files.length == 1 ) {
-//				exists = true;
-//			} else if ( files.length > 1 ) {
-//				throw new Alert( "Cannot determine this path is a file" ).culprit(  "path", path ).mishap();
-//			}
-//		} catch ( IOException e ) {
-//			throw new RuntimeException( e );
-//		}
-//		if ( !if_exists.contains( exists ) ) {
-//			throw new Alert( exists ? "File already exists" : "File does not exist" ).culprit( "file", path ).mishap();
-//		} else if ( exists ) {
-//			return new FtpVFile( vvol, path );
-//		} else {
-//			if ( create_if_needed ) {
-//				throw new RuntimeException( "tbd" ); 	//	todo: to be defined
-//			} else {
-//				return null;
-//			}
-//		}
-//	}
-
 	static final FtpVFile make(  final FtpVVolume fvol, final String path  ) {
-//		final FTPClient ftpc = fvol.getConnectedFTPClient();
 		final boolean file_exists = FtpTools.fileExists( fvol, path );
 		if ( file_exists ) {
 			return new FtpVFile( fvol, path );
