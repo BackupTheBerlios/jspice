@@ -23,6 +23,7 @@ import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.datatypes.Deferred;
 import org.openspice.jspice.datatypes.SpiceClass;
+import org.openspice.jspice.datatypes.Symbol;
 import org.openspice.jspice.datatypes.elements.XmlElement;
 import org.openspice.jspice.datatypes.proc.Proc;
 import org.openspice.jspice.tools.Consumer;
@@ -167,6 +168,19 @@ public class CastLib {
 				return toString( ((Deferred)obj).get() );
 			} catch ( final ClassCastException exn ) {
 				throw oops( exn, "String needed", obj );
+			}
+		}
+	}
+
+	public static final Symbol toSymbol( final Object obj ) {
+		try {
+			if ( obj != null ) return (Symbol)obj;
+			throw oops( "Symbol needed", obj );
+		} catch ( final ClassCastException _ ) {
+			try {
+				return toSymbol( ((Deferred)obj).get() );
+			} catch ( final ClassCastException exn ) {
+				throw oops( exn, "Symbol needed", obj );
 			}
 		}
 	}

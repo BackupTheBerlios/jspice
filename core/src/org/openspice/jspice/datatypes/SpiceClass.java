@@ -31,7 +31,7 @@ import java.util.Map;
  * 	-	It is possible to determine which Spice classes it extends.
  *  -	Records the java.lang.Class which implements it.
  */
-public class SpiceClass extends SpiceObject {
+public class SpiceClass extends SpiceObject.NonMap {
 
 	private final Class concrete;
 
@@ -57,21 +57,6 @@ public class SpiceClass extends SpiceObject {
 		throw new RuntimeException( "tbd" );    // todo:
 	}
 
-	public List convertToList() {
-		throw new RuntimeException( "tbd" );    // todo:
-	}
-
-	public Map convertToMap() {
-		throw new RuntimeException( "tbd" );    // todo:
-	}
-
-	public SpiceObject convertFromList( final List list ) {
-		throw new RuntimeException( "tbd" );    // todo:
-	}
-
-	public SpiceObject convertFromMap( final Map map ) {
-		throw new RuntimeException( "tbd" );    // todo:
-	}
 
 	//	---oooOOOooo---
 

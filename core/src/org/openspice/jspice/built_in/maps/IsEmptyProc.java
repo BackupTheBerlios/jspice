@@ -16,26 +16,29 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.datatypes;
+package org.openspice.jspice.built_in.maps;
 
-import org.openspice.jspice.tools.Consumer;
-import org.openspice.jspice.built_in.inspect.FieldAdder;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.lib.ListLib;
+import org.openspice.jspice.lib.MapLib;
 
-import java.util.List;
 import java.util.Map;
+import java.util.List;
 
-public class Vanilla extends SpiceObject.NonMap {
+public class IsEmptyProc extends Unary1InvokeProc {
 
-	public void addInstanceFields( final FieldAdder adder ) {
-		throw new RuntimeException( "tbd" );	//	todo:
+	{
+		this.setDescription(
+			"isEmpty",
+			"%p( map ) -> bool",
+			"returns true if the map has no entries"
+		);
 	}
 
-	public void showTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
+	public Object invoke( final Object x ) {
+		return Boolean.valueOf( MapLib.isEmpty( x ) );
 	}
 
-	public void printTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
-	}
+	public static final IsEmptyProc IS_EMPTY_PROC = new IsEmptyProc();
 
 }

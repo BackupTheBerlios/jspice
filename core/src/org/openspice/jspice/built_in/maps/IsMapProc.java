@@ -16,26 +16,26 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.datatypes;
+package org.openspice.jspice.built_in.maps;
 
-import org.openspice.jspice.tools.Consumer;
-import org.openspice.jspice.built_in.inspect.FieldAdder;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.lib.IsLib;
 
-import java.util.List;
-import java.util.Map;
 
-public class Vanilla extends SpiceObject.NonMap {
+public class IsMapProc extends Unary1InvokeProc {
 
-	public void addInstanceFields( final FieldAdder adder ) {
-		throw new RuntimeException( "tbd" );	//	todo:
+	{
+		setDescription(
+			"isMap",
+			"%p( object ) -> boolean",
+			"returns true if object is an instance of Map, otherise false"
+		);
 	}
 
-	public void showTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
+	public Object invoke( final Object x ) {
+		return Boolean.valueOf( IsLib.isMap( x ) );
 	}
 
-	public void printTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
-	}
+	public static final IsMapProc IS_MAP_PROC = new IsMapProc();
 
 }

@@ -26,6 +26,7 @@ import org.openspice.jspice.built_in.inspect.FieldAdder;
 import java.util.*;
 
 public abstract class SpiceObject {
+
 	public abstract void showTo( final Consumer cuchar );
 	public abstract void printTo( final Consumer cuchar );
 	public abstract List convertToList();
@@ -33,6 +34,9 @@ public abstract class SpiceObject {
 	public abstract SpiceObject convertFromList( List list );
 	public abstract SpiceObject convertFromMap( Map map );
 	public abstract void addInstanceFields( FieldAdder adder );
+	public abstract boolean isEmpty();
+	public abstract boolean isMapFlavour();
+	public abstract boolean isListFlavour();
 
 	//	Make this abstract when we are about to embark on hacking the summaries.
 	public String summary() {
@@ -59,19 +63,31 @@ public abstract class SpiceObject {
 
 	public abstract static class NonMap extends SpiceObject {
 
-		public List convertToList() {
+		public final boolean isEmpty() {
+			throw new Alert( "Cannot determine if this is empty" ).culprit( "this", this ).mishap();
+		}
+
+		public final boolean isMapFlavour() {
+			return false;
+		}
+
+		public final boolean isListFlavour() {
+			return false;
+		}
+
+		public final List convertToList() {
 			throw new Alert( "Cannot convert Termin into a List" ).mishap();
 		}
 
-		public Map convertToMap() {
+		public final Map convertToMap() {
 			throw new Alert( "Cannot convert Termin into a Map" ).mishap();
 		}
 
-		public SpiceObject convertFromList( final List list ) {
+		public final SpiceObject convertFromList( final List list ) {
 			throw Alert.unreachable();
 		}
 
-		public SpiceObject convertFromMap( final Map map ) {
+		public final SpiceObject convertFromMap( final Map map ) {
 			throw Alert.unreachable();
 		}
 

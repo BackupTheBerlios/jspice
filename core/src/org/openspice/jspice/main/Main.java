@@ -53,12 +53,12 @@ public class Main {
 
 	protected void perform( final boolean wantBanner, final String prompt ) {
 		this.init( wantBanner );
-		this.interpreter.interpret( prompt );
+		this.interpreter.interpret( prompt != null ? prompt : this.jspice_conf.getPrompt() );
 		this.shutdown();
 	}
 
 	public static void main( final String[] args ) {
-		new Main().perform( true, FixedConf.PROMPT_THEN_SPACE );
+		new Main().perform( true, null );
 	}
 
 }

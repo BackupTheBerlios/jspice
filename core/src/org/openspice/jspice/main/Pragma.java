@@ -29,17 +29,14 @@ import org.openspice.jspice.main.pragmas.ListPragma;
 import org.openspice.jspice.namespace.NameSpaceManager;
 import org.openspice.jspice.namespace.NameSpace;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.Iterator;
+import java.util.*;
 
 public class Pragma {
 
-	final Interpreter interpreter;
-	final String input_string;
-	String command;
-	final List arg_list;
+	private final Interpreter interpreter;
+	private final String input_string;
+	private String command;
+	private final List arg_list;
 
 	public Pragma( final Interpreter interpreter, final String input_string ) {
 		this.interpreter = interpreter;

@@ -16,26 +16,25 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.datatypes;
+package org.openspice.jspice.built_in.strings;
 
-import org.openspice.jspice.tools.Consumer;
-import org.openspice.jspice.built_in.inspect.FieldAdder;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.lib.IsLib;
 
-import java.util.List;
-import java.util.Map;
+public class IsStringProc extends Unary1InvokeProc {
 
-public class Vanilla extends SpiceObject.NonMap {
-
-	public void addInstanceFields( final FieldAdder adder ) {
-		throw new RuntimeException( "tbd" );	//	todo:
+	{
+		setDescription(
+			"isString",
+			"%p( object ) -> boolean",
+			"returns true if object is an instance of String, otherise false"
+		);
 	}
 
-	public void showTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
+	public Object invoke( Object x ) {
+		return Boolean.valueOf( IsLib.isString( x ) );
 	}
 
-	public void printTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
-	}
+	public static final IsStringProc IS_STRING_PROC = new IsStringProc();
 
 }

@@ -180,6 +180,14 @@ public final class XmlElement extends SpiceObject {
 		return new XmlElement( this.getTypeSymbol(), this.getAttributes(), ListTools.convertTo( map ) );
 	}
 
+	public boolean isListFlavour() {
+		return true;
+	}
+
+	public boolean isMapFlavour() {
+		return true;
+	}
+
 	//	----
 
 	//	todo: how do we handle qualified names, local names etc etc etc.

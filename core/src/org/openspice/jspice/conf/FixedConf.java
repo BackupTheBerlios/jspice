@@ -96,8 +96,8 @@ public abstract class FixedConf {
 
 	//	----
 
-	public static final String PROMPT = ">>>";
-	public static final String PROMPT_THEN_SPACE = PROMPT + " ";
+	public static final String PROMPT_BASE = ">>>";
+//	public static final String PROMPT_THEN_SPACE = PROMPT_BASE + " ";
 
 	//	--- Internal names ---
 

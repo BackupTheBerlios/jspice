@@ -28,6 +28,7 @@ import org.openspice.jspice.class_builder.JSpiceClassLoader;
 import org.openspice.vfs.VFolder;
 import org.openspice.vfs.VFile;
 import org.openspice.vfs.files.FileVFolder;
+import org.openspice.vfs.files.FileVFile;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -45,6 +46,16 @@ public final class JSpiceConf {
 
 //	private static final String inventory_conf_file_name = FixedConf.INVENTORY_NAM + "." + FixedConf.CONF_EXT;
 	private static final String personal_inventory = "." + FixedConf.INVENTORY_NAM;
+
+	//	---oooOOOooo---
+
+	String prompt_base = FixedConf.PROMPT_BASE;
+
+	public String getPrompt() {
+		return this.prompt_base + " ";
+	}
+
+	//	---oooOOOooo---
 
 
 	public final String getLoadConfFileName() {
@@ -184,6 +195,10 @@ public final class JSpiceConf {
 		return null;
 	}
 
+	private static File user_home() {
+		return new File( System.getProperty( "user.home" ) );
+	}
+
 	public VFolder getHome() {
 		return this.jspice_home;
 	}
@@ -259,10 +274,13 @@ public final class JSpiceConf {
 	 * This is placeholding stuff at present.  Obviously enough the configuration
 	 * files should have a unified format.  However, for the moment the basic rules are:-
 	 * 	1.	'#' is an end of line comment
-	 * 	2.	data entry lines are AddLoaderBuilder EXTN CLASSNAME
+	 * 	2.	data entry lines are
+	 *          AddLoaderBuilder EXTN CLASSNAME
+	 *          Entity NAME HEX_CODE
+	 *          Prompt STRING
 	 * 	3.	blank lines are discarded
 	 */
-	private static final void parseJSpiceConf( final VFile conf_file, final Map env_map, final Map entity_to_code_map, final Map code_to_entity_map ) {
+	private final void parseJSpiceConf( final VFile conf_file ) { //, final Map env_map, final Map entity_to_code_map, final Map code_to_entity_map ) {
 		final ConfTokenizer conft = new ConfTokenizer( conf_file.readContents() );
 		for ( final List list = new ArrayList(); conft.next( list ) != null; list.clear() ) {
 			final int list_size = list.size();	//	Guaranteed to be at least length 1.
@@ -271,18 +289,20 @@ public final class JSpiceConf {
 			if ( "AddLoaderBuilder".equals( command ) && list_size == 3 ) {
 				final String extn = (String)list.get( 1 );
 				final String cname = (String)list.get( 2 );
-				env_map.put( extn, cname );
+				this.extnMap.put( extn, cname );
 			} else if ( "Entity".equals( command ) && list_size == 3 ) {
 				final String name = (String)list.get( 1 );
 				final String hex_code_str = (String)list.get( 2 );
 				if ( hex_code_str.length() > 0 && hex_code_str.charAt( 0 ) == 'U' ) {
 					final char code = (char)Integer.parseInt( hex_code_str.substring( 1 ), 16 );
 					final Character ch = new Character( code );
-					entity_to_code_map.put( name, ch );
-					code_to_entity_map.put( ch, name );
+					this.entityToStringMap.put( name, ch );
+					this.charToEntityMap.put( ch, name );
 				} else {
 					new Alert( "Unrecognised entity code" ).culprit( "name", name ).culprit( "code", hex_code_str ).warning();
 				}
+			} else if ( "Prompt".equals( command ) && list_size == 2 ) {
+				this.prompt_base = (String)list.get( 1 );
 			} else {
 				final Object directive = list.remove( 0 );
 				new Alert( "Unrecognized directive JSpice conf file" ).culprit( "directive", directive ).culprit_list( list ).mishap();
@@ -296,22 +316,31 @@ public final class JSpiceConf {
 		return jspice_class_loader;
 	}
 
+
 	public JSpiceConf() {
 		this.jspice_home = new FileVFolder( home() );
 		if ( this.jspice_home == null ) {
-			new Alert( "Cannot locate JSpice home directory").warning();
+			new Alert( "Cannot locate JSpice home directory" ).warning();
 		}
 		this.jspice_conf_vfile = this.jspice_home.getVFile( FixedConf.JSPICE_CONF_NAM, FixedConf.CONF_EXT );
-//		if ( !this.jspice_conf_vfile.canRead() ) {
-//			new Alert( "Cannot read JSpice configuration file").culprit( "filename", this.jspice_conf_vfile ).warning();
-//		}
 
 		//	Parse the JConf file.
-		parseJSpiceConf( this.jspice_conf_vfile, this.extnMap, this.entityToStringMap, this.charToEntityMap );
+		this.parseJSpiceConf( this.jspice_conf_vfile );
 
 		Print.println( Print.CONFIG, "Installing std inventory ..." );
 		this.installInventoryConf( this.jspice_home.getVFolder( FixedConf.std_inventory_name, null ) );
 		Print.println( Print.CONFIG, "... installed" );
+
+		//	todo: move the strings constants to FixedConf
+		final File user_home_file = new File( new File( user_home(), ".jspice" ), "jspice.conf" );
+		if ( user_home_file.exists() ) {
+			if ( user_home_file.canRead() && user_home_file.isFile() ) {
+				this.parseJSpiceConf( new FileVFile( user_home_file ) );
+			} else {
+				new Alert( "Personal configuration file is unreadable" ).culprit( "filename", user_home_file ).warning();
+			}
+		}
+
 	}
 
 }

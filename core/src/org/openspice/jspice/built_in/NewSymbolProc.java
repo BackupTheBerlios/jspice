@@ -16,26 +16,18 @@
  * 	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.openspice.jspice.datatypes;
+package org.openspice.jspice.built_in;
 
-import org.openspice.jspice.tools.Consumer;
-import org.openspice.jspice.built_in.inspect.FieldAdder;
+import org.openspice.jspice.datatypes.proc.Unary1InvokeProc;
+import org.openspice.jspice.datatypes.Symbol;
+import org.openspice.jspice.lib.CastLib;
 
-import java.util.List;
-import java.util.Map;
+public class NewSymbolProc extends Unary1InvokeProc {
 
-public class Vanilla extends SpiceObject.NonMap {
-
-	public void addInstanceFields( final FieldAdder adder ) {
-		throw new RuntimeException( "tbd" );	//	todo:
+	public Object invoke( final Object x ) {
+		return Symbol.make( CastLib.toString( x ) );
 	}
 
-	public void showTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
-	}
-
-	public void printTo( Consumer cuchar ) {
-		cuchar.outString( "-vanilla-" );
-	}
+	public static final NewSymbolProc NEW_SYMBOL_PROC = new NewSymbolProc();
 
 }

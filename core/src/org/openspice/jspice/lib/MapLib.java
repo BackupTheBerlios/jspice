@@ -27,6 +27,23 @@ import java.util.*;
 
 public final class MapLib {
 
+	public static final boolean isEmpty( final Object obj ) {
+		if ( obj instanceof Map ) {
+			return ((Map)obj).isEmpty();
+		} else if ( obj instanceof List ) {
+			return ((List)obj).isEmpty();
+        } else if ( obj instanceof String ) {
+			return ((String)obj).length() == 0;
+		} else if ( obj instanceof SpiceObject ) {
+			return ((SpiceObject)obj).isEmpty();
+		} else {
+			throw new Alert(
+				"Map conversion failed",
+				"Trying to convert to map in process of running isEmpty"
+			).culprit( "object", obj ).mishap( 'E' );
+        }
+	}
+
 	public final static Map convertTo( final Object obj ) {
 		if ( obj instanceof Map ) {
 			return (Map)obj;

@@ -28,7 +28,7 @@ import java.util.*;
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-public class Symbol extends SpiceObject implements Comparable {
+public class Symbol extends SpiceObject.NonMap implements Comparable {
 
     private final String symbol;
 
@@ -42,7 +42,7 @@ public class Symbol extends SpiceObject implements Comparable {
 
     public String getInternedString() {
         return this.symbol;
-    }
+	}
 
     private static WeakHashMap table = new WeakHashMap();
 
@@ -68,26 +68,6 @@ public class Symbol extends SpiceObject implements Comparable {
 	
 	public void printTo( final Consumer cuchar ) {
 		cuchar.outString( this.symbol );
-	}
-
-	public List convertToList() {
-		throw new Alert( "Cannot convert a symbol to a list" ).culprit( "symbol", this ).mishap();
-//		return ListTools.convertTo( this.symbol );
-	}
-	
-	public SpiceObject convertFromList( final List list ) {
-		throw Alert.unreachable();
-//		return make( (String)ListTools.convertFrom( list, "" ) );
-	}
-	
-	public Map convertToMap() {
-		throw new Alert( "Cannot convert a symbol to a map" ).culprit( "symbol", this ).mishap();
-//		return MapLib.convertTo( this.symbol );
-	}
-	
-	public SpiceObject convertFromMap( final Map map ) {
-		throw Alert.unreachable();
-//		return make( (String)MapLib.convertFrom( map, "" ) );
 	}
 
 }

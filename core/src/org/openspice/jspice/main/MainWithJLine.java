@@ -43,7 +43,7 @@ public class MainWithJLine extends Main {
 					}
 				)
 			);
-			ConsoleReaderInputStream.setIn( reader, prompt );
+			ConsoleReaderInputStream.setIn( reader, prompt != null ? prompt : this.jspice_conf.getPrompt() );
 
 			this.interpreter.interpret( "" );
 			this.shutdown();
@@ -53,7 +53,7 @@ public class MainWithJLine extends Main {
 	}
 
 	public static void main( final String[] args ) {
-		new MainWithJLine().perform( true, FixedConf.PROMPT_THEN_SPACE );
+		new MainWithJLine().perform( true, null );
 	}
 
 }

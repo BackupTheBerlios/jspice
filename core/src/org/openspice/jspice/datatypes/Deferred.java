@@ -22,6 +22,7 @@ import org.openspice.jspice.tools.Consumer;
 import org.openspice.jspice.tools.PrintTools;
 import org.openspice.jspice.tools.ListTools;
 import org.openspice.jspice.lib.MapLib;
+import org.openspice.jspice.lib.IsLib;
 import org.openspice.jspice.alert.Alert;
 import org.openspice.jspice.built_in.inspect.FieldAdder;
 
@@ -113,6 +114,18 @@ public abstract class Deferred extends SpiceObject {
 
 	public SpiceObject convertFromMap( final Map map ) {
 		throw Alert.unreachable();
+	}
+
+	public boolean isEmpty() {
+		return MapLib.isEmpty( this.get() );
+	}
+
+	public boolean isMapFlavour() {
+		return IsLib.isMapFlavour( this.get() );
+	}
+
+	public boolean isListFlavour() {
+		return IsLib.isMapFlavour( this.get() );
 	}
 
 	public void addInstanceFields( FieldAdder adder ) {
