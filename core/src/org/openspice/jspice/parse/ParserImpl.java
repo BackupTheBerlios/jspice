@@ -247,10 +247,11 @@ public class ParserImpl extends Parser {
     public Expr readExprPrec( final int prec ) {
         final Expr e = readOptExprPrec( prec );
         if ( e == null ) {
+			final Token t = this.peekToken();
             this.alert(
                 "Missing expression",
-                "An expression is required here"
-            ).mishap();
+                "An expression cannot follow this token"
+            ).culprit( "token", t ).mishap();
         }
         return e;
     }

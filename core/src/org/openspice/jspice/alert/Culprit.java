@@ -22,7 +22,7 @@ import org.openspice.jspice.tools.PrintTools;
  */
 
 
-public class Culprit {
+class Culprit {
 	final String desc;
 	final Object arg;
 	final boolean typed;
@@ -39,9 +39,16 @@ public class Culprit {
 		this( desc1, arg1, false, false );
 	}
 
+	static Culprit hint( final String hint_text ) {
+		return new Culprit( "hint", hint_text, false, true );
+	}
+
+	static Culprit typedCulprit( final String desc, final Object arg ) {
+		return new Culprit( desc, arg, true, false );
+	}
+
 	String keepShort( final Object x, final int mx_len, final int filemxlen ) {
 		final int mxlen = mx_len > 5 ? mx_len : 5;
-		//final String s = x == null ? "<null>" : x.toString();
 		final String s = this.print ? ( "" + x ) : PrintTools.showToString( x );
 		if ( s.length() > mxlen ) {
 			if ( s.charAt( 0 ) == '/' && s.length() < filemxlen ) {
@@ -57,13 +64,13 @@ public class Culprit {
 	static final int maxlen = 60;
 	static final int filemaxlen = 256;
 
-	public String keepShort( Object x ) {
+	String keepShort( Object x ) {
 		return keepShort( x, maxlen, filemaxlen );
 	}
 
 	static final int min_pad_width = 8;
 
-	public void output() {
+	void output() {
 		final String d = this.desc.toUpperCase();
 		Output.print( d );
 		for ( int i = d.length(); i < min_pad_width; i++ ) {

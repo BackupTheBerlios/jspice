@@ -21,6 +21,7 @@ package org.openspice.jspice.alert;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 public final class Alert {
 
@@ -31,7 +32,7 @@ public final class Alert {
 	final Throwable cause;
 	final String complaint;
 	final String explanation;
-	CulpritList culprits = new CulpritList();
+	LinkedList culprits = new LinkedList(); 		//new CulpritGroup();
 
 	public Alert( final Throwable t, final String _complaint, final String _explanation, final char phase ) {
 		this.cause = t;
@@ -83,12 +84,12 @@ public final class Alert {
 			null
 		);
 		if ( p != null ) {
-			this.culprits = this.culprits.culprit( "Phase", p );
+			this.culprits.add( new Culprit( "Phase", p ) );
 		}
 	}
 
 	public Alert culprit( final String desc, final Object arg ) {
-		this.culprits = this.culprits.culprit( desc, arg );
+		this.culprits.add( new Culprit( desc, arg ) );
 		return this;
 	}
 
@@ -101,12 +102,12 @@ public final class Alert {
 	}
 
 	public Alert hint( final String hint_text ) {
-		this.culprits = this.culprits.hint( hint_text );
+		this.culprits.add( Culprit.hint( hint_text ) );
 		return this;
 	}
 
 	public Alert typedCulprit( final String desc, final Object arg ) {
-		this.culprits = this.culprits.typedCulprit( desc, arg );
+		this.culprits.add( Culprit.typedCulprit( desc, arg ) );
 		return this;
 	}
 
@@ -114,12 +115,13 @@ public final class Alert {
 		return this.report( Abort.abort );
 	}
 
+
 	public AlertException mishap( final char phase ) {
 		this.setPhase( phase );
 		return this.report( Abort.abort );
 	}
 
-	public void  warning() {
+	public void warning() {
 		this.report( Warning.warning );
 	}
 
@@ -142,10 +144,19 @@ public final class Alert {
 			Output.print( "BECAUSE : " );
 			Output.println( this.explanation );
 		}
-		culprits.output();
+		this.output();
 		Output.flushAll();
 
 		return severity.throwUp( new AlertException( this ) );
+	}
+
+	private void output() {
+		for ( Iterator it = this.culprits.iterator(); it.hasNext(); ) {
+			final Culprit c = (Culprit)it.next();
+			c.output();
+		}
+		Output.println( "" );
+		Output.flushAll();
 	}
 
 	//	---- This section just deals with the statics ----
